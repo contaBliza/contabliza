@@ -1,0 +1,1696 @@
+﻿<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>ContaBliza - Movimientos</title>
+
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/componentes.css">
+  <link rel="stylesheet" href="../css/pages.css">
+  <style>
+    body.movs-page{
+      background:
+        radial-gradient(980px 460px at 50% -130px, rgba(136, 208, 222, 0.36) 0%, rgba(136, 208, 222, 0) 66%),
+        radial-gradient(620px 290px at 86% 164px, rgba(239, 191, 104, 0.21) 0%, rgba(239, 191, 104, 0) 82%),
+        linear-gradient(180deg, #0a4154 0%, #16576c 224px, #ece9e5 224px, #f1efec 100%);
+      color: #103446;
+    }
+    .movs-page .navbar{
+      height: 62px;
+      background:
+        radial-gradient(260px 100px at 82% 120%, rgba(233, 186, 100, 0.2), rgba(233, 186, 100, 0)),
+        linear-gradient(135deg, rgba(10, 61, 78, 0.92), rgba(18, 83, 104, 0.9));
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 8px 22px rgba(5, 34, 46, 0.34);
+    }
+    .movs-page .navbar::after{
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -1px;
+      height: 2px;
+      background: linear-gradient(90deg, rgba(214, 245, 255, 0.28), rgba(240, 198, 118, 0.9));
+      pointer-events: none;
+    }
+    .movs-page .nav-btn{
+      color: #f4fafc;
+    }
+    .movs-page .nav-btn:hover{
+      opacity: 1;
+      background: rgba(255,255,255,0.09);
+    }
+    .brand-chip{
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      color: #ecf6f8;
+      text-shadow: 0 2px 7px rgba(0,0,0,0.28);
+    }
+    .brand-mark{
+      width: 46px;
+      height: 46px;
+      display: block;
+      background: center / contain no-repeat url("../assets/contabliza-mark.svg");
+      filter: drop-shadow(0 7px 16px rgba(9, 38, 49, 0.35));
+      color: transparent;
+      font-size: 0;
+      line-height: 0;
+    }
+    .brand-text{
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 1.66rem;
+      letter-spacing: -0.02em;
+    }
+    .movs-shell{
+      max-width: 690px;
+      margin: 0 auto;
+      padding-top: 82px;
+      padding-bottom: 26px;
+      position: relative;
+    }
+    .movs-shell::before{
+      content: "";
+      position: absolute;
+      left: -10px;
+      right: -10px;
+      top: 194px;
+      height: 58px;
+      border-top-left-radius: 48% 100%;
+      border-top-right-radius: 48% 100%;
+      background: linear-gradient(180deg, rgba(248, 247, 243, 0.95), rgba(236, 233, 227, 0.98));
+      box-shadow: inset 0 1px 0 rgba(245, 209, 138, 0.75);
+      z-index: 0;
+    }
+    .movs-hero{
+      padding: 20px 8px 20px;
+      margin-bottom: 0;
+      position: relative;
+      z-index: 1;
+    }
+    .movs-hero h2{
+      color: #ebf6f8;
+      font-size: 2.2rem;
+      margin: 0 0 6px;
+      text-shadow: 0 4px 14px rgba(0,0,0,0.34);
+    }
+    .movs-hero p{
+      color: rgba(235,247,250,0.92);
+      font-size: 1.15rem;
+      margin: 0;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.26);
+    }
+    .movs-toolbar{
+      margin-top: 16px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+      gap: 0;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 10px 20px rgba(11, 43, 56, 0.24);
+      border: 1px solid #d9d2c6;
+      background: rgba(248, 245, 240, 0.95);
+    }
+    .movs-toolbar-slot{
+      position: relative;
+      min-height: 64px;
+      display: flex;
+      align-items: center;
+      background: rgba(250, 248, 244, 0.96);
+      border-right: 1px solid #ddd5c8;
+    }
+    .movs-toolbar-slot:last-child{
+      border-right: none;
+      background: transparent;
+    }
+    .movs-toolbar-slot.has-display .movs-toolbar-select{
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      z-index: 2;
+    }
+    .movs-toolbar-display{
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      padding: 0 18px;
+      color: #16394c;
+      font-size: 1rem;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      pointer-events: none;
+    }
+    .movs-toolbar-select{
+      width: 100%;
+      min-height: 64px;
+      border: none;
+      background: transparent;
+      color: #16394c;
+      font-size: 1rem;
+      font-weight: 600;
+      padding: 0 18px;
+      box-shadow: none;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+    }
+    .movs-toolbar-slot::after{
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-right: 2px solid #274e61;
+      border-bottom: 2px solid #274e61;
+      transform: rotate(-45deg);
+      position: absolute;
+      right: 18px;
+      top: 50%;
+      margin-top: -4px;
+      pointer-events: none;
+    }
+    .movs-toolbar-action{
+      min-height: 64px;
+      padding: 0 22px;
+      border-radius: 18px;
+      margin: 6px;
+      font-size: 1.04rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      text-decoration: none;
+      color: #f7fbfc;
+      background: linear-gradient(135deg, rgba(12, 82, 103, 0.95), rgba(23, 109, 128, 0.94));
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.22), 0 12px 24px rgba(10, 43, 56, 0.22);
+      white-space: nowrap;
+    }
+    .movs-toolbar-action .plus{
+      font-size: 2rem;
+      line-height: 1;
+      font-weight: 500;
+      transform: translateY(-1px);
+    }
+    .movs-summary{
+      border-radius: 22px;
+      border: 1px solid #dfd7cc;
+      background: rgba(248, 245, 240, 0.96);
+      box-shadow: 0 14px 28px rgba(15, 35, 45, 0.12);
+      padding: 14px;
+      margin-bottom: 14px;
+      position: relative;
+      z-index: 1;
+    }
+    .movs-summary-track{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .movs-summary-side{
+      min-height: 68px;
+      padding: 14px 16px;
+      display: grid;
+      align-content: center;
+      text-align: left;
+      font-size: 0.98rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      border-radius: 18px;
+      border: 1px solid #ddd3c7;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.78);
+      gap: 4px;
+      cursor: pointer;
+      transition: transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease;
+    }
+    .movs-summary-side:hover{
+      transform: translateY(-1px);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.82), 0 8px 18px rgba(16, 51, 69, 0.08);
+    }
+    .movs-summary-side.is-active{
+      border-color: rgba(18, 86, 106, 0.42);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.86), 0 10px 20px rgba(16, 51, 69, 0.12);
+    }
+    .movs-summary-side span{
+      opacity: 0.9;
+    }
+    .movs-summary-side strong{
+      font-size: 1.08em;
+      margin-left: 0;
+      white-space: normal;
+    }
+    .movs-summary-side.is-income{
+      color: #175669;
+      background: linear-gradient(180deg, rgba(242,251,252,0.98), rgba(233,246,247,0.98));
+    }
+    .movs-summary-side.is-expense{
+      color: #9b3728;
+      background: linear-gradient(180deg, rgba(255,248,232,0.98), rgba(250,240,200,0.98));
+    }
+    .movs-card{
+      border-radius: 20px;
+      border: 1px solid #ddd8cf;
+      background: #f5f3f0;
+      box-shadow: 0 12px 30px rgba(15, 35, 45, 0.14);
+      padding: 18px 16px 16px;
+      margin-bottom: 14px;
+      position: relative;
+      z-index: 1;
+    }
+    .movs-head{
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .movs-head h3{
+      margin: 0;
+      font-size: 1.85rem;
+      color: #0e3345;
+    }
+    .rows-info{
+      color: #4c6270;
+      font-size: 0.82rem;
+      font-weight: 700;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: #ece7de;
+      border: 1px solid #ddd3c6;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.72);
+      white-space: nowrap;
+    }
+    .movs-table-wrap{
+      margin-top: 6px;
+      overflow: auto;
+      border-radius: 16px;
+    }
+    .movs-list{
+      display: none;
+      margin-top: 8px;
+      gap: 10px;
+    }
+    .mov-card{
+      border: 1px solid #e2dbd1;
+      border-radius: 16px;
+      background: #fcfbf9;
+      padding: 12px 14px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.78);
+      display: grid;
+      grid-template-columns: 56px minmax(0, 1fr) auto;
+      gap: 10px 12px;
+      align-items: center;
+    }
+    .mov-card-top{
+      display: block;
+    }
+    .mov-card-date{
+      color: #5d7280;
+      font-size: 0.74rem;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      text-transform: uppercase;
+      line-height: 1.15;
+      width: 56px;
+      min-height: 52px;
+      border: 1px solid #e0d8cd;
+      border-radius: 14px;
+      background: linear-gradient(180deg, #fffefe, #f5f1eb);
+      display: grid;
+      place-items: center;
+      text-align: center;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.9);
+    }
+    .mov-card-main{
+      display: grid;
+      gap: 5px;
+      min-width: 0;
+      align-content: center;
+    }
+    .mov-card-concept{
+      color: #193c50;
+      font-size: 0.98rem;
+      font-weight: 700;
+      line-height: 1.15;
+    }
+    .mov-card-meta{
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      color: #617683;
+      font-size: 0.82rem;
+    }
+    .mov-card-actions{
+      display: grid;
+      justify-items: end;
+      gap: 6px;
+      min-width: 34px;
+      align-content: center;
+    }
+    .mov-card-side{
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .mov-card-side .btn-secondary,
+    .mov-card-actions .row-actions .btn-secondary{
+      min-height: 28px;
+      min-width: 28px;
+      border-radius: 10px;
+      padding: 4px;
+    }
+    .mov-card-side .btn-secondary svg,
+    .mov-card-actions .row-actions .btn-secondary svg{
+      width: 13px;
+      height: 13px;
+    }
+    .movs-pagination{
+      margin-top: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .movs-page-btn{
+      min-width: 34px;
+      height: 34px;
+      padding: 0 10px;
+      border-radius: 999px;
+      border: 1px solid #d8d0c4;
+      background: #fcfbf9;
+      color: #17384b;
+      font-size: 0.82rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.75);
+    }
+    .movs-page-btn.is-active{
+      background: linear-gradient(135deg, #14566c, #2b7878);
+      color: #ffffff;
+      border-color: rgba(20, 86, 108, 0.9);
+      box-shadow: 0 8px 16px rgba(13, 48, 61, 0.18);
+    }
+    .movs-page-btn[disabled]{
+      opacity: 0.45;
+    }
+    .movs-page-dots{
+      color: #6a7c89;
+      font-size: 0.82rem;
+      font-weight: 700;
+      padding: 0 2px;
+    }
+    .movs-page .table{
+      border: 1px solid #e3dbd0;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.75);
+      border-radius: 16px;
+      background: #fcfbf9;
+      min-width: 500px;
+      overflow: hidden;
+    }
+    .movs-page .table th{
+      background: #f1ece6;
+      color: #334753;
+      font-size: 0.71rem;
+      font-weight: 700;
+      text-transform: none;
+      padding: 11px 10px;
+      border-bottom: 1px solid #e8dfd3;
+    }
+    .movs-page .table td{
+      font-size: 0.76rem;
+      color: #243640;
+      vertical-align: middle;
+      padding: 12px 10px;
+      border-bottom: 1px solid #eee6db;
+    }
+    .movs-page .table td:first-child{
+      width: 86px;
+      white-space: normal;
+      overflow-wrap: anywhere;
+      line-height: 1.08;
+      color: #536877;
+    }
+    .movs-page .table td:nth-child(2){
+      width: 90px;
+    }
+    .movs-page .table th:last-child,
+    .movs-page .table td:last-child{
+      width: 64px;
+      text-align: center;
+    }
+    .movs-page .table tbody tr:last-child td{
+      border-bottom: none;
+    }
+    .movs-page .table tbody tr:nth-child(even) td{
+      background: #faf7f3;
+    }
+    .cat-cell{
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      max-width: max-content;
+    }
+    .cat-text{
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 140px;
+    }
+    .cat-cell .btn-secondary{
+      min-height: 30px;
+      min-width: 30px;
+      border-radius: 10px;
+      padding: 6px;
+      display: inline-grid;
+      place-items: center;
+      font-size: 0.72rem;
+      font-weight: 600;
+      background: #fffdfa;
+      border-color: #ccbfae;
+    }
+    .row-actions{
+      display: inline-flex;
+      justify-content: center;
+      gap: 6px;
+      width: auto;
+    }
+    .row-actions .btn-secondary{
+      min-height: 32px;
+      min-width: 32px;
+      border-radius: 10px;
+      padding: 6px;
+      display: inline-grid;
+      place-items: center;
+      font-size: 0.72rem;
+      font-weight: 600;
+      background: #fffdfa;
+      border-color: #ccbfae;
+    }
+    .mov-row{
+      cursor: pointer;
+    }
+    .mov-row:hover td{
+      background: #f2efea;
+    }
+    .mov-row td:last-child{
+      cursor: default;
+    }
+    .movs-page .badge{
+      font-size: 0.66rem;
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-weight: 700;
+      text-transform: lowercase;
+      letter-spacing: 0;
+    }
+    .movs-page .badge-success{ background:#1f7a3a; color:#fff; }
+    .movs-page .badge-danger{ background:#b3262d; color:#fff; }
+    .home-empty{
+      margin-top: 10px;
+      color: #5f7480;
+      font-size: 0.92rem;
+    }
+    .preview-panel,
+    .edit-panel{
+      border-radius: 18px;
+      border: 1px solid #ddd8cf;
+      background: #f7f4ef;
+      box-shadow: 0 16px 36px rgba(15, 35, 45, 0.2);
+    }
+    .edit-panel{
+      width: min(560px, calc(100vw - 24px));
+      padding: 22px 18px 16px;
+      background:
+        radial-gradient(280px 110px at 100% 0%, rgba(243, 206, 122, 0.18), rgba(243, 206, 122, 0)),
+        linear-gradient(180deg, #faf8f4 0%, #f5f1eb 100%);
+      box-shadow: 0 24px 44px rgba(10, 32, 44, 0.28);
+    }
+    .preview-actions{
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      padding-top: 12px;
+      flex-wrap: wrap;
+    }
+    .preview-actions .btn-secondary,
+    .edit-panel .btn-secondary,
+    .edit-panel .btn-primary{
+      min-height: 42px;
+      min-width: 110px;
+      border-radius: 12px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      padding: 0 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .edit-header{
+      color: #0f3244;
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+      letter-spacing: -0.02em;
+    }
+    .edit-sub{
+      margin: 0 0 14px;
+      color: #70828e;
+      font-size: 0.84rem;
+      line-height: 1.35;
+    }
+    .edit-panel .form-group{
+      margin-bottom: 14px;
+    }
+    .edit-panel .form-group label{
+      margin-bottom: 6px;
+      color: #27485a;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+    }
+    .edit-panel .form-group input,
+    .edit-panel .form-group select{
+      min-height: 54px;
+      border-radius: 15px;
+      border: 1px solid #d8d0c4;
+      background: #fffcf9;
+      color: #16374b;
+      font-size: 1rem;
+      padding: 0 14px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.95), 0 4px 12px rgba(19, 36, 46, 0.04);
+    }
+    .edit-panel .form-group input:focus,
+    .edit-panel .form-group select:focus{
+      outline: none;
+      border-color: #5d8c9d;
+      box-shadow: 0 0 0 3px rgba(63, 128, 150, 0.14);
+    }
+    .edit-actions{
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(213, 204, 193, 0.85);
+    }
+    .edit-panel .btn-secondary{
+      background: rgba(252, 251, 249, 0.9);
+      color: #4a6474;
+      border-color: #a9bbc5;
+      box-shadow: none;
+    }
+    .edit-panel .btn-primary{
+      color: #f8fbfc;
+      background: linear-gradient(135deg, rgba(12, 82, 103, 0.95), rgba(23, 109, 128, 0.94));
+      border-color: rgba(12, 82, 103, 0.38);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 12px 24px rgba(10, 43, 56, 0.22);
+    }
+    @media (max-width: 560px){
+      .movs-shell{
+        padding-top: 76px;
+        padding-left: 12px;
+        padding-right: 12px;
+      }
+      .movs-shell::before{
+        left: -2px;
+        right: -2px;
+        top: 174px;
+        height: 52px;
+      }
+      .brand-mark{ width:40px; height:40px; }
+      .brand-text{ font-size:1.48rem; }
+      .movs-hero h2{ font-size:1.95rem; }
+      .movs-hero p{ font-size:1.05rem; }
+      .movs-toolbar{
+        grid-template-columns: 1fr;
+        gap: 8px;
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        overflow: visible;
+      }
+      .movs-toolbar-slot{
+        min-height: 52px;
+        border-radius: 16px;
+        border: 1px solid #ddd5c8;
+        box-shadow: 0 8px 16px rgba(11, 43, 56, 0.12);
+      }
+      .movs-toolbar-slot:last-child{
+        background: rgba(250, 248, 244, 0.96);
+      }
+      .movs-toolbar-select{
+        min-height: 52px;
+        font-size: 0.94rem;
+      }
+      .movs-toolbar-action{
+        min-height: 52px;
+        width: 100%;
+        margin: 0;
+        font-size: 0.98rem;
+      }
+      .movs-summary{
+        padding: 12px;
+      }
+      .movs-summary-track{
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+      .movs-summary-side{
+        min-height: 0;
+        font-size: 0.92rem;
+        padding: 12px 14px;
+      }
+      .movs-head h3{ font-size:1.52rem; }
+      .rows-info{
+        font-size: 0.76rem;
+        padding: 6px 9px;
+      }
+      .movs-pagination{
+        gap: 6px;
+      }
+      .movs-page-btn{
+        min-width: 30px;
+        height: 30px;
+        padding: 0 8px;
+        font-size: 0.76rem;
+      }
+      .preview-panel,
+      .edit-panel{
+        border-radius: 16px;
+      }
+      .edit-panel{
+        width: calc(100vw - 16px);
+        padding: 18px 14px 14px;
+      }
+      .preview-actions .btn-secondary,
+      .edit-panel .btn-secondary,
+      .edit-panel .btn-primary{
+        min-height: 40px;
+        font-size: 0.88rem;
+      }
+      .edit-header{
+        font-size: 1.25rem;
+      }
+      .edit-sub{
+        font-size: 0.84rem;
+      }
+      .edit-panel .form-group input,
+      .edit-panel .form-group select{
+        min-height: 50px;
+        font-size: 0.96rem;
+      }
+      .edit-actions{
+        gap: 8px;
+      }
+      .movs-table-wrap{
+        display: none;
+      }
+      .movs-list{
+        display: grid;
+      }
+      .mov-card{
+        grid-template-columns: 48px minmax(0, 1fr) auto;
+        padding: 11px 12px;
+      }
+      .mov-card-date{
+        width: 48px;
+        min-height: 46px;
+        font-size: 0.7rem;
+      }
+      .mov-card-concept{
+        font-size: 0.94rem;
+      }
+      .mov-card-date,
+      .mov-card-meta{
+        font-size: 0.78rem;
+      }
+      .mov-card-actions{
+        min-width: 32px;
+        gap: 5px;
+      }
+      .mov-card-meta{
+        gap: 6px;
+      }
+      .mov-card-side .btn-secondary,
+      .mov-card-actions .row-actions .btn-secondary{
+        min-height: 26px;
+        min-width: 26px;
+        padding: 3px;
+      }
+      .movs-page .badge{
+        padding: 4px 8px;
+        font-size: 0.62rem;
+      }
+    }
+  </style>
+</head>
+
+<body class="movs-page">
+
+  <!-- =============================
+       NAVBAR
+       ============================= -->
+  <nav class="navbar">
+    <div class="nav-left">
+            <button class="nav-btn" type="button" data-nav="back" aria-label="Volver" title="Volver"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"></path></svg></button>
+      <button class="nav-btn" data-nav="menu" aria-label="Menú" title="Menú"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16"></path><path d="M4 12h16"></path><path d="M4 18h16"></path></svg></button>
+    </div>
+
+    <div class="nav-center">
+      <a class="brand-chip" href="./home.html" aria-label="Ir a Home">
+        <span class="brand-mark">CB</span>
+        <span class="brand-text">ContaBliza</span>
+      </a>
+    </div>
+
+    <div class="nav-right">
+      <button class="nav-btn" data-action="notifications" aria-label="Notificaciones" title="Notificaciones"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 10-12 0c0 7-3 7-3 7h18s-3 0-3-7"></path><path d="M13.73 21a2 2 0 01-3.46 0"></path></svg></button>
+      <button class="nav-btn" id="btnLogout" title="Salir" aria-label="Salir"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 17l5-5-5-5"></path><path d="M15 12H3"></path><path d="M21 5v14"></path></svg></button>
+    </div>
+  </nav>
+  <!-- NAV DRAWER -->
+  <div class="nav-drawer" id="navDrawer" aria-hidden="true">
+    <div class="nav-drawer-backdrop" data-nav="close"></div>
+    <div class="nav-drawer-panel" role="menu">
+      <div class="nav-drawer-header">Menú</div>
+      <a class="nav-drawer-item" href="./home.html">
+        <span class="ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 10l9-7 9 7"></path>
+            <path d="M5 10v9h14v-9"></path>
+          </svg>
+        </span>
+        <span>Home</span>
+      </a>
+      <a class="nav-drawer-item" href="./movimientos.html">
+        <span class="ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M8 6h10"></path>
+            <path d="M6 10h12"></path>
+            <path d="M6 14h12"></path>
+            <path d="M8 18h10"></path>
+          </svg>
+        </span>
+        <span>Movimientos</span>
+      </a>
+      <a class="nav-drawer-item" href="./movimiento.html">
+        <span class="ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 5v14"></path>
+            <path d="M5 12h14"></path>
+          </svg>
+        </span>
+        <span>Nuevo</span>
+      </a>
+      <a class="nav-drawer-item" href="./reportes.html">
+        <span class="ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 19V5"></path>
+            <path d="M8 19V9"></path>
+            <path d="M12 19V12"></path>
+            <path d="M16 19V7"></path>
+            <path d="M20 19V10"></path>
+          </svg>
+        </span>
+        <span>Reportes</span>
+      </a>
+      <a class="nav-drawer-item" href="./calendario.html">
+        <span class="ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="5" width="18" height="16" rx="2"></rect>
+            <path d="M16 3v4"></path>
+            <path d="M8 3v4"></path>
+            <path d="M3 9h18"></path>
+          </svg>
+        </span>
+        <span>Calendario</span>
+      </a>
+            <a class="nav-drawer-item" href="./documentos.html">
+        <span class="ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M6 2h9l5 5v15a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"></path>
+            <path d="M14 2v6h6"></path>
+            <path d="M8 13h8"></path>
+            <path d="M8 17h8"></path>
+          </svg>
+        </span>
+        <span>Documentos</span>
+      </a>
+      <a class="nav-drawer-item" href="./config.html">
+        <span class="ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2v2"></path>
+            <path d="M12 20v2"></path>
+            <path d="M4.93 4.93l1.41 1.41"></path>
+            <path d="M17.66 17.66l1.41 1.41"></path>
+            <path d="M2 12h2"></path>
+            <path d="M20 12h2"></path>
+            <path d="M4.93 19.07l1.41-1.41"></path>
+            <path d="M17.66 6.34l1.41-1.41"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+        </span>
+        <span>Configuración</span>
+      </a>
+      <div class="nav-drawer-divider"></div>
+      <button class="nav-drawer-item" data-action="logout" type="button">
+        <span class="ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M10 17l5-5-5-5"></path>
+            <path d="M15 12H3"></path>
+            <path d="M21 5v14"></path>
+          </svg>
+        </span>
+        <span>Cerrar sesión</span>
+      </button>
+    </div>
+  </div>
+
+  <main class="dashboard movs-shell">
+    <section class="movs-hero">
+      <h2>Movimientos</h2>
+      <p>Listado de ingresos y gastos</p>
+      <div class="movs-toolbar">
+        <div class="movs-toolbar-slot has-display">
+          <span class="movs-toolbar-display" id="catFilterDisplay">Categoría: Todas</span>
+          <select id="catFilter" class="movs-toolbar-select" aria-label="Categoría">
+            <option value="__all__" selected>Categoría: Todas</option>
+          </select>
+        </div>
+        <div class="movs-toolbar-slot has-display">
+          <span class="movs-toolbar-display" id="monedaFilterDisplay">Moneda: Todas</span>
+          <select id="monedaFilter" class="movs-toolbar-select" aria-label="Moneda">
+            <option value="__all__" selected>Moneda: Todas</option>
+            <option value="UYU">UYU</option>
+            <option value="USD">USD</option>
+          </select>
+        </div>
+        <div class="movs-toolbar-slot">
+          <a class="movs-toolbar-action" href="./movimiento.html"><span class="plus" aria-hidden="true">+</span><span>Nuevo movimiento</span></a>
+        </div>
+      </div>
+      <a class="btn-secondary" id="btnClearFocusTop" href="./movimientos.html" style="display:none; margin-top:10px;">Volver al listado completo</a>
+    </section>
+
+    <section class="movs-summary">
+      <div class="movs-summary-track">
+        <div class="movs-summary-side is-income" id="summaryIncomeCard" role="button" tabindex="0" aria-pressed="false"><span>Ingresos:</span><strong id="summaryIncome">$ 0,00</strong></div>
+        <div class="movs-summary-side is-expense" id="summaryExpenseCard" role="button" tabindex="0" aria-pressed="false"><span>Gastos:</span><strong id="summaryExpense">$ 0,00</strong></div>
+      </div>
+    </section>
+
+    <section class="movs-card">
+      <div class="movs-head">
+        <h3>Historial</h3>
+        <div class="rows-info" id="rowsInfo">0 movimientos</div>
+      </div>
+
+      <div class="movs-table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Tipo</th>
+              <th>Concepto</th>
+              <th>Categoría</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tbl"></tbody>
+        </table>
+      </div>
+
+      <div class="movs-list" id="movCards"></div>
+
+      <div class="movs-pagination" id="pagination" style="display:none;"></div>
+
+      <div class="home-empty" id="emptyState" style="display:none;">Todavía no hay movimientos cargados.</div>
+    </section>
+  </main>
+
+  <!-- PREVIEW MODAL -->
+  <div class="preview-modal" id="previewModal" aria-hidden="true" role="dialog" aria-label="Vista previa">
+    <div class="preview-panel">
+      <img id="previewImage" class="preview-image" alt="Vista previa del adjunto">
+      <iframe id="previewPdf" title="Vista previa del PDF" style="display:none; width:100%; height:70vh; border:1px solid var(--line); border-radius:10px; background:#fff;"></iframe>
+      <div class="preview-actions">
+        <a class="btn-secondary" id="previewDownload" href="#" download style="display:none;">Descargar</a>
+        <button class="btn-secondary" id="previewClose" type="button">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- EDIT MODAL -->
+  <div class="edit-modal" id="editModal" aria-hidden="true" role="dialog" aria-label="Editar movimiento">
+    <div class="edit-panel">
+      <div class="edit-header">Editar movimiento</div>
+      <p class="edit-sub">Actualiza los datos del movimiento seleccionado.</p>
+      <div class="chart-empty" id="editMsg" style="display:none; margin-top:4px;"></div>
+      <div class="form-group">
+        <label for="editTipo">Tipo</label>
+        <select id="editTipo">
+          <option value="ingreso">Ingreso</option>
+          <option value="egreso">Gasto</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="editMoneda">Moneda</label>
+        <select id="editMoneda">
+          <option value="UYU">UYU</option>
+          <option value="USD">USD</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="editConcepto">Concepto</label>
+        <input id="editConcepto" type="text" placeholder="Ej: Sueldo, Supermercado, Alquiler">
+      </div>
+      <div class="form-group">
+        <label for="editMonto">Monto</label>
+        <input id="editMonto" type="number" min="0" step="0.01" placeholder="Ej: 2500">
+      </div>
+      <div class="form-group">
+        <label for="editFecha">Fecha</label>
+        <input id="editFecha" type="date">
+      </div>
+      <div class="form-group">
+        <label for="editMedio">Cuenta / Medio</label>
+        <select id="editMedio"></select>
+      </div>
+      <div class="form-group">
+        <label for="editCategoria">Categoría</label>
+        <select id="editCategoria"></select>
+      </div>
+      <div class="edit-actions">
+        <button class="btn-secondary" id="editCancel" type="button">Cancelar</button>
+        <button class="btn-primary" id="editSave" type="button">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/storage.js"></script>
+  <script src="../js/app.js"></script>
+
+  <script>
+    // =============================
+    // movimientos.html - lista de movimientos
+    // =============================
+
+    const tbl = document.getElementById("tbl");
+    const movCards = document.getElementById("movCards");
+    const rowsInfo = document.getElementById("rowsInfo");
+    const emptyState = document.getElementById("emptyState");
+    const pagination = document.getElementById("pagination");
+    const summaryIncome = document.getElementById("summaryIncome");
+    const summaryExpense = document.getElementById("summaryExpense");
+    const summaryIncomeCard = document.getElementById("summaryIncomeCard");
+    const summaryExpenseCard = document.getElementById("summaryExpenseCard");
+    const previewModal = document.getElementById("previewModal");
+    const previewImage = document.getElementById("previewImage");
+    const previewPdf = document.getElementById("previewPdf");
+    const previewDownload = document.getElementById("previewDownload");
+    const previewClose = document.getElementById("previewClose");
+    const catFilter = document.getElementById("catFilter");
+    const catFilterDisplay = document.getElementById("catFilterDisplay");
+    const monedaFilter = document.getElementById("monedaFilter");
+    const monedaFilterDisplay = document.getElementById("monedaFilterDisplay");
+    const editModal = document.getElementById("editModal");
+    const editMsg = document.getElementById("editMsg");
+    const editTipo = document.getElementById("editTipo");
+    const editMoneda = document.getElementById("editMoneda");
+    const editConcepto = document.getElementById("editConcepto");
+    const editMonto = document.getElementById("editMonto");
+    const editFecha = document.getElementById("editFecha");
+    const editMedio = document.getElementById("editMedio");
+    const editCategoria = document.getElementById("editCategoria");
+    const editCancel = document.getElementById("editCancel");
+    const editSave = document.getElementById("editSave");
+    const btnClearFocus = document.getElementById("btnClearFocus");
+    const btnClearFocusTop = document.getElementById("btnClearFocusTop");
+    const focusId = new URLSearchParams(location.search || "").get("focus") || "";
+    const focusFrom = new URLSearchParams(location.search || "").get("from") || "";
+
+    let currentEditId = null;
+    let currentPage = 1;
+    let currentTipoFilter = "__all__";
+    const PAGE_SIZE = 10;
+
+    function escapeHtml(str){
+      return String(str ?? "")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    function fmtMoney(n, moneda){
+      const value = Number(n || 0);
+      const m = moneda || "UYU";
+      try{
+        return new Intl.NumberFormat("es-UY", {
+          style: "currency",
+          currency: m
+        }).format(value);
+      }catch{
+        return value.toLocaleString("es-UY");
+      }
+    }
+
+    function fmtSummaryMoney(n, moneda){
+      const full = fmtMoney(n, moneda);
+      if(String(moneda) === "UYU") return full.replace(/^UYU\s*/, "");
+      if(String(moneda) === "USD") return full.replace(/^US\$\s*/, "USD ");
+      return full;
+    }
+
+    function syncTipoSummaryState(){
+      if(summaryIncomeCard){
+        const active = currentTipoFilter === "ingreso";
+        summaryIncomeCard.classList.toggle("is-active", active);
+        summaryIncomeCard.setAttribute("aria-pressed", active ? "true" : "false");
+      }
+      if(summaryExpenseCard){
+        const active = currentTipoFilter === "egreso";
+        summaryExpenseCard.classList.toggle("is-active", active);
+        summaryExpenseCard.setAttribute("aria-pressed", active ? "true" : "false");
+      }
+    }
+
+    function getMediosSafe(){
+      if(typeof getMedios === "function") return getMedios();
+      return [
+        { id: "caja", name: "Caja" },
+        { id: "banco", name: "Banco" },
+        { id: "tarjeta", name: "Tarjeta" }
+      ];
+    }
+
+    function getMedioLabel(id){
+      const list = getMediosSafe();
+      const found = list.find(m => String(m.id) === String(id));
+      return found ? found.name : "Cuenta";
+    }
+
+    function getCategoriasBase(){
+      if(typeof getCategorias === "function") return getCategorias();
+      return ["Ventas", "Compras", "Servicios", "Impuestos", "Sueldos", "Otros"];
+    }
+
+    function getCategoriasFromMovs(movs){
+      const list = movs.map(m => String(m.categoria || "").trim()).filter(Boolean);
+      const set = new Set([...getCategoriasBase(), ...list]);
+      return Array.from(set).sort((a,b) => a.localeCompare(b));
+    }
+
+    function buildCategoriaFilter(movs, scope = null){
+      if(!catFilter) return;
+      const current = catFilter.value || "__all__";
+      const list = scope ? movs.filter(scope) : movs;
+      const cats = getCategoriasFromMovs(list);
+      const hasNone = list.some(m => !m.categoria);
+      const opts = [
+        `<option value="__all__">Todas</option>`,
+        ...(hasNone ? [`<option value="__none__">Sin categoría</option>`] : []),
+        ...cats.map(c => `<option value="${c}">${c}</option>`)
+      ];
+      catFilter.innerHTML = opts.join("");
+      if(Array.from(catFilter.options).some(o => o.value === current)){
+        catFilter.value = current;
+      }
+      syncCategoriaDisplay();
+    }
+
+    function syncCategoriaDisplay(){
+      if(!catFilterDisplay || !catFilter) return;
+      const value = catFilter.value || "__all__";
+      const text = catFilter.options[catFilter.selectedIndex]?.textContent || "Todas";
+      catFilterDisplay.textContent = value === "__all__" ? "Categoría: Todas" : `Categoría: ${text}`;
+    }
+
+    function syncMonedaDisplay(){
+      if(!monedaFilterDisplay || !monedaFilter) return;
+      const value = monedaFilter.value || "__all__";
+      const text = monedaFilter.options[monedaFilter.selectedIndex]?.textContent || "Todas";
+      monedaFilterDisplay.textContent = value === "__all__" ? "Moneda: Todas" : `Moneda: ${text}`;
+    }
+
+    function renderSummary(movs, moneda){
+      if(moneda && moneda !== "__all__"){
+        const income = movs.reduce((acc, m) => acc + (m.tipo === "ingreso" ? Number(m.monto || 0) : 0), 0);
+        const expense = movs.reduce((acc, m) => acc + (m.tipo === "egreso" ? Number(m.monto || 0) : 0), 0);
+        if(summaryIncome) summaryIncome.textContent = fmtMoney(income, moneda);
+        if(summaryExpense) summaryExpense.textContent = fmtMoney(expense, moneda);
+        return;
+      }
+
+      const incomeUYU = movs.reduce((acc, m) => acc + ((m.tipo === "ingreso" && String(m.moneda || "UYU") === "UYU") ? Number(m.monto || 0) : 0), 0);
+      const incomeUSD = movs.reduce((acc, m) => acc + ((m.tipo === "ingreso" && String(m.moneda || "UYU") === "USD") ? Number(m.monto || 0) : 0), 0);
+      const expenseUYU = movs.reduce((acc, m) => acc + ((m.tipo === "egreso" && String(m.moneda || "UYU") === "UYU") ? Number(m.monto || 0) : 0), 0);
+      const expenseUSD = movs.reduce((acc, m) => acc + ((m.tipo === "egreso" && String(m.moneda || "UYU") === "USD") ? Number(m.monto || 0) : 0), 0);
+
+      if(summaryIncome) summaryIncome.textContent = `${fmtSummaryMoney(incomeUYU, "UYU")} · ${fmtSummaryMoney(incomeUSD, "USD")}`;
+      if(summaryExpense) summaryExpense.textContent = `${fmtSummaryMoney(expenseUYU, "UYU")} · ${fmtSummaryMoney(expenseUSD, "USD")}`;
+    }
+
+    function getPaginationItems(totalPages, page){
+      const items = [];
+      if(totalPages <= 7){
+        for(let i = 1; i <= totalPages; i++) items.push(i);
+        return items;
+      }
+      items.push(1);
+      if(page > 3) items.push("...");
+      const start = Math.max(2, page - 1);
+      const end = Math.min(totalPages - 1, page + 1);
+      for(let i = start; i <= end; i++) items.push(i);
+      if(page < totalPages - 2) items.push("...");
+      items.push(totalPages);
+      return items;
+    }
+
+    function renderPagination(totalItems){
+      if(!pagination) return;
+      const totalPages = Math.max(1, Math.ceil(totalItems / PAGE_SIZE));
+      if(totalItems <= PAGE_SIZE){
+        pagination.style.display = "none";
+        pagination.innerHTML = "";
+        return;
+      }
+      const items = getPaginationItems(totalPages, currentPage);
+      pagination.style.display = "flex";
+      pagination.innerHTML = [
+        `<button class="movs-page-btn" type="button" data-page-nav="prev" ${currentPage === 1 ? "disabled" : ""}>Anterior</button>`,
+        ...items.map(item => item === "..."
+          ? `<span class="movs-page-dots">...</span>`
+          : `<button class="movs-page-btn ${item === currentPage ? "is-active" : ""}" type="button" data-page="${item}">${item}</button>`),
+        `<button class="movs-page-btn" type="button" data-page-nav="next" ${currentPage === totalPages ? "disabled" : ""}>Siguiente</button>`
+      ].join("");
+    }
+
+    function getCategoriaLabel(val){
+      return val ? String(val) : "-";
+    }
+
+    function getTipoLabel(tipo){
+      if(tipo === "ingreso") return "Ingreso";
+      if(tipo === "egreso") return "Gasto";
+      return String(tipo || "");
+    }
+
+    function fmtDateCell(iso){
+      const raw = String(iso || "");
+      const parts = raw.split("-");
+      if(parts.length !== 3) return escapeHtml(raw);
+      return `${escapeHtml(parts[0])}-${escapeHtml(parts[1])}-<br>${escapeHtml(parts[2])}`;
+    }
+
+    function fmtShortDate(iso){
+      const raw = String(iso || "");
+      const parts = raw.split("-");
+      if(parts.length !== 3) return escapeHtml(raw);
+      return `${escapeHtml(parts[2])}<br>${escapeHtml(parts[1])}`;
+    }
+
+    function fillEditCategorias(movs, currentValue = ""){
+      if(!editCategoria) return;
+      const cats = getCategoriasFromMovs(movs);
+      const current = String(currentValue || "").trim();
+      const list = current && !cats.includes(current) ? [...cats, current] : cats;
+      editCategoria.innerHTML = [
+        `<option value="">Sin categoría</option>`,
+        ...list.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`)
+      ].join("");
+    }
+
+    function fillEditMedios(){
+      if(!editMedio) return;
+      const medios = getMediosSafe();
+      editMedio.innerHTML = medios.map(m =>
+        `<option value="${m.id}">${m.name}</option>`
+      ).join("");
+    }
+
+    function openEdit(mov, movsAll){
+      if(!editModal) return;
+      currentEditId = mov.id;
+      fillEditCategorias(movsAll, mov.categoria || "");
+      fillEditMedios();
+      if(editMsg){
+        editMsg.style.display = "none";
+        editMsg.textContent = "";
+      }
+      editTipo.value = mov.tipo || "ingreso";
+      editMoneda.value = mov.moneda || (typeof getSettings === "function" ? (getSettings()?.moneda || "UYU") : "UYU");
+      editConcepto.value = mov.concepto || "";
+      editMonto.value = Number(mov.monto || 0) || "";
+      editFecha.value = mov.fecha || "";
+      if(editMedio) editMedio.value = mov.medioId || "";
+      editCategoria.value = mov.categoria || "";
+      editModal.classList.add("is-open");
+      editModal.setAttribute("aria-hidden", "false");
+    }
+
+    function closeEdit(){
+      if(!editModal) return;
+      const activeEl = document.activeElement;
+      if(activeEl && editModal.contains(activeEl) && typeof activeEl.blur === "function"){
+        activeEl.blur();
+      }
+      currentEditId = null;
+      if(editMsg){
+        editMsg.style.display = "none";
+        editMsg.textContent = "";
+      }
+      editTipo.value = "ingreso";
+      editMoneda.value = "UYU";
+      editConcepto.value = "";
+      editMonto.value = "";
+      editFecha.value = "";
+      if(editMedio) editMedio.value = "";
+      editCategoria.value = "";
+      editModal.classList.remove("is-open");
+      editModal.setAttribute("aria-hidden", "true");
+    }
+
+    function getDownloadName(a){
+      const raw = String(a.adjuntoName || "").trim();
+      if(raw) return raw;
+      const ext = String(a.adjuntoMime || "").includes("pdf") ? "pdf" : "jpg";
+      return `adjunto-${a.id || Date.now()}.${ext}`;
+    }
+
+    function renderAdjuntoBtn(a){
+      const dataUrl = String(a.adjuntoDataUrl || "");
+      const fileName = escapeHtml(getDownloadName(a));
+      if(dataUrl.startsWith("data:image/")){
+        return `<button class="btn-secondary cat-view-btn" type="button" data-preview="${dataUrl}" data-file="${fileName}" aria-label="Ver imagen adjunta" title="Ver imagen adjunta">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+            <circle cx="9" cy="10" r="1.6"></circle>
+            <path d="M21 15l-4.5-4.5L8 19"></path>
+          </svg>
+        </button>`;
+      }
+      if(dataUrl.startsWith("data:application/pdf")){
+        return `<button class="btn-secondary cat-view-btn" type="button" data-preview-pdf="${dataUrl}" data-file="${fileName}" aria-label="Ver PDF adjunto" title="Ver PDF adjunto">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"></path>
+            <path d="M14 3v5h5"></path>
+            <path d="M8 15h8"></path>
+            <path d="M8 11h3"></path>
+          </svg>
+        </button>`;
+      }
+      return "";
+    }
+
+    function renderRowActions(m){
+      return `
+        <span class="row-actions">
+          <button class="btn-secondary row-delete-btn" type="button" data-delete-id="${escapeHtml(m.id || "")}" aria-label="Borrar movimiento" title="Borrar movimiento">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M3 6h18"></path>
+              <path d="M8 6V4h8v2"></path>
+              <path d="M19 6l-1 14H6L5 6"></path>
+              <path d="M10 11v6"></path>
+              <path d="M14 11v6"></path>
+            </svg>
+          </button>
+        </span>
+      `;
+    }
+
+    function openPreviewImage(dataUrl, fileName){
+      previewPdf.src = "";
+      previewPdf.style.display = "none";
+      previewImage.src = dataUrl;
+      previewImage.style.display = "block";
+      previewImage.classList.remove("is-zoomed");
+      if(previewDownload){
+        previewDownload.href = dataUrl;
+        previewDownload.download = fileName || "adjunto.jpg";
+        previewDownload.style.display = "inline-flex";
+      }
+      previewModal.classList.add("is-open");
+      previewModal.setAttribute("aria-hidden", "false");
+    }
+
+    function openPreviewPdf(dataUrl, fileName){
+      previewImage.src = "";
+      previewImage.style.display = "none";
+      previewPdf.src = `${dataUrl}#toolbar=1&navpanes=0&scrollbar=1`;
+      previewPdf.style.display = "block";
+      if(previewDownload){
+        previewDownload.href = dataUrl;
+        previewDownload.download = fileName || "adjunto.pdf";
+        previewDownload.style.display = "inline-flex";
+      }
+      previewModal.classList.add("is-open");
+      previewModal.setAttribute("aria-hidden", "false");
+    }
+
+    function closePreview(){
+      previewImage.src = "";
+      previewImage.style.display = "none";
+      previewImage.classList.remove("is-zoomed");
+      previewPdf.src = "";
+      previewPdf.style.display = "none";
+      if(previewDownload){
+        previewDownload.href = "#";
+        previewDownload.style.display = "none";
+      }
+      previewModal.classList.remove("is-open");
+      previewModal.setAttribute("aria-hidden", "true");
+    }
+
+    function render(){
+      if(typeof listMovimientosSortedDesc !== "function"){
+        emptyState.style.display = "block";
+        emptyState.textContent = "Falta listMovimientosSortedDesc() en storage.js";
+        return;
+      }
+
+      const movsAll = listMovimientosSortedDesc();
+      const monVal = monedaFilter ? monedaFilter.value : "__all__";
+      buildCategoriaFilter(movsAll, (m) => {
+        if(monVal === "__all__") return true;
+        return String(m.moneda || "") === String(monVal);
+      });
+
+      const filterVal = catFilter ? catFilter.value : "__all__";
+      let movs = movsAll.filter(m => {
+        if(filterVal === "__all__") return true;
+        if(filterVal === "__none__") return !m.categoria;
+        return String(m.categoria || "") === String(filterVal);
+      }).filter(m => {
+        if(monVal === "__all__") return true;
+        return String(m.moneda || "") === String(monVal);
+      }).filter(m => {
+        if(currentTipoFilter === "__all__") return true;
+        return String(m.tipo || "") === currentTipoFilter;
+      });
+
+      const summaryScope = movsAll.filter(m => {
+        if(filterVal === "__all__") return true;
+        if(filterVal === "__none__") return !m.categoria;
+        return String(m.categoria || "") === String(filterVal);
+      }).filter(m => {
+        if(monVal === "__all__") return true;
+        return String(m.moneda || "") === String(monVal);
+      });
+      renderSummary(summaryScope, monVal);
+      syncTipoSummaryState();
+
+      if(focusId){
+        const focused = movsAll.find(m => String(m.id) === String(focusId));
+        movs = focused ? [focused] : [];
+        currentPage = 1;
+      }
+
+      if(focusId){
+        if(movs.length === 1){
+          rowsInfo.textContent = "1 movimiento (vista puntual)";
+        }else{
+          rowsInfo.textContent = "No se encontro el movimiento solicitado";
+        }
+      }else{
+        rowsInfo.textContent = `${movs.length} movimiento${movs.length === 1 ? "" : "s"}`;
+      }
+
+      if(!movs.length){
+        tbl.innerHTML = "";
+        emptyState.style.display = "block";
+        if(pagination){
+          pagination.style.display = "none";
+          pagination.innerHTML = "";
+        }
+        return;
+      }
+
+      emptyState.style.display = "none";
+      const totalPages = Math.max(1, Math.ceil(movs.length / PAGE_SIZE));
+      if(currentPage > totalPages) currentPage = totalPages;
+      const start = (currentPage - 1) * PAGE_SIZE;
+      const pageMovs = movs.slice(start, start + PAGE_SIZE);
+
+      tbl.innerHTML = pageMovs.map(m => `
+        <tr class="mov-row" data-row-id="${escapeHtml(m.id || "")}" ${focusId && String(m.id) === String(focusId) ? 'style="background:rgba(46,154,50,.12);" data-focus-row="1"' : ""}>
+          <td>${fmtDateCell(m.fecha || "")}</td>
+          <td>
+            <span class="badge ${m.tipo === "ingreso" ? "badge-success" : m.tipo === "egreso" ? "badge-danger" : ""}">
+              ${escapeHtml(getTipoLabel(m.tipo))}
+            </span>
+          </td>
+          <td>${escapeHtml(m.concepto || "")}</td>
+          <td>
+            <span class="cat-cell">
+              <span class="cat-text">${escapeHtml(getCategoriaLabel(m.categoria))}</span>
+              ${renderAdjuntoBtn(m)}
+            </span>
+          </td>
+          <td>${renderRowActions(m)}</td>
+        </tr>
+      `).join("");
+
+      if(movCards){
+        movCards.innerHTML = pageMovs.map(m => `
+          <article class="mov-card mov-row" data-row-id="${escapeHtml(m.id || "")}" ${focusId && String(m.id) === String(focusId) ? 'style="background:rgba(46,154,50,.12);" data-focus-row="1"' : ""}>
+            <div class="mov-card-top">
+              <div class="mov-card-date">${fmtShortDate(m.fecha || "")}</div>
+            </div>
+            <div class="mov-card-main">
+              <div class="mov-card-concept">${escapeHtml(m.concepto || "")}</div>
+              <div class="mov-card-meta">
+                <span class="badge ${m.tipo === "ingreso" ? "badge-success" : m.tipo === "egreso" ? "badge-danger" : ""}">
+                  ${escapeHtml(getTipoLabel(m.tipo))}
+                </span>
+                <span>${escapeHtml(getCategoriaLabel(m.categoria))}</span>
+                <span>${escapeHtml(getMedioLabel(m.medioId))}</span>
+              </div>
+            </div>
+            <div class="mov-card-actions">
+              <div class="mov-card-side">${renderAdjuntoBtn(m)}</div>
+              ${renderRowActions(m)}
+            </div>
+          </article>
+        `).join("");
+      }
+      renderPagination(movs.length);
+
+      if(focusId){
+        const focusRow = tbl.querySelector("[data-focus-row='1']");
+        if(focusRow){
+          focusRow.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+      }
+    }
+
+    previewClose.addEventListener("click", closePreview);
+    previewModal.addEventListener("click", (e) => {
+      if(e.target === previewModal) closePreview();
+    });
+    previewImage.addEventListener("click", () => {
+      if(previewImage.style.display !== "block") return;
+      previewImage.classList.toggle("is-zoomed");
+    });
+
+    function handleMovListClick(e){
+      const deleteBtn = e.target.closest(".row-delete-btn");
+      if(deleteBtn){
+        e.preventDefault();
+        e.stopPropagation();
+        const id = deleteBtn.getAttribute("data-delete-id");
+        if(!id || typeof deleteMovimiento !== "function") return;
+        const ok = window.confirm("¿Estás seguro que querés eliminar este movimiento?");
+        if(!ok) return;
+        deleteMovimiento(id);
+        if(String(currentEditId) === String(id)){
+          closeEdit();
+        }
+        render();
+        return;
+      }
+
+      const btn = e.target.closest(".cat-view-btn");
+      if(btn){
+        const imgUrl = btn.getAttribute("data-preview");
+        const pdfUrl = btn.getAttribute("data-preview-pdf");
+        const file = btn.getAttribute("data-file") || "";
+        if(pdfUrl){
+          openPreviewPdf(pdfUrl, file);
+        }else if(imgUrl){
+          openPreviewImage(imgUrl, file);
+        }
+        return;
+      }
+
+      const row = e.target.closest(".mov-row");
+      if(!row) return;
+      const id = row.getAttribute("data-row-id");
+      const movsAll = (typeof listMovimientosSortedDesc === "function") ? listMovimientosSortedDesc() : [];
+      const mov = movsAll.find(x => String(x.id) === String(id));
+      if(mov){
+        openEdit(mov, movsAll);
+      }
+    }
+
+    tbl.addEventListener("click", handleMovListClick);
+    if(movCards){
+      movCards.addEventListener("click", handleMovListClick);
+    }
+
+    document.addEventListener("keydown", (e) => {
+      if(e.key === "Escape" && previewModal.classList.contains("is-open")){
+        closePreview();
+      }
+    });
+
+    editCancel.addEventListener("click", closeEdit);
+
+    editSave.addEventListener("click", () => {
+      if(!currentEditId) return;
+      if(typeof updateMovimiento !== "function"){
+        if(editMsg){
+          editMsg.textContent = "Falta updateMovimiento() en storage.js";
+          editMsg.style.display = "block";
+        }
+        return;
+      }
+      const tipoVal = editTipo.value || "ingreso";
+      const monedaVal = editMoneda.value || "UYU";
+      const conceptoVal = editConcepto.value.trim();
+      const montoVal = Number(editMonto.value || 0);
+      const fechaVal = editFecha.value;
+      const medioVal = editMedio ? editMedio.value : "";
+      const catVal = editCategoria.value.trim();
+      if(!conceptoVal || !fechaVal || !medioVal || !montoVal || montoVal <= 0){
+        if(editMsg){
+          editMsg.textContent = "Completa concepto, monto, fecha y cuenta/medio.";
+          editMsg.style.display = "block";
+        }
+        return;
+      }
+
+      updateMovimiento(currentEditId, {
+        tipo: tipoVal,
+        moneda: monedaVal,
+        concepto: conceptoVal,
+        monto: montoVal,
+        fecha: fechaVal,
+        medioId: medioVal,
+        categoria: catVal || null,
+      });
+      closeEdit();
+      render();
+    });
+
+    editModal.addEventListener("click", (e) => {
+      if(e.target === editModal) closeEdit();
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if(e.key === "Escape" && editModal.classList.contains("is-open")){
+        closeEdit();
+      }
+    });
+
+    if(catFilter){
+      catFilter.addEventListener("change", () => {
+        currentPage = 1;
+        syncCategoriaDisplay();
+        render();
+      });
+    }
+    if(monedaFilter){
+      monedaFilter.addEventListener("change", () => {
+        currentPage = 1;
+        syncMonedaDisplay();
+        render();
+      });
+    }
+    function toggleTipoFilter(tipo){
+      currentTipoFilter = currentTipoFilter === tipo ? "__all__" : tipo;
+      currentPage = 1;
+      render();
+    }
+    [summaryIncomeCard, summaryExpenseCard].forEach((el) => {
+      if(!el) return;
+      const tipo = el === summaryIncomeCard ? "ingreso" : "egreso";
+      el.addEventListener("click", () => toggleTipoFilter(tipo));
+      el.addEventListener("keydown", (event) => {
+        if(event.key === "Enter" || event.key === " "){
+          event.preventDefault();
+          toggleTipoFilter(tipo);
+        }
+      });
+    });
+    if(pagination){
+      pagination.addEventListener("click", (event) => {
+        const pageBtn = event.target.closest("[data-page]");
+        const navBtn = event.target.closest("[data-page-nav]");
+        if(pageBtn){
+          currentPage = Number(pageBtn.getAttribute("data-page") || 1);
+          render();
+          return;
+        }
+        if(navBtn){
+          const nav = navBtn.getAttribute("data-page-nav");
+          if(nav === "prev") currentPage = Math.max(1, currentPage - 1);
+          if(nav === "next") currentPage += 1;
+          render();
+        }
+      });
+    }
+    if(btnClearFocus && focusId){
+      btnClearFocus.style.display = "inline-flex";
+      if(focusFrom === "documentos"){
+        btnClearFocus.href = "./documentos.html";
+        btnClearFocus.textContent = "Volver a documentos";
+      }
+    }
+    if(btnClearFocusTop && focusId){
+      btnClearFocusTop.style.display = "inline-flex";
+      if(focusFrom === "documentos"){
+        btnClearFocusTop.href = "./documentos.html";
+        btnClearFocusTop.textContent = "Volver a documentos";
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      render();
+      syncCategoriaDisplay();
+      syncMonedaDisplay();
+    });
+
+    window.addEventListener("cb:settings-updated", () => {
+      render();
+      syncCategoriaDisplay();
+      syncMonedaDisplay();
+    });
+
+    window.addEventListener("storage", (e) => {
+      if(e.key === "contabliza_settings"){
+        render();
+        syncCategoriaDisplay();
+        syncMonedaDisplay();
+      }
+    });
+  </script>
+
+</body>
+</html>
+
+

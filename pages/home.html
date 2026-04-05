@@ -1,0 +1,1201 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>ContaBliza - Home</title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/componentes.css">
+  <link rel="stylesheet" href="../css/pages.css">
+
+  <style>
+    body.home-page{
+      background:
+        radial-gradient(980px 460px at 50% -130px, rgba(136, 208, 222, 0.36) 0%, rgba(136, 208, 222, 0) 66%),
+        radial-gradient(620px 290px at 86% 164px, rgba(239, 191, 104, 0.21) 0%, rgba(239, 191, 104, 0) 82%),
+        linear-gradient(180deg, #0a4154 0%, #16576c 224px, #ece9e5 224px, #f1efec 100%);
+      color: #103446;
+      overflow-x: hidden;
+    }
+    .home-page .navbar{
+      height: 62px;
+      background:
+        radial-gradient(260px 100px at 82% 120%, rgba(233, 186, 100, 0.2), rgba(233, 186, 100, 0)),
+        linear-gradient(135deg, rgba(10, 61, 78, 0.92), rgba(18, 83, 104, 0.9));
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 8px 22px rgba(5, 34, 46, 0.34);
+    }
+    .home-page .navbar::after{
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -1px;
+      height: 2px;
+      background: linear-gradient(90deg, rgba(214, 245, 255, 0.28), rgba(240, 198, 118, 0.9));
+      pointer-events: none;
+    }
+    .home-page .nav-btn,
+    .home-page .logo-text{
+      color: #f4fafc;
+    }
+    .home-page .nav-btn:hover{
+      opacity: 1;
+      background: rgba(255, 255, 255, 0.09);
+    }
+    .brand-chip{
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      color: #ecf6f8;
+      text-shadow: 0 2px 7px rgba(0, 0, 0, 0.28);
+    }
+    .brand-mark{
+      width: 46px;
+      height: 46px;
+      display: block;
+      background: center / contain no-repeat url("../assets/contabliza-mark.svg");
+      filter: drop-shadow(0 7px 16px rgba(9, 38, 49, 0.35));
+      color: transparent;
+      font-size: 0;
+      line-height: 0;
+    }
+    .brand-text{
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 1.66rem;
+      letter-spacing: -0.02em;
+    }
+    .home-shell{
+      max-width: 690px;
+      margin: 0 auto;
+      padding-top: 82px;
+      padding-bottom: 26px;
+      position: relative;
+      overflow-x: clip;
+    }
+    .home-shell::before{
+      content: "";
+      position: absolute;
+      left: -10px;
+      right: -10px;
+      top: 194px;
+      height: 58px;
+      border-top-left-radius: 48% 100%;
+      border-top-right-radius: 48% 100%;
+      background: linear-gradient(180deg, rgba(248, 247, 243, 0.95), rgba(236, 233, 227, 0.98));
+      box-shadow: inset 0 1px 0 rgba(245, 209, 138, 0.75);
+      z-index: 0;
+    }
+    .home-hero{
+      padding: 16px 8px 18px;
+      margin-bottom: 0;
+      position: relative;
+      z-index: 1;
+    }
+    .home-hero h2{
+      color: #ebf6f8;
+      font-size: 2.2rem;
+      margin-bottom: 6px;
+      text-shadow: 0 4px 14px rgba(0, 0, 0, 0.34);
+    }
+    .home-hero p{
+      color: rgba(235, 247, 250, 0.92);
+      font-size: 1.15rem;
+      margin: 0;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.26);
+    }
+    .hero-actions{
+      display: grid;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .hero-actions-row{
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+    .hero-action-link{
+      min-height: 54px;
+      padding: 0 18px;
+      border-radius: 18px;
+      border: 1px solid rgba(242, 238, 231, 0.4);
+      background: linear-gradient(180deg, rgba(17, 86, 103, 0.86), rgba(11, 70, 86, 0.9));
+      color: #f7fbfc;
+      font-size: 0.98rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      text-decoration: none;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 12px 24px rgba(7, 33, 43, 0.24);
+      backdrop-filter: blur(2px);
+    }
+    .hero-action-link svg{
+      flex: 0 0 auto;
+      stroke-width: 2.4;
+    }
+    .hero-action-link:hover{
+      opacity: 1;
+      filter: brightness(1.03);
+    }
+    .hero-action-link.is-primary{
+      background: linear-gradient(90deg, rgba(11, 66, 83, 0.98), rgba(16, 88, 105, 0.94));
+    }
+    .hero-action-link .hero-action-icon{
+      width: 22px;
+      height: 22px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .hero-action-link .hero-action-icon.plus{
+      font-size: 2rem;
+      line-height: 1;
+      font-weight: 500;
+      transform: translateY(-1px);
+    }
+    .home-card{
+      border-radius: 20px;
+      border: 1px solid #ddd8cf;
+      background: #f5f3f0;
+      box-shadow: 0 12px 30px rgba(15, 35, 45, 0.14);
+      padding: 18px;
+      margin-bottom: 14px;
+      position: relative;
+      z-index: 1;
+    }
+    .home-card.compact-balance{
+      padding: 18px 18px 20px;
+    }
+    .saldo-title{
+      margin: 0;
+      font-size: 1.9rem;
+      color: #0d3447;
+      line-height: 1.05;
+    }
+    .saldo-top{
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .saldo-filter{
+      display: flex;
+      align-items: center;
+      color: #506a7a;
+      flex: 0 0 auto;
+      justify-content: flex-start;
+      position: relative;
+      display: inline-flex;
+    }
+    .saldo-filter::after{
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-right: 2px solid #183f53;
+      border-bottom: 2px solid #183f53;
+      transform: rotate(45deg);
+      position: absolute;
+      left: calc(100% - 6px);
+      top: 50%;
+      margin-top: -6px;
+      pointer-events: none;
+    }
+    .saldo-block{
+      border: 1px solid #cfc8be;
+      border-radius: 18px;
+      background: #f7f5f2;
+      padding: 16px 18px;
+      box-shadow: 0 4px 14px rgba(18, 38, 48, 0.08);
+      cursor: pointer;
+      transition: transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease, background 120ms ease;
+    }
+    .saldo-block:hover{
+      transform: translateY(-1px);
+      box-shadow: 0 8px 18px rgba(18, 38, 48, 0.1);
+    }
+    .saldo-block.is-active{
+      border-color: rgba(27, 92, 112, 0.45);
+      background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(241, 248, 249, 0.98));
+      box-shadow: 0 10px 22px rgba(16, 66, 82, 0.12);
+    }
+    .saldo-block + .saldo-block{
+      margin-top: 10px;
+    }
+    .saldo-row{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      min-height: 70px;
+    }
+    .saldo-meta{
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+      flex: 1 1 auto;
+    }
+    .saldo-badge{
+      width: 46px;
+      height: 46px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: -0.02em;
+      flex: 0 0 auto;
+    }
+    .saldo-badge.uyu{
+      background: linear-gradient(180deg, #93d1ca, #78bdb6);
+    }
+    .saldo-badge.usd{
+      background: linear-gradient(180deg, #73bee9, #4aa4d7);
+    }
+    .saldo-copy{
+      min-width: 0;
+      display: grid;
+      align-content: center;
+      gap: 4px;
+    }
+    .saldo-label{
+      font-size: 1rem;
+      line-height: 1.1;
+      color: #355265;
+      margin-bottom: 0;
+    }
+    .saldo-currency{
+      color: #355265;
+      font-weight: 500;
+      font-size: 1rem;
+    }
+    .saldo-value{
+      font-family: var(--font-display);
+      font-size: 1.65rem;
+      line-height: 1;
+      color: #182d3a;
+      letter-spacing: -0.01em;
+      white-space: nowrap;
+      flex: 0 0 auto;
+      align-self: center;
+    }
+    .saldo-select{
+      border: none;
+      background: transparent;
+      color: #183f53;
+      min-width: auto;
+      text-align: left;
+      font-size: 0.98rem;
+      font-weight: 700;
+      padding: 0 14px 0 0;
+      box-shadow: none;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+    }
+    .saldo-select:focus{
+      box-shadow: none;
+    }
+    .balance-sub{
+      font-size: 0.8rem;
+      line-height: 1.2;
+      color: #61717e;
+      min-height: 0.96rem;
+    }
+    .saldo-value.is-negative{
+      color: #b02c2c;
+    }
+    .distribution-card{
+      overflow: hidden;
+    }
+    .distribution-head{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .distribution-head h3{
+      margin: 0;
+      font-size: 1.65rem;
+      color: #0d3447;
+    }
+    .distribution-caption{
+      color: #728390;
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+    }
+    .distribution-layout{
+      display: grid;
+      gap: 16px;
+    }
+    .distribution-chart{
+      display: grid;
+      justify-items: center;
+      gap: 10px;
+    }
+    .distribution-donut{
+      --income-angle: 0deg;
+      width: 170px;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at center, #f7f5f2 0 38%, transparent 39%),
+        conic-gradient(#2d7a79 0deg var(--income-angle), #cf3437 var(--income-angle) 360deg);
+      box-shadow: inset 0 0 0 5px rgba(255,255,255,0.52), 0 6px 16px rgba(18, 38, 48, 0.06);
+      position: relative;
+      display: grid;
+      place-items: center;
+    }
+    .distribution-center{
+      width: 102px;
+      height: 102px;
+      border-radius: 50%;
+      background: #f7f5f2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(18, 38, 48, 0.08);
+      padding: 10px 8px;
+    }
+    .distribution-center-label{
+      font-size: 0.68rem;
+      color: #6d7c88;
+      font-weight: 600;
+      line-height: 1.1;
+      margin-bottom: 3px;
+    }
+    .distribution-center-total{
+      font-size: 0.72rem;
+      line-height: 1.1;
+      color: #16384b;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      max-width: 100%;
+      overflow-wrap: anywhere;
+    }
+    .distribution-empty{
+      width: 100%;
+      border: 1px dashed #d8d1c7;
+      border-radius: 16px;
+      padding: 16px;
+      text-align: center;
+      color: #61717e;
+      font-size: 0.88rem;
+      background: rgba(255,255,255,0.45);
+    }
+    .distribution-list{
+      display: grid;
+      gap: 10px;
+    }
+    .distribution-item{
+      border: 1px solid #d9d1c7;
+      border-radius: 16px;
+      background: #fbfaf8;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      box-shadow: 0 4px 14px rgba(18, 38, 48, 0.05);
+    }
+    .distribution-item-main{
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+    .distribution-dot{
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      flex: 0 0 auto;
+    }
+    .distribution-dot.is-expense{
+      background: #cf3437;
+    }
+    .distribution-dot.is-income{
+      background: #2d7a79;
+    }
+    .distribution-copy{
+      min-width: 0;
+    }
+    .distribution-name{
+      font-size: 1rem;
+      line-height: 1.1;
+      color: #17384b;
+      font-weight: 700;
+    }
+    .distribution-meta{
+      margin-top: 3px;
+      font-size: 0.84rem;
+      color: #61717e;
+    }
+    .distribution-amount{
+      text-align: right;
+      color: #17384b;
+      font-weight: 700;
+      font-size: 1rem;
+      white-space: nowrap;
+    }
+    .last-head{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      gap: 10px;
+    }
+    .last-head h3{
+      margin: 0;
+      font-size: 1.8rem;
+      color: #0e3345;
+    }
+    .last-head a{
+      color: #134056;
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .last-list{
+      display: grid;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .last-item{
+      border: 1px solid #e2dbd1;
+      border-radius: 16px;
+      background: #fcfbf9;
+      padding: 12px 14px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.78);
+      display: grid;
+      gap: 8px;
+    }
+    .last-item-top{
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .last-item-date{
+      color: #5c7080;
+      font-size: 0.74rem;
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: 0.01em;
+      text-transform: uppercase;
+    }
+    .last-item-amount{
+      color: #17384b;
+      font-size: 1rem;
+      font-weight: 700;
+      white-space: nowrap;
+      text-align: right;
+    }
+    .last-item-main{
+      display: grid;
+      gap: 5px;
+    }
+    .last-item-concept{
+      color: #193c50;
+      font-size: 0.98rem;
+      font-weight: 700;
+      line-height: 1.15;
+    }
+    .last-item-meta{
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      color: #617683;
+      font-size: 0.82rem;
+    }
+    .home-page .badge{
+      font-size: 0.66rem;
+      padding: 4px 9px;
+      border-radius: 999px;
+      font-weight: 700;
+      text-transform: lowercase;
+      letter-spacing: 0;
+    }
+    .home-page .badge-success{
+      background: #1f7a3a;
+      color: #fff;
+    }
+    .home-page .badge-danger{
+      background: #b3262d;
+      color: #fff;
+    }
+    .home-empty{
+      margin-top: 10px;
+      color: #5f7480;
+      font-size: 0.92rem;
+    }
+    .rows-info{
+      color: #617683;
+      font-size: 0.82rem;
+      margin-bottom: 4px;
+    }
+    @media (max-width: 640px){
+      .home-shell{
+        padding-top: 76px;
+        padding-left: 12px;
+        padding-right: 12px;
+      }
+      .home-shell::before{
+        left: -2px;
+        right: -2px;
+        top: 174px;
+        height: 52px;
+      }
+      .brand-mark{
+        width: 40px;
+        height: 40px;
+      }
+      .brand-text{
+        font-size: 1.48rem;
+      }
+      .home-hero h2{
+        font-size: 1.95rem;
+      }
+      .home-hero p{
+        font-size: 1.05rem;
+      }
+      .hero-actions-row{
+        grid-template-columns: 1fr;
+      }
+      .hero-action-link{
+        min-height: 50px;
+        font-size: 0.95rem;
+      }
+      .home-card.compact-balance{
+        padding: 16px;
+      }
+      .saldo-top{
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .saldo-filter{
+        width: auto;
+      }
+      .saldo-row{
+        align-items: center;
+        min-height: 0;
+        gap: 10px;
+      }
+      .saldo-meta{
+        width: auto;
+        gap: 10px;
+        flex: 1 1 auto;
+        min-width: 0;
+      }
+      .saldo-badge{
+        width: 40px;
+        height: 40px;
+        font-size: 0.8rem;
+      }
+      .saldo-copy{
+        flex: 1 1 auto;
+        min-width: 0;
+      }
+      .saldo-label{
+        font-size: 0.94rem;
+      }
+      .balance-sub{
+        font-size: 0.76rem;
+        min-height: 0.9rem;
+      }
+      .saldo-value{
+        font-size: 1.18rem;
+        letter-spacing: -0.02em;
+      }
+      .saldo-select{
+        min-width: auto;
+        font-size: 0.92rem;
+        padding-right: 14px;
+      }
+      .distribution-head h3,
+      .saldo-title,
+      .last-head h3{
+        font-size: 1.42rem;
+      }
+      .distribution-layout{
+        gap: 14px;
+      }
+      .distribution-donut{
+        width: 148px;
+      }
+      .distribution-center{
+        width: 92px;
+        height: 92px;
+      }
+      .distribution-center-total{
+        font-size: 0.66rem;
+      }
+      .distribution-item{
+        padding: 11px 12px;
+      }
+      .distribution-name,
+      .distribution-amount{
+        font-size: 0.94rem;
+      }
+      .distribution-meta{
+        font-size: 0.78rem;
+      }
+      .last-head a{
+        font-size: 0.84rem;
+      }
+      .last-item{
+        padding: 11px 12px;
+      }
+      .last-item-amount,
+      .last-item-concept{
+        font-size: 0.92rem;
+      }
+      .last-item-date,
+      .last-item-meta{
+        font-size: 0.78rem;
+      }
+      .home-page .badge{
+        font-size: 0.62rem;
+        padding: 4px 8px;
+      }
+      .last-head a{
+        font-size: 1rem;
+      }
+    }
+    @media (min-width: 860px){
+      .distribution-layout{
+        grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+        align-items: center;
+      }
+    }
+  </style>
+</head>
+
+<body class="home-page">
+
+  <!-- =============================
+       NAVBAR
+       ============================= -->
+  <nav class="navbar">
+    <div class="nav-left">
+            <button class="nav-btn" type="button" data-nav="back" aria-label="Volver" title="Volver"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"></path></svg></button>
+      <button class="nav-btn" data-nav="menu" aria-label="Menú" title="Menú"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16"></path><path d="M4 12h16"></path><path d="M4 18h16"></path></svg></button>
+    </div>
+
+    <div class="nav-center">
+      <a class="brand-chip" href="./home.html" aria-label="Ir a Home">
+        <span class="brand-mark">CB</span>
+        <span class="brand-text">ContaBliza</span>
+      </a>
+    </div>
+
+    <div class="nav-right">
+      <button class="nav-btn" data-action="notifications" aria-label="Notificaciones" title="Notificaciones"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 10-12 0c0 7-3 7-3 7h18s-3 0-3-7"></path><path d="M13.73 21a2 2 0 01-3.46 0"></path></svg></button>
+      <button class="nav-btn" id="btnLogout" title="Salir" aria-label="Salir"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 17l5-5-5-5"></path><path d="M15 12H3"></path><path d="M21 5v14"></path></svg></button>
+    </div>
+  </nav>
+  <!-- NAV DRAWER -->
+  <div class="nav-drawer" id="navDrawer" aria-hidden="true">
+    <div class="nav-drawer-backdrop" data-nav="close"></div>
+    <div class="nav-drawer-panel" role="menu">
+      <div class="nav-drawer-header">Menú</div>
+      <a class="nav-drawer-item" href="./home.html">
+        <span class="ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 10l9-7 9 7"></path>
+            <path d="M5 10v9h14v-9"></path>
+          </svg>
+        </span>
+        <span>Home</span>
+      </a>
+      <a class="nav-drawer-item" href="./movimientos.html">
+        <span class="ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M8 6h10"></path>
+            <path d="M6 10h12"></path>
+            <path d="M6 14h12"></path>
+            <path d="M8 18h10"></path>
+          </svg>
+        </span>
+        <span>Movimientos</span>
+      </a>
+      <a class="nav-drawer-item" href="./movimiento.html">
+        <span class="ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 5v14"></path>
+            <path d="M5 12h14"></path>
+          </svg>
+        </span>
+        <span>Nuevo</span>
+      </a>
+      <a class="nav-drawer-item" href="./reportes.html">
+        <span class="ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 19V5"></path>
+            <path d="M8 19V9"></path>
+            <path d="M12 19V12"></path>
+            <path d="M16 19V7"></path>
+            <path d="M20 19V10"></path>
+          </svg>
+        </span>
+        <span>Reportes</span>
+      </a>
+      <a class="nav-drawer-item" href="./calendario.html">
+        <span class="ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="5" width="18" height="16" rx="2"></rect>
+            <path d="M16 3v4"></path>
+            <path d="M8 3v4"></path>
+            <path d="M3 9h18"></path>
+          </svg>
+        </span>
+        <span>Calendario</span>
+      </a>
+            <a class="nav-drawer-item" href="./documentos.html">
+        <span class="ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M6 2h9l5 5v15a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"></path>
+            <path d="M14 2v6h6"></path>
+            <path d="M8 13h8"></path>
+            <path d="M8 17h8"></path>
+          </svg>
+        </span>
+        <span>Documentos</span>
+      </a>
+      <a class="nav-drawer-item" href="./config.html">
+        <span class="ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2v2"></path>
+            <path d="M12 20v2"></path>
+            <path d="M4.93 4.93l1.41 1.41"></path>
+            <path d="M17.66 17.66l1.41 1.41"></path>
+            <path d="M2 12h2"></path>
+            <path d="M20 12h2"></path>
+            <path d="M4.93 19.07l1.41-1.41"></path>
+            <path d="M17.66 6.34l1.41-1.41"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+        </span>
+        <span>Configuración</span>
+      </a>
+      <div class="nav-drawer-divider"></div>
+      <button class="nav-drawer-item" data-action="logout" type="button">
+        <span class="ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M10 17l5-5-5-5"></path>
+            <path d="M15 12H3"></path>
+            <path d="M21 5v14"></path>
+          </svg>
+        </span>
+        <span>Cerrar sesión</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- =============================
+       HOME
+       ============================= -->
+  <main class="dashboard home-shell">
+    <section class="home-hero">
+      <h2>Hola, <span id="userName">usuario</span></h2>
+      <p>Resumen simple de tus finanzas</p>
+      <div class="hero-actions">
+        <div class="hero-actions-row">
+          <a class="hero-action-link is-primary" href="./movimientos.html">
+            <span class="hero-action-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" aria-hidden="true">
+                <path d="M8 6h10"></path>
+                <path d="M6 10h12"></path>
+                <path d="M6 14h12"></path>
+                <path d="M8 18h10"></path>
+              </svg>
+            </span>
+            <span>Movimientos</span>
+          </a>
+          <a class="hero-action-link" href="./movimiento.html">
+            <span class="hero-action-icon plus" aria-hidden="true">+</span>
+            <span>Nuevo movimiento</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="home-card compact-balance">
+      <div class="saldo-top">
+        <h3 class="saldo-title">Saldo</h3>
+        <div class="saldo-filter">
+          <label for="accountSelect" hidden>Cuenta</label>
+          <select id="accountSelect" class="saldo-select"></select>
+        </div>
+      </div>
+
+      <div class="saldo-block is-active" id="saldoBlockUYU" data-currency="UYU" role="button" tabindex="0" aria-pressed="true">
+        <div class="saldo-row">
+          <div class="saldo-meta">
+            <span class="saldo-badge uyu">UYU</span>
+            <div class="saldo-copy">
+              <div class="saldo-label">UYU</div>
+              <div class="balance-sub" id="accountHintUYU"></div>
+            </div>
+          </div>
+          <div class="saldo-value" id="accountSaldoUYU">$ 0.00</div>
+        </div>
+      </div>
+
+      <div class="saldo-block" id="saldoBlockUSD" data-currency="USD" role="button" tabindex="0" aria-pressed="false">
+        <div class="saldo-row">
+          <div class="saldo-meta">
+            <span class="saldo-badge usd">USD</span>
+            <div class="saldo-copy">
+              <div class="saldo-label">USD</div>
+              <div class="balance-sub" id="accountHintUSD"></div>
+            </div>
+          </div>
+          <div class="saldo-value" id="accountSaldoUSD">US$ 0.00</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="home-card distribution-card">
+      <div class="distribution-head">
+        <h3>Distribución</h3>
+        <div class="distribution-caption" id="distributionCaption">Basado en UYU</div>
+      </div>
+
+      <div class="distribution-layout">
+        <div class="distribution-chart">
+          <div class="distribution-donut" id="distributionDonut" style="--income-angle: 0deg;">
+            <div class="distribution-center">
+              <div class="distribution-center-label">Resultado</div>
+              <div class="distribution-center-total" id="distributionTotal">$ 0,00</div>
+            </div>
+          </div>
+          <div class="distribution-empty" id="distributionEmpty" style="display:none;">
+            Todavía no hay movimientos en UYU para mostrar la distribución.
+          </div>
+        </div>
+
+        <div class="distribution-list">
+          <div class="distribution-item">
+            <div class="distribution-item-main">
+              <span class="distribution-dot is-expense" aria-hidden="true"></span>
+              <div class="distribution-copy">
+                <div class="distribution-name">Gasto</div>
+                <div class="distribution-meta" id="distributionExpenseMeta">0%</div>
+              </div>
+            </div>
+            <div class="distribution-amount" id="distributionExpenseAmount">$ 0,00</div>
+          </div>
+
+          <div class="distribution-item">
+            <div class="distribution-item-main">
+              <span class="distribution-dot is-income" aria-hidden="true"></span>
+              <div class="distribution-copy">
+                <div class="distribution-name">Ingreso</div>
+                <div class="distribution-meta" id="distributionIncomeMeta">0%</div>
+              </div>
+            </div>
+            <div class="distribution-amount" id="distributionIncomeAmount">$ 0,00</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="home-card">
+      <div class="last-head">
+        <h3>Últimos movimientos</h3>
+        <a href="./movimientos.html">Ver todos</a>
+      </div>
+
+      <div class="rows-info" id="rowsInfo">0 items</div>
+
+      <div class="last-list" id="tblLast"></div>
+
+      <div class="home-empty" id="emptyState" style="display:none;">
+        Todavía no hay movimientos cargados.
+      </div>
+    </section>
+  </main>
+
+  <!-- =============================
+       SCRIPTS
+       ============================= -->
+  <script src="../js/storage.js"></script>
+  <script src="../js/app.js"></script>
+
+  <script>
+    const accountSelect = document.getElementById("accountSelect");
+    const accountSaldoUYU = document.getElementById("accountSaldoUYU");
+    const accountSaldoUSD = document.getElementById("accountSaldoUSD");
+    const accountHintUYU = document.getElementById("accountHintUYU");
+    const accountHintUSD = document.getElementById("accountHintUSD");
+    const saldoBlockUYU = document.getElementById("saldoBlockUYU");
+    const saldoBlockUSD = document.getElementById("saldoBlockUSD");
+    const userName = document.getElementById("userName");
+    const distributionCaption = document.getElementById("distributionCaption");
+    const distributionDonut = document.getElementById("distributionDonut");
+    const distributionTotal = document.getElementById("distributionTotal");
+    const distributionEmpty = document.getElementById("distributionEmpty");
+    const distributionExpenseMeta = document.getElementById("distributionExpenseMeta");
+    const distributionExpenseAmount = document.getElementById("distributionExpenseAmount");
+    const distributionIncomeMeta = document.getElementById("distributionIncomeMeta");
+    const distributionIncomeAmount = document.getElementById("distributionIncomeAmount");
+
+    const rowsInfo = document.getElementById("rowsInfo");
+    const tblLast = document.getElementById("tblLast");
+    const emptyState = document.getElementById("emptyState");
+    let activeDistributionCurrency = "UYU";
+
+    function escapeHtml(str){
+      return String(str ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function fmtMoney(n, moneda){
+      const value = Number(n || 0);
+      const m = moneda || "UYU";
+      try{
+        return new Intl.NumberFormat("es-UY", {
+          style: "currency",
+          currency: m
+        }).format(value);
+      }catch{
+        return value.toLocaleString("es-UY");
+      }
+    }
+
+    function fmtShortDate(dateStr){
+      const raw = String(dateStr || "").trim();
+      const match = raw.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+      if(!match) return raw;
+      return `${match[3]}/${match[2]}`;
+    }
+
+    function getSessionSafe(){
+      try{
+        const raw = localStorage.getItem("contabliza_session") || sessionStorage.getItem("contabliza_session_temp");
+        if(raw) return JSON.parse(raw);
+      }catch{}
+      if(typeof getSession === "function") return getSession();
+      return null;
+    }
+
+    function getMovimientosSafe(){
+      if(typeof listMovimientosSortedDesc === "function") return listMovimientosSortedDesc();
+      if(typeof getMovimientos === "function"){
+        return getMovimientos().slice().sort((a, b) => {
+          const fa = String(a?.fecha || "");
+          const fb = String(b?.fecha || "");
+          if(fa === fb){
+            return String(b?.createdAt || "").localeCompare(String(a?.createdAt || ""));
+          }
+          return fb.localeCompare(fa);
+        });
+      }
+      return [];
+    }
+
+    function getMediosSafe(){
+      if(typeof getMedios === "function") return getMedios();
+      return [
+        { id: "caja", name: "Caja" },
+        { id: "banco", name: "Banco" },
+        { id: "tarjeta", name: "Tarjeta" }
+      ];
+    }
+
+    function getMedioLabel(id){
+      const list = getMediosSafe();
+      const found = list.find(m => String(m.id) === String(id));
+      return found ? found.name : "Cuenta";
+    }
+
+    function getTipoLabel(tipo){
+      if(tipo === "ingreso") return "Ingreso";
+      if(tipo === "egreso") return "Gasto";
+      return String(tipo || "");
+    }
+
+    function rebuildMedioSelect(){
+      if(!accountSelect) return;
+      const medios = getMediosSafe();
+      const opts = [
+        `<option value="__all__">General</option>`,
+        ...medios.map(m => `<option value="${m.id}">${m.name}</option>`)
+      ];
+      accountSelect.innerHTML = opts.join("");
+    }
+
+    function getFilteredMovimientos(movs, selected){
+      if(String(selected) === "__all__") return movs.slice();
+      return movs.filter(m => String(m.medioId) === String(selected));
+    }
+
+    function sumCurrencyBalance(movs, moneda){
+      return movs.reduce((acc, m) => {
+        if(String(m.moneda || "UYU") !== String(moneda)) return acc;
+        return acc + ((m.tipo === "ingreso" ? 1 : -1) * Number(m.monto || 0));
+      }, 0);
+    }
+
+    function renderDistribution(movs, selected){
+      const filtered = getFilteredMovimientos(movs, selected);
+      const uyuMovs = filtered.filter(m => String(m.moneda || "UYU") === "UYU");
+      const income = uyuMovs.reduce((acc, m) => acc + (m.tipo === "ingreso" ? Number(m.monto || 0) : 0), 0);
+      const expense = uyuMovs.reduce((acc, m) => acc + (m.tipo === "egreso" ? Number(m.monto || 0) : 0), 0);
+      const flowTotal = income + expense;
+      const netTotal = income - expense;
+      const incomePct = flowTotal > 0 ? Math.round((income / flowTotal) * 100) : 0;
+      const expensePct = flowTotal > 0 ? 100 - incomePct : 0;
+      const incomeAngle = flowTotal > 0 ? Math.max(0, Math.min(360, (income / flowTotal) * 360)) : 0;
+
+      if(distributionCaption){
+        distributionCaption.textContent = String(selected) === "__all__" ? "Basado en UYU" : `${getMedioLabel(selected)} · UYU`;
+      }
+      if(distributionTotal) distributionTotal.textContent = fmtMoney(netTotal, "UYU");
+      if(distributionExpenseAmount) distributionExpenseAmount.textContent = fmtMoney(expense, "UYU");
+      if(distributionIncomeAmount) distributionIncomeAmount.textContent = fmtMoney(income, "UYU");
+      if(distributionExpenseMeta) distributionExpenseMeta.textContent = flowTotal > 0 ? `${expensePct}% del movimiento UYU` : "Sin egresos en UYU";
+      if(distributionIncomeMeta) distributionIncomeMeta.textContent = flowTotal > 0 ? `${incomePct}% del movimiento UYU` : "Sin ingresos en UYU";
+      if(distributionDonut) distributionDonut.style.setProperty("--income-angle", `${incomeAngle}deg`);
+      if(distributionEmpty) distributionEmpty.style.display = flowTotal > 0 ? "none" : "block";
+      if(distributionDonut) distributionDonut.style.display = flowTotal > 0 ? "grid" : "none";
+    }
+
+    function setActiveDistributionCurrency(moneda){
+      activeDistributionCurrency = String(moneda || "UYU") === "USD" ? "USD" : "UYU";
+      if(saldoBlockUYU){
+        const active = activeDistributionCurrency === "UYU";
+        saldoBlockUYU.classList.toggle("is-active", active);
+        saldoBlockUYU.setAttribute("aria-pressed", active ? "true" : "false");
+      }
+      if(saldoBlockUSD){
+        const active = activeDistributionCurrency === "USD";
+        saldoBlockUSD.classList.toggle("is-active", active);
+        saldoBlockUSD.setAttribute("aria-pressed", active ? "true" : "false");
+      }
+    }
+
+    function renderDistributionByCurrency(movs, selected, moneda){
+      const filtered = getFilteredMovimientos(movs, selected);
+      const currency = String(moneda || "UYU") === "USD" ? "USD" : "UYU";
+      const currencyMovs = filtered.filter(m => String(m.moneda || "UYU") === currency);
+      const income = currencyMovs.reduce((acc, m) => acc + (m.tipo === "ingreso" ? Number(m.monto || 0) : 0), 0);
+      const expense = currencyMovs.reduce((acc, m) => acc + (m.tipo === "egreso" ? Number(m.monto || 0) : 0), 0);
+      const flowTotal = income + expense;
+      const netTotal = income - expense;
+      const incomePct = flowTotal > 0 ? Math.round((income / flowTotal) * 100) : 0;
+      const expensePct = flowTotal > 0 ? 100 - incomePct : 0;
+      const incomeAngle = flowTotal > 0 ? Math.max(0, Math.min(360, (income / flowTotal) * 360)) : 0;
+
+      if(distributionCaption){
+        distributionCaption.textContent = String(selected) === "__all__" ? `General · ${currency}` : `${getMedioLabel(selected)} · ${currency}`;
+      }
+      if(distributionTotal) distributionTotal.textContent = fmtMoney(netTotal, currency);
+      if(distributionExpenseAmount) distributionExpenseAmount.textContent = fmtMoney(expense, currency);
+      if(distributionIncomeAmount) distributionIncomeAmount.textContent = fmtMoney(income, currency);
+      if(distributionExpenseMeta) distributionExpenseMeta.textContent = flowTotal > 0 ? `${expensePct}% del movimiento ${currency}` : `Sin egresos en ${currency}`;
+      if(distributionIncomeMeta) distributionIncomeMeta.textContent = flowTotal > 0 ? `${incomePct}% del movimiento ${currency}` : `Sin ingresos en ${currency}`;
+      if(distributionDonut) distributionDonut.style.setProperty("--income-angle", `${incomeAngle}deg`);
+      if(distributionEmpty) distributionEmpty.style.display = flowTotal > 0 ? "none" : "block";
+      if(distributionDonut) distributionDonut.style.display = flowTotal > 0 ? "grid" : "none";
+      if(distributionEmpty) distributionEmpty.textContent = `Todavía no hay movimientos en ${currency} para mostrar la distribución.`;
+    }
+
+    function renderHome(){
+      const session = getSessionSafe();
+      if(userName && (session?.user || session?.email)){
+        userName.textContent = session.user || session.email;
+      }
+
+      const movs = getMovimientosSafe();
+      const selected = accountSelect ? accountSelect.value : "__all__";
+      const filteredMovs = getFilteredMovimientos(movs, selected);
+      const totalUYU = sumCurrencyBalance(filteredMovs, "UYU");
+      const totalUSD = sumCurrencyBalance(filteredMovs, "USD");
+
+      if(accountSaldoUYU) accountSaldoUYU.textContent = fmtMoney(totalUYU, "UYU");
+      if(accountSaldoUYU) accountSaldoUYU.classList.toggle("is-negative", totalUYU < 0);
+      if(accountSaldoUSD) accountSaldoUSD.textContent = fmtMoney(totalUSD, "USD");
+      if(accountSaldoUSD) accountSaldoUSD.classList.toggle("is-negative", totalUSD < 0);
+      if(accountHintUYU) accountHintUYU.textContent = totalUYU === 0 ? "Sin movimientos en UYU" : "";
+      if(accountHintUSD) accountHintUSD.textContent = totalUSD === 0 ? "Sin movimientos en USD" : "";
+
+      renderDistributionByCurrency(movs, selected, activeDistributionCurrency);
+
+      const last = filteredMovs.slice(0, 3);
+      rowsInfo.textContent = `${last.length} item${last.length === 1 ? "" : "s"}`;
+
+      if(!last.length){
+        tblLast.innerHTML = "";
+        emptyState.style.display = "block";
+        return;
+      }
+
+      emptyState.style.display = "none";
+      tblLast.innerHTML = last.map(m => {
+        return `
+        <article class="last-item">
+          <div class="last-item-top">
+            <div class="last-item-date">${escapeHtml(fmtShortDate(m.fecha || ""))}</div>
+            <div class="last-item-amount">${escapeHtml(fmtMoney(m.monto || 0, m.moneda || "UYU"))}</div>
+          </div>
+          <div class="last-item-main">
+            <div class="last-item-concept">${escapeHtml(m.concepto || "")}</div>
+            <div class="last-item-meta">
+              <span class="badge ${m.tipo === "ingreso" ? "badge-success" : m.tipo === "egreso" ? "badge-danger" : ""}">
+                ${escapeHtml(getTipoLabel(m.tipo))}
+              </span>
+              <span>${escapeHtml(getMedioLabel(m.medioId))}</span>
+            </div>
+          </div>
+        </article>
+      `;
+      }).join("");
+    }
+
+    if(accountSelect){
+      accountSelect.addEventListener("change", renderHome);
+    }
+    [saldoBlockUYU, saldoBlockUSD].forEach(block => {
+      if(!block) return;
+      const activate = () => {
+        setActiveDistributionCurrency(block.dataset.currency);
+        renderHome();
+      };
+      block.addEventListener("click", activate);
+      block.addEventListener("keydown", (event) => {
+        if(event.key === "Enter" || event.key === " "){
+          event.preventDefault();
+          activate();
+        }
+      });
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+      rebuildMedioSelect();
+      setActiveDistributionCurrency("UYU");
+      renderHome();
+    });
+  </script>
+
+</body>
+</html>

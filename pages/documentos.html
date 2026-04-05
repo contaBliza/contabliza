@@ -1,0 +1,931 @@
+﻿<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>ContaBliza - Documentos</title>
+
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/componentes.css">
+  <link rel="stylesheet" href="../css/pages.css">
+
+  <style>
+    :root{
+      --doc-bg: rgba(248, 245, 240, 0.96);
+      --doc-line: #ddd5ca;
+      --doc-copy: #103446;
+      --doc-muted: #647985;
+      --doc-income: #1f8b4c;
+      --doc-expense: #c55248;
+      --doc-shadow: 0 16px 34px rgba(15, 35, 45, 0.14);
+    }
+    body.doc-page{
+      background:
+        radial-gradient(980px 460px at 50% -130px, rgba(136, 208, 222, 0.36) 0%, rgba(136, 208, 222, 0) 66%),
+        radial-gradient(620px 290px at 86% 164px, rgba(239, 191, 104, 0.21) 0%, rgba(239, 191, 104, 0) 82%),
+        linear-gradient(180deg, #0a4154 0%, #16576c 224px, #ece9e5 224px, #f1efec 100%);
+      color: var(--doc-copy);
+      overflow-x: hidden;
+    }
+    .doc-page .navbar{
+      height: 62px;
+      background:
+        radial-gradient(260px 100px at 82% 120%, rgba(233, 186, 100, 0.2), rgba(233, 186, 100, 0)),
+        linear-gradient(135deg, rgba(10, 61, 78, 0.92), rgba(18, 83, 104, 0.9));
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 8px 22px rgba(5, 34, 46, 0.34);
+    }
+    .doc-page .navbar::after{
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -1px;
+      height: 2px;
+      background: linear-gradient(90deg, rgba(214, 245, 255, 0.28), rgba(240, 198, 118, 0.9));
+      pointer-events: none;
+    }
+    .doc-page .nav-btn{ color: #f4fafc; }
+    .doc-page .nav-btn:hover{ opacity: 1; background: rgba(255,255,255,0.09); }
+    .brand-chip{
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      color: #ecf6f8;
+      text-shadow: 0 2px 7px rgba(0,0,0,0.28);
+    }
+    .brand-mark{
+      width: 46px;
+      height: 46px;
+      display: block;
+      background: center / contain no-repeat url("../assets/contabliza-mark.svg");
+      filter: drop-shadow(0 7px 16px rgba(9, 38, 49, 0.35));
+      color: transparent;
+      font-size: 0;
+      line-height: 0;
+    }
+    .brand-text{
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 1.66rem;
+      letter-spacing: -0.02em;
+    }
+    .doc-shell{
+      max-width: 690px;
+      margin: 0 auto;
+      padding: 82px 14px 30px;
+      position: relative;
+      overflow-x: clip;
+    }
+    .doc-shell::before{
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 194px;
+      height: 58px;
+      border-top-left-radius: 48% 100%;
+      border-top-right-radius: 48% 100%;
+      background: linear-gradient(180deg, rgba(248, 247, 243, 0.95), rgba(236, 233, 227, 0.98));
+      box-shadow: inset 0 1px 0 rgba(245, 209, 138, 0.75);
+      z-index: 0;
+    }
+    .doc-hero{
+      padding: 20px 2px 18px;
+      position: relative;
+      z-index: 1;
+    }
+    .doc-hero h2{
+      color: #ebf6f8;
+      font-size: 2.12rem;
+      margin: 0 0 4px;
+      text-shadow: 0 4px 14px rgba(0,0,0,0.34);
+    }
+    .doc-sub{
+      color: #dbeef3;
+      margin: 0 0 14px;
+      font-size: 0.98rem;
+      line-height: 1.35;
+    }
+    .doc-hero-actions{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .doc-hero-actions a{
+      position: relative;
+      overflow: hidden;
+      text-decoration: none;
+    }
+    .doc-hero-actions .btn-primary,
+    .doc-hero-actions .btn-secondary{
+      min-height: 52px;
+      border-radius: 16px;
+      font-size: 1.02rem;
+      font-weight: 600;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(226, 217, 204, 0.92);
+      box-shadow: 0 10px 24px rgba(14, 43, 56, 0.18);
+    }
+    .doc-hero-actions .btn-primary{
+      background: linear-gradient(135deg, #0d566d 0%, #236e80 100%);
+      color: #f3f9fb;
+    }
+    .doc-hero-actions .btn-secondary{
+      background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(247, 244, 239, 0.94));
+      color: #123c51;
+      border-color: rgba(208, 216, 222, 0.96);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.96), 0 10px 24px rgba(14, 43, 56, 0.12);
+    }
+    .doc-card{
+      border-radius: 22px;
+      border: 1px solid var(--doc-line);
+      background: var(--doc-bg);
+      box-shadow: var(--doc-shadow);
+      padding: 18px 16px 16px;
+      margin-bottom: 12px;
+      position: relative;
+      z-index: 1;
+    }
+    .doc-head{
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .doc-head h3{
+      margin: 0;
+      color: #102f40;
+      font-size: 1.58rem;
+      letter-spacing: -0.02em;
+    }
+    .doc-count{
+      color: #5c6d78;
+      font-size: 0.8rem;
+      border: 1px solid #d4cdc2;
+      background: rgba(255,255,255,0.72);
+      border-radius: 999px;
+      padding: 6px 10px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .doc-filters{
+      display: grid;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .doc-note{
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 11px;
+      border-radius: 12px;
+      border: 1px solid #ddd6cb;
+      background: rgba(246, 243, 238, 0.92);
+      color: #60717b;
+      font-size: 0.8rem;
+      line-height: 1.25;
+      margin-bottom: 10px;
+    }
+    .doc-note svg{
+      flex: 0 0 auto;
+      color: #7c8d97;
+    }
+    .doc-filter-inline{
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+    }
+    .doc-filters input,
+    .doc-filters select{
+      min-height: 48px;
+      border-radius: 14px;
+      border: 1px solid #cbc4ba;
+      background: #f7f5f2;
+      color: #142f3e;
+      font-size: 1rem;
+      padding: 10px 14px;
+      box-sizing: border-box;
+      width: 100%;
+    }
+    .doc-list{
+      display: grid;
+      gap: 10px;
+    }
+    .doc-item{
+      display: grid;
+      grid-template-columns: 52px minmax(0, 1fr) auto;
+      gap: 10px 12px;
+      align-items: start;
+      padding: 12px;
+      border-radius: 16px;
+      border: 1px solid #ddd5ca;
+      background: rgba(255,255,255,0.72);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.88);
+    }
+    .doc-date-tile{
+      width: 52px;
+      min-height: 56px;
+      border-radius: 14px;
+      border: 1px solid #ded7cd;
+      background: linear-gradient(180deg, #fffefe, #f5f1eb);
+      display: grid;
+      place-items: center;
+      align-content: center;
+      padding: 6px 4px;
+      box-sizing: border-box;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.92);
+    }
+    .doc-date-day{
+      color: #294758;
+      font-weight: 800;
+      font-size: 1.2rem;
+      line-height: 1;
+    }
+    .doc-date-month{
+      color: #83919a;
+      font-weight: 800;
+      font-size: 0.66rem;
+      line-height: 1;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .doc-item-main{
+      min-width: 0;
+      display: grid;
+      gap: 2px;
+    }
+    .doc-item-top{
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      color: #5d7480;
+      font-size: 0.72rem;
+      font-weight: 700;
+    }
+    .doc-chip-mini{
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 2px 7px;
+      font-size: 0.66rem;
+      font-weight: 800;
+      line-height: 1.2;
+      border: 1px solid transparent;
+    }
+    .doc-chip-mini.is-uy{
+      color: #1f7c4a;
+      background: rgba(31, 139, 76, 0.1);
+      border-color: rgba(31,139,76,0.16);
+    }
+    .doc-chip-mini.is-us{
+      color: #2f71d7;
+      background: rgba(47, 113, 215, 0.1);
+      border-color: rgba(47,113,215,0.16);
+    }
+    .doc-chip-mini.is-type-ingreso{
+      color: var(--doc-income);
+      background: rgba(31, 139, 76, 0.1);
+      border-color: rgba(31,139,76,0.16);
+    }
+    .doc-chip-mini.is-type-egreso{
+      color: var(--doc-expense);
+      background: rgba(197, 82, 72, 0.1);
+      border-color: rgba(197,82,72,0.16);
+    }
+    .doc-title{
+      margin: 0;
+      color: #123244;
+      font-size: 0.98rem;
+      font-weight: 700;
+      line-height: 1.15;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .doc-subline{
+      color: #667b87;
+      font-size: 0.76rem;
+      line-height: 1.2;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .doc-item-side{
+      display: grid;
+      justify-items: end;
+      align-content: start;
+      gap: 4px;
+      min-width: 96px;
+    }
+    .doc-money{
+      text-align: right;
+      font-weight: 700;
+      color: #183e53;
+      white-space: nowrap;
+      font-size: 0.95rem;
+    }
+    .doc-money.is-income{
+      color: var(--doc-income);
+    }
+    .doc-money.is-expense{
+      color: var(--doc-expense);
+    }
+    .doc-file-meta{
+      color: #7a8790;
+      font-size: 0.76rem;
+      line-height: 1.15;
+      white-space: nowrap;
+      text-align: right;
+    }
+    .doc-actions{
+      display: inline-flex;
+      justify-content: flex-end;
+      gap: 4px;
+      flex-wrap: wrap;
+      width: 100%;
+    }
+    .doc-actions .btn-secondary{
+      min-height: 24px;
+      min-width: 24px;
+      border-radius: 999px;
+      padding: 2px;
+      display: inline-grid;
+      place-items: center;
+      font-weight: 600;
+      border: 0;
+      background: transparent;
+      box-shadow: none;
+      color: #5f7480;
+    }
+    .doc-actions .btn-secondary:hover{
+      background: rgba(16, 52, 70, 0.06);
+      color: #123c51;
+    }
+    .doc-empty{
+      margin-top: 10px;
+      color: #60707a;
+      font-size: 0.95rem;
+      text-align: center;
+      padding: 12px 8px 6px;
+    }
+    .doc-pagination{
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+    .doc-page-btn{
+      min-width: 38px;
+      min-height: 38px;
+      border-radius: 12px;
+      border: 1px solid #d2cac0;
+      background: rgba(255,255,255,0.78);
+      color: #34515f;
+      font-size: 0.88rem;
+      font-weight: 700;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.9);
+    }
+    .doc-page-btn.is-active{
+      border-color: transparent;
+      color: #f8fbfc;
+      background: linear-gradient(135deg, #0f566b, #2c7a78);
+      box-shadow: 0 8px 18px rgba(16, 51, 69, 0.16);
+    }
+    .doc-na{
+      color: #72818a;
+      font-size: 0.92rem;
+      padding: 6px 0;
+    }
+    .preview-modal{
+      position: fixed;
+      inset: 0;
+      background: rgba(8, 29, 39, 0.58);
+      display: none;
+      place-items: center;
+      padding: 20px;
+      z-index: 40;
+    }
+    .preview-modal.is-open{ display: grid; }
+    .preview-panel{
+      width: min(92vw, 760px);
+      max-height: 90vh;
+      overflow: auto;
+      border-radius: 18px;
+      border: 1px solid #ddd8cf;
+      background: #f7f4ef;
+      box-shadow: 0 16px 36px rgba(15, 35, 45, 0.2);
+      padding: 14px;
+    }
+    .preview-image{
+      display: none;
+      width: 100%;
+      border-radius: 12px;
+      background: #fff;
+      border: 1px solid #ddd5ca;
+      cursor: zoom-in;
+    }
+    .preview-image.is-zoomed{
+      transform: scale(1.4);
+      transform-origin: top center;
+      cursor: zoom-out;
+    }
+    .preview-actions{
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      padding-top: 12px;
+      flex-wrap: wrap;
+    }
+    .preview-actions .btn-secondary{
+      display: inline-flex;
+      align-items: center;
+      min-height: 42px;
+      border-radius: 12px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      padding: 0 14px;
+      min-width: 120px;
+      justify-content: center;
+      text-align: center;
+    }
+    @media (max-width: 560px){
+      .doc-shell{
+        padding-top: 76px;
+        padding-left: 12px;
+        padding-right: 12px;
+      }
+      .doc-shell::before{
+        left: 0;
+        right: 0;
+        top: 174px;
+        height: 52px;
+      }
+      .brand-mark{ width: 40px; height: 40px; }
+      .brand-text{ font-size: 1.48rem; }
+      .doc-hero h2{ font-size: 1.95rem; }
+      .doc-head{
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .doc-head h3{
+        font-size: 1.7rem;
+        max-width: 10ch;
+      }
+      .doc-count{
+        align-self: flex-start;
+      }
+      .doc-filter-inline{ grid-template-columns: 1fr; }
+      .doc-item{
+        grid-template-columns: 46px minmax(0, 1fr) auto;
+        align-items: start;
+      }
+      .doc-date-tile{
+        width: 46px;
+        min-height: 50px;
+        border-radius: 14px;
+      }
+      .doc-date-day{ font-size: 1.05rem; }
+      .doc-date-month{ font-size: 0.62rem; }
+      .doc-title{
+        white-space: normal;
+      }
+      .doc-subline{
+        white-space: normal;
+      }
+      .doc-item-side{
+        min-width: 78px;
+        gap: 3px;
+      }
+      .doc-money{
+        font-size: 0.88rem;
+      }
+      .preview-panel{ border-radius: 16px; }
+      .preview-actions .btn-secondary{
+        min-height: 40px;
+        font-size: 0.88rem;
+      }
+    }
+  </style>
+</head>
+
+<body class="doc-page">
+  <nav class="navbar">
+    <div class="nav-left">
+      <button class="nav-btn" type="button" data-nav="back" aria-label="Volver" title="Volver"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"></path></svg></button>
+      <button class="nav-btn" data-nav="menu" aria-label="Menú" title="Menú"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16"></path><path d="M4 12h16"></path><path d="M4 18h16"></path></svg></button>
+    </div>
+
+    <div class="nav-center">
+      <a class="brand-chip" href="./home.html" aria-label="Ir a Home">
+        <span class="brand-mark">CB</span>
+        <span class="brand-text">ContaBliza</span>
+      </a>
+    </div>
+
+    <div class="nav-right">
+      <button class="nav-btn" data-action="notifications" aria-label="Notificaciones" title="Notificaciones"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 10-12 0c0 7-3 7-3 7h18s-3 0-3-7"></path><path d="M13.73 21a2 2 0 01-3.46 0"></path></svg></button>
+      <button class="nav-btn" id="btnLogout" title="Salir" aria-label="Salir"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 17l5-5-5-5"></path><path d="M15 12H3"></path><path d="M21 5v14"></path></svg></button>
+    </div>
+  </nav>
+
+  <div class="nav-drawer" id="navDrawer" aria-hidden="true">
+    <div class="nav-drawer-backdrop" data-nav="close"></div>
+    <div class="nav-drawer-panel" role="menu">
+      <div class="nav-drawer-header">Menú</div>
+      <a class="nav-drawer-item" href="./home.html"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10l9-7 9 7"></path><path d="M5 10v9h14v-9"></path></svg></span><span>Home</span></a>
+      <a class="nav-drawer-item" href="./movimientos.html"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h10"></path><path d="M6 10h12"></path><path d="M6 14h12"></path><path d="M8 18h10"></path></svg></span><span>Movimientos</span></a>
+      <a class="nav-drawer-item" href="./movimiento.html"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg></span><span>Nuevo</span></a>
+      <a class="nav-drawer-item" href="./reportes.html"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5"></path><path d="M8 19V9"></path><path d="M12 19V12"></path><path d="M16 19V7"></path><path d="M20 19V10"></path></svg></span><span>Reportes</span></a>
+      <a class="nav-drawer-item" href="./calendario.html"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M16 3v4"></path><path d="M8 3v4"></path><path d="M3 9h18"></path></svg></span><span>Calendario</span></a>
+      <a class="nav-drawer-item" href="./documentos.html"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2h9l5 5v15a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"></path><path d="M14 2v6h6"></path><path d="M8 13h8"></path><path d="M8 17h8"></path></svg></span><span>Documentos</span></a>
+      <a class="nav-drawer-item" href="./config.html"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="M4.93 4.93l1.41 1.41"></path><path d="M17.66 17.66l1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="M4.93 19.07l1.41-1.41"></path><path d="M17.66 6.34l1.41-1.41"></path><circle cx="12" cy="12" r="3"></circle></svg></span><span>Configuración</span></a>
+      <div class="nav-drawer-divider"></div>
+      <button class="nav-drawer-item" data-action="logout" type="button"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 17l5-5-5-5"></path><path d="M15 12H3"></path><path d="M21 5v14"></path></svg></span><span>Cerrar sesión</span></button>
+    </div>
+  </div>
+
+  <main class="doc-shell">
+    <section class="doc-hero">
+      <h2>Documentos</h2>
+      <p class="doc-sub">Facturas y recibos adjuntos a movimientos.</p>
+      <div class="doc-hero-actions">
+        <a class="btn-primary" href="./movimiento.html">Nuevo movimiento</a>
+        <a class="btn-secondary" href="./movimientos.html">Movimientos</a>
+      </div>
+    </section>
+
+    <section class="doc-card">
+      <div class="doc-head">
+        <h3>Listado de documentos</h3>
+        <div class="doc-count" id="rowsInfo">0 documentos</div>
+      </div>
+
+      <div class="doc-note" aria-live="polite">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="12" cy="12" r="9"></circle>
+          <path d="M12 8h.01"></path>
+          <path d="M11 12h1v4h1"></path>
+        </svg>
+        <span>Solo se muestran movimientos que tienen factura o archivo adjunto.</span>
+      </div>
+
+      <div class="doc-filters">
+        <input id="q" type="text" placeholder="Buscar por concepto, factura o archivo" aria-label="Buscar">
+        <div class="doc-filter-inline">
+          <select id="docType" aria-label="Tipo">
+            <option value="__all__">Todos</option>
+            <option value="ingreso">Ingresos</option>
+            <option value="egreso">Gastos</option>
+            <option value="factura">Con factura/recibo</option>
+            <option value="adjunto">Con archivo adjunto</option>
+          </select>
+          <select id="monedaFilter" aria-label="Moneda">
+            <option value="__all__" selected>Todas las monedas</option>
+            <option value="UYU">UYU</option>
+            <option value="USD">USD</option>
+          </select>
+          <select id="sortBy" aria-label="Orden">
+            <option value="fecha_desc" selected>Fecha: más nuevo</option>
+            <option value="fecha_asc">Fecha: más viejo</option>
+            <option value="concepto_asc">Concepto: A-Z</option>
+            <option value="monto_desc">Monto: mayor</option>
+            <option value="monto_asc">Monto: menor</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="doc-list" id="docList"></div>
+      <div class="doc-empty" id="emptyState" style="display:none;">No hay documentos para este filtro.</div>
+      <div class="doc-pagination" id="docPagination" aria-label="Paginación de documentos"></div>
+    </section>
+  </main>
+
+  <div class="preview-modal" id="previewModal" aria-hidden="true" role="dialog" aria-label="Vista previa">
+    <div class="preview-panel">
+      <img id="previewImage" class="preview-image" alt="Vista previa del adjunto">
+      <iframe id="previewPdf" title="Vista previa del PDF" style="display:none; width:100%; height:70vh; border:1px solid var(--doc-line); border-radius:10px; background:#fff;"></iframe>
+      <div class="preview-actions">
+        <a class="btn-secondary" id="previewDownload" href="#" download style="display:none;">Descargar</a>
+        <button class="btn-secondary" id="previewClose" type="button">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/storage.js"></script>
+  <script src="../js/app.js"></script>
+  <script>
+    const docList = document.getElementById("docList");
+    const docPagination = document.getElementById("docPagination");
+    const rowsInfo = document.getElementById("rowsInfo");
+    const emptyState = document.getElementById("emptyState");
+    const q = document.getElementById("q");
+    const docType = document.getElementById("docType");
+    const monedaFilter = document.getElementById("monedaFilter");
+    const sortBy = document.getElementById("sortBy");
+    const previewModal = document.getElementById("previewModal");
+    const previewImage = document.getElementById("previewImage");
+    const previewPdf = document.getElementById("previewPdf");
+    const previewDownload = document.getElementById("previewDownload");
+    const previewClose = document.getElementById("previewClose");
+    const PAGE_SIZE = 10;
+    let currentPage = 1;
+
+    function escapeHtml(str){
+      return String(str ?? "")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    function fmtMoney(n, moneda){
+      const value = Number(n || 0);
+      const m = moneda || "UYU";
+      try{
+        return new Intl.NumberFormat("es-UY", { style: "currency", currency: m }).format(value);
+      }catch{
+        return value.toLocaleString("es-UY");
+      }
+    }
+
+    function fmtDateHuman(dateStr){
+      const raw = String(dateStr || "").trim();
+      if(!raw) return "-";
+      const match = raw.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+      if(!match) return raw;
+      return `${match[3]}/${match[2]}/${match[1]}`;
+    }
+
+    function getDateParts(dateStr){
+      const raw = String(dateStr || "").trim();
+      const match = raw.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+      if(!match){
+        return { day: "--", month: "S/F" };
+      }
+      const months = ["ENE","FEB","MAR","ABR","MAY","JUN","JUL","AGO","SEP","OCT","NOV","DIC"];
+      return {
+        day: match[3],
+        month: months[Math.max(0, Number(match[2]) - 1)] || "MES"
+      };
+    }
+
+    function listMovsSafe(){
+      if(typeof listMovimientosSortedDesc === "function") return listMovimientosSortedDesc();
+      if(typeof getMovimientos === "function") return getMovimientos();
+      return [];
+    }
+
+    function hasAdjunto(m){
+      return !!String(m.adjuntoDataUrl || "").trim() || !!String(m.adjuntoName || "").trim();
+    }
+
+    function hasFactura(m){
+      return !!String(m.factura || "").trim();
+    }
+
+    function matchesType(m, filter){
+      if(filter === "ingreso") return String(m.tipo || "") === "ingreso";
+      if(filter === "egreso") return String(m.tipo || "") === "egreso";
+      if(filter === "factura") return hasFactura(m);
+      if(filter === "adjunto") return hasAdjunto(m);
+      return hasFactura(m) || hasAdjunto(m);
+    }
+
+    function matchesSearch(m, term){
+      if(!term) return true;
+      const t = term.toLowerCase();
+      return (
+        String(m.concepto || "").toLowerCase().includes(t) ||
+        String(m.factura || "").toLowerCase().includes(t) ||
+        String(m.adjuntoName || "").toLowerCase().includes(t) ||
+        String(m.fecha || "").toLowerCase().includes(t)
+      );
+    }
+
+    function byFechaDesc(a, b){
+      const fa = String(a.fecha || "");
+      const fb = String(b.fecha || "");
+      if(fa === fb){
+        return String(b.createdAt || "").localeCompare(String(a.createdAt || ""));
+      }
+      return fb.localeCompare(fa);
+    }
+
+    function sortDocs(list, mode){
+      const arr = list.slice();
+      if(mode === "fecha_asc") return arr.sort((a, b) => -byFechaDesc(a, b));
+      if(mode === "concepto_asc") return arr.sort((a, b) => String(a.concepto || "").localeCompare(String(b.concepto || "")));
+      if(mode === "monto_desc") return arr.sort((a, b) => Number(b.monto || 0) - Number(a.monto || 0));
+      if(mode === "monto_asc") return arr.sort((a, b) => Number(a.monto || 0) - Number(b.monto || 0));
+      return arr.sort(byFechaDesc);
+    }
+
+    function getDownloadName(m){
+      const raw = String(m?.adjuntoName || "").trim();
+      if(raw) return raw;
+      const ext = String(m?.adjuntoMime || "").includes("pdf") ? "pdf" : "jpg";
+      return `documento-${m?.id || Date.now()}.${ext}`;
+    }
+
+    function getDocKind(m){
+      if(!hasAdjunto(m)) return "none";
+      return String(m.adjuntoDataUrl || "").startsWith("data:application/pdf") ? "pdf" : "img";
+    }
+    function getDocMetaLabel(m){
+      const factura = String(m.factura || "").trim();
+      const fileName = String(m.adjuntoName || "").trim();
+      if(factura) return factura;
+      if(fileName) return fileName;
+      return "Adjunto del movimiento";
+    }
+
+    function openPreviewImage(dataUrl, fileName){
+      previewPdf.src = "";
+      previewPdf.style.display = "none";
+      previewImage.src = dataUrl;
+      previewImage.style.display = "block";
+      previewImage.classList.remove("is-zoomed");
+      if(previewDownload){
+        previewDownload.href = dataUrl;
+        previewDownload.download = fileName || "adjunto.jpg";
+        previewDownload.style.display = "inline-flex";
+      }
+      previewModal.classList.add("is-open");
+      previewModal.setAttribute("aria-hidden", "false");
+    }
+
+    function openPreviewPdf(dataUrl, fileName){
+      previewImage.src = "";
+      previewImage.style.display = "none";
+      previewPdf.src = `${dataUrl}#toolbar=1&navpanes=0&scrollbar=1`;
+      previewPdf.style.display = "block";
+      if(previewDownload){
+        previewDownload.href = dataUrl;
+        previewDownload.download = fileName || "adjunto.pdf";
+        previewDownload.style.display = "inline-flex";
+      }
+      previewModal.classList.add("is-open");
+      previewModal.setAttribute("aria-hidden", "false");
+    }
+
+    function closePreview(){
+      previewImage.src = "";
+      previewImage.style.display = "none";
+      previewImage.classList.remove("is-zoomed");
+      previewPdf.src = "";
+      previewPdf.style.display = "none";
+      if(previewDownload){
+        previewDownload.href = "#";
+        previewDownload.style.display = "none";
+      }
+      previewModal.classList.remove("is-open");
+      previewModal.setAttribute("aria-hidden", "true");
+    }
+
+    function renderAction(m){
+      if(!hasAdjunto(m)) return `<span class="doc-na">-</span>`;
+      const isPdf = getDocKind(m) === "pdf";
+      if(isPdf){
+        return `<button class="btn-secondary doc-view-btn" type="button" data-doc-id="${escapeHtml(m.id || "")}" aria-label="Ver PDF adjunto" title="Ver PDF adjunto">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+            <path d="M9 6l6 6-6 6"></path>
+          </svg>
+        </button>`;
+      }
+      return `<button class="btn-secondary doc-view-btn" type="button" data-doc-id="${escapeHtml(m.id || "")}" aria-label="Ver imagen adjunta" title="Ver imagen adjunta">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+          <path d="M9 6l6 6-6 6"></path>
+        </svg>
+      </button>`;
+    }
+
+    function renderDocItem(m){
+      const kind = getDocKind(m);
+      const moneda = String(m.moneda || "UYU");
+      const tipo = String(m.tipo || "");
+      const typeLabel = tipo === "ingreso" ? "Ingreso" : tipo === "egreso" ? "Gasto" : "Movimiento";
+      const dateParts = getDateParts(m.fecha || "");
+      const fileLabel = kind === "pdf" ? "PDF (1)" : kind === "img" ? "Foto (1)" : "Sin adjunto";
+      const moneyClass = tipo === "ingreso" ? "is-income" : tipo === "egreso" ? "is-expense" : "";
+      const moneyPrefix = tipo === "egreso" ? "-" : "";
+      return `
+        <article class="doc-item">
+          <div class="doc-date-tile">
+            <div class="doc-date-day">${escapeHtml(dateParts.day)}</div>
+            <div class="doc-date-month">${escapeHtml(dateParts.month)}</div>
+          </div>
+          <div class="doc-item-main">
+            <div class="doc-item-top">
+              <span class="doc-chip-mini ${moneda === "USD" ? "is-us" : "is-uy"}">${escapeHtml(moneda)}</span>
+              <span class="doc-chip-mini ${tipo === "ingreso" ? "is-type-ingreso" : "is-type-egreso"}">${escapeHtml(typeLabel)}</span>
+            </div>
+            <p class="doc-title">${escapeHtml(m.concepto || typeLabel)}</p>
+            <div class="doc-subline">${escapeHtml(getDocMetaLabel(m))}</div>
+          </div>
+          <div class="doc-item-side">
+            <div class="doc-money ${moneyClass}">${escapeHtml(`${moneyPrefix}${fmtMoney(m.monto || 0, moneda)}`)}</div>
+            <div class="doc-file-meta">${escapeHtml(fileLabel)}</div>
+            <div class="doc-actions">${renderAction(m)}</div>
+          </div>
+        </article>
+      `;
+    }
+
+    function renderPagination(totalPages){
+      if(totalPages <= 1){
+        docPagination.innerHTML = "";
+        return;
+      }
+      docPagination.innerHTML = Array.from({ length: totalPages }, (_, index) => {
+        const page = index + 1;
+        const active = page === currentPage ? " is-active" : "";
+        return `<button class="doc-page-btn${active}" type="button" data-page="${page}" aria-label="Página ${page}" aria-current="${page === currentPage ? "page" : "false"}">${page}</button>`;
+      }).join("");
+    }
+
+    function render(){
+      const all = listMovsSafe();
+      const term = (q?.value || "").trim();
+      const typeVal = docType ? docType.value : "__all__";
+      const monVal = monedaFilter ? monedaFilter.value : "__all__";
+      const orderVal = sortBy ? sortBy.value : "fecha_desc";
+
+      const docs = sortDocs(
+        all
+          .filter(m => matchesType(m, typeVal))
+          .filter(m => monVal === "__all__" ? true : String(m.moneda || "") === String(monVal))
+          .filter(m => matchesSearch(m, term)),
+        orderVal
+      );
+
+      const totalPages = Math.max(1, Math.ceil(docs.length / PAGE_SIZE));
+      currentPage = Math.min(currentPage, totalPages);
+      const start = (currentPage - 1) * PAGE_SIZE;
+      const pageDocs = docs.slice(start, start + PAGE_SIZE);
+
+      rowsInfo.textContent = `${docs.length} documento${docs.length === 1 ? "" : "s"}${docs.length ? ` · pág. ${currentPage}/${totalPages}` : ""}`;
+
+      if(!docs.length){
+        docList.innerHTML = "";
+        docPagination.innerHTML = "";
+        emptyState.style.display = "block";
+        return;
+      }
+
+      emptyState.style.display = "none";
+      docList.innerHTML = pageDocs.map(renderDocItem).join("");
+      renderPagination(totalPages);
+    }
+
+    docList.addEventListener("click", (e) => {
+      const btn = e.target.closest(".doc-view-btn");
+      if(!btn) return;
+      const id = btn.getAttribute("data-doc-id");
+      if(!id) return;
+      const mov = listMovsSafe().find(m => String(m.id || "") === String(id));
+      if(!mov || !hasAdjunto(mov)) return;
+      const dataUrl = String(mov.adjuntoDataUrl || "");
+      const fileName = getDownloadName(mov);
+      if(dataUrl.startsWith("data:application/pdf")){
+        openPreviewPdf(dataUrl, fileName);
+      }else{
+        openPreviewImage(dataUrl, fileName);
+      }
+    });
+
+    docPagination.addEventListener("click", (e) => {
+      const btn = e.target.closest(".doc-page-btn");
+      if(!btn) return;
+      const nextPage = Number(btn.getAttribute("data-page") || 1);
+      if(!Number.isFinite(nextPage) || nextPage < 1 || nextPage === currentPage) return;
+      currentPage = nextPage;
+      render();
+    });
+
+    previewClose.addEventListener("click", closePreview);
+    previewModal.addEventListener("click", (e) => { if(e.target === previewModal) closePreview(); });
+    previewImage.addEventListener("click", () => {
+      if(previewImage.style.display !== "block") return;
+      previewImage.classList.toggle("is-zoomed");
+    });
+    document.addEventListener("keydown", (e) => {
+      if(e.key === "Escape" && previewModal.classList.contains("is-open")) closePreview();
+    });
+
+    if(q) q.addEventListener("input", () => { currentPage = 1; render(); });
+    if(docType) docType.addEventListener("change", () => { currentPage = 1; render(); });
+    if(monedaFilter) monedaFilter.addEventListener("change", () => { currentPage = 1; render(); });
+    if(sortBy) sortBy.addEventListener("change", () => { currentPage = 1; render(); });
+    document.addEventListener("DOMContentLoaded", render);
+  </script>
+</body>
+</html>
+
+

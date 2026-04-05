@@ -1,0 +1,1275 @@
+﻿<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>ContaBliza - Calendario</title>
+
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/componentes.css">
+  <link rel="stylesheet" href="../css/pages.css">
+
+  <style>
+    :root{
+      --cal-card: rgba(247, 244, 239, 0.96);
+      --cal-line: #ded6ca;
+      --cal-copy: #10384a;
+      --cal-muted: #657985;
+      --cal-accent: #17606f;
+      --cal-danger: #c2554b;
+      --cal-gold: #d2a24d;
+      --cal-shadow: 0 16px 34px rgba(19, 39, 50, 0.14);
+    }
+    body.cal-page{
+      background:
+        radial-gradient(900px 420px at 50% -120px, rgba(139, 213, 228, 0.32) 0%, rgba(139, 213, 228, 0) 65%),
+        linear-gradient(180deg, #0b4558 0%, #175b70 148px, #e9e6e2 148px, #f1eeea 100%);
+      color: #0f3446;
+    }
+    .cal-page .navbar{
+      height: 62px;
+      background: linear-gradient(135deg, rgba(9, 61, 78, 0.92), rgba(17, 84, 105, 0.9));
+      border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+      box-shadow: 0 8px 24px rgba(6, 38, 50, 0.35);
+    }
+    .cal-page .nav-btn{
+      color: #f3fafc;
+    }
+    .cal-page .nav-btn:hover{
+      opacity: 1;
+      background: rgba(255, 255, 255, 0.09);
+    }
+    .brand-chip{
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      color: #ecf6f8;
+      text-shadow: 0 2px 7px rgba(0,0,0,0.28);
+    }
+    .brand-mark{
+      width: 46px;
+      height: 46px;
+      display: block;
+      background: center / contain no-repeat url("../assets/contabliza-mark.svg");
+      filter: drop-shadow(0 7px 16px rgba(9, 38, 49, 0.35));
+      color: transparent;
+      font-size: 0;
+      line-height: 0;
+    }
+    .brand-text{
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 1.66rem;
+      letter-spacing: -0.02em;
+    }
+    .cal-shell{
+      padding-top: 82px;
+      padding-bottom: 28px;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .cal-card{
+      border-radius: 22px;
+      border: 1px solid var(--cal-line);
+      background: var(--cal-card);
+      box-shadow: var(--cal-shadow);
+      padding: 18px 16px;
+      margin-bottom: 14px;
+    }
+    .cal-hero h2{
+      margin: 0 0 4px;
+      font-size: 2.05rem;
+      font-weight: 800;
+      color: #0b3448;
+      letter-spacing: -0.02em;
+    }
+    .cal-sub{
+      margin: 0;
+      color: #486271;
+      font-size: 0.98rem;
+      line-height: 1.35;
+    }
+    .cal-month-head{
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .cal-month-btn{
+      width: 36px;
+      height: 36px;
+      border-radius: 999px;
+      border: 1px solid #d8d0c5;
+      background: rgba(255,255,255,0.72);
+      color: #183f53;
+      display: grid;
+      place-items: center;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.9);
+    }
+    .cal-month-btn:hover{
+      background: rgba(24, 63, 83, 0.1);
+    }
+    .cal-month-copy{
+      min-width: 0;
+      flex: 1 1 auto;
+      text-align: center;
+    }
+    .cal-month-label{
+      margin: 0 0 2px;
+      font-size: 1.72rem;
+      line-height: 1.1;
+      color: #0f374a;
+      letter-spacing: -0.02em;
+    }
+    .cal-month-meta{
+      margin: 0;
+      color: var(--cal-muted);
+      font-size: 0.84rem;
+      line-height: 1.25;
+    }
+    .cal-weekdays,
+    .cal-days{
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 2px;
+    }
+    .cal-weekdays{
+      border-top: 1px solid #ddd5ca;
+      border-bottom: 1px solid #ddd5ca;
+      margin-bottom: 6px;
+    }
+    .cal-weekday{
+      text-align: center;
+      padding: 8px 0;
+      font-weight: 700;
+      color: #4c6470;
+      font-size: 0.84rem;
+    }
+    .cal-weekday.sun{
+      color: var(--cal-danger);
+    }
+    .cal-day{
+      border: none;
+      background: transparent;
+      min-height: 46px;
+      border-bottom: 1px solid #e2dbd1;
+      color: #12384a;
+      font-size: 1.18rem;
+      font-weight: 700;
+      display: grid;
+      place-items: center;
+      position: relative;
+      z-index: 0;
+      border-radius: 12px;
+    }
+    .cal-day.sun{
+      color: var(--cal-danger);
+    }
+    .cal-day.other{
+      color: #b8b1a8;
+    }
+    .cal-day.spacer{
+      min-height: 46px;
+      border-bottom-color: transparent;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .cal-day.today::after{
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--cal-gold);
+      position: absolute;
+      bottom: 8px;
+    }
+    .cal-day.selected{
+      color: #fff;
+    }
+    .cal-day.selected::before{
+      content: "";
+      position: absolute;
+      inset: 5px 7px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #17606f, #2f7c71);
+      z-index: -1;
+      box-shadow: 0 8px 16px rgba(18, 73, 91, 0.18);
+    }
+    .cal-day.has-event:not(.selected)::before{
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--cal-accent);
+      position: absolute;
+      bottom: 6px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .cal-form-title{
+      margin: 0;
+      font-size: 1.58rem;
+      color: #0d3649;
+      letter-spacing: -0.02em;
+    }
+    .cal-card-head{
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .cal-card-copy{
+      min-width: 0;
+      flex: 1 1 auto;
+    }
+    .cal-card-copy p{
+      margin: 4px 0 0;
+      color: var(--cal-muted);
+      font-size: 0.84rem;
+      line-height: 1.3;
+    }
+    .cal-grid{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px 12px;
+    }
+    .span-2{
+      grid-column: span 2;
+    }
+    .cal-page .form-group{
+      margin-bottom: 0;
+    }
+    .cal-page .form-group label{
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: #26495c;
+      margin-bottom: 6px;
+    }
+    .cal-page .form-group input,
+    .cal-page .form-group select{
+      min-height: 48px;
+      border-radius: 16px;
+      border-color: #cbc4ba;
+      background: #f7f5f2;
+      color: #142f3e;
+      font-size: 1rem;
+      padding: 10px 14px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85);
+    }
+    .cal-page .form-group input::placeholder{
+      color: #738898;
+    }
+    .cal-type{
+      position: relative;
+    }
+    .cal-type::before{
+      content: "🔔";
+      position: absolute;
+      left: 14px;
+      bottom: 13px;
+      font-size: 1rem;
+      opacity: 0.9;
+      pointer-events: none;
+    }
+    .cal-type select{
+      padding-left: 40px !important;
+    }
+    .cal-page .btn-primary{
+      min-height: 54px;
+      border-radius: 16px;
+      border-color: rgba(9, 54, 70, 0.5);
+      font-size: 1.05rem;
+      font-weight: 700;
+      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.28);
+    }
+    .cal-msg{
+      margin-top: 10px;
+      color: #0d455a;
+      background: #dceff5;
+      border: 1px solid #bad7e2;
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-size: 0.92rem;
+    }
+    .cal-list-head{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .cal-list-head h3{
+      margin: 0;
+      font-size: 1.34rem;
+      letter-spacing: -0.02em;
+    }
+    .cal-list-sub{
+      margin: 4px 0 0;
+      color: var(--cal-muted);
+      font-size: 0.82rem;
+    }
+    .chip{
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 11px;
+      border: 1px solid #d3ccc2;
+      border-radius: 999px;
+      font-size: 0.88rem;
+      background: #f8f6f2;
+    }
+    .cal-filter-row{
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .cal-filter-stack{
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 8px;
+    }
+    .cal-month-filter{
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 104px;
+      gap: 8px;
+    }
+    .cal-filter-inline{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .cal-filter-row input,
+    .cal-filter-row select{
+      min-height: 46px;
+      border-radius: 14px;
+      border: 1px solid #d2c9bd;
+      background: #fbfaf7;
+      color: #17384b;
+      padding: 10px 14px;
+      font-size: 0.95rem;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.92);
+    }
+    .cal-filter-row .btn-secondary{
+      min-height: 46px;
+      border-radius: 14px;
+    }
+    #btnClear{
+      min-width: 74px;
+      border-color: #e1e6ea;
+      color: #7b8d98;
+      background: rgba(252,251,248,0.46);
+      box-shadow: none;
+      font-weight: 500;
+    }
+    .cal-mobile-list{
+      display: none;
+      gap: 10px;
+      margin-top: 2px;
+    }
+    .cal-event-card{
+      border: 1px solid #ddd5ca;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.72);
+      padding: 12px 12px 11px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.88);
+    }
+    .cal-event-head{
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .cal-event-title{
+      margin: 0;
+      color: #14384a;
+      font-size: 0.98rem;
+      font-weight: 700;
+      line-height: 1.25;
+    }
+    .cal-event-date{
+      color: #5e7380;
+      font-size: 0.8rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .cal-event-meta{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+      color: #556a76;
+      font-size: 0.8rem;
+    }
+    .cal-event-actions{
+      display: flex;
+      justify-content: flex-end;
+      gap: 6px;
+      margin-top: 12px;
+    }
+    .table td,
+    .table th{
+      font-size: 0.84rem;
+      padding: 8px 10px;
+    }
+    .table th{
+      color: #49626f;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .cal-row-actions{
+      display: inline-flex;
+      justify-content: flex-end;
+      gap: 6px;
+    }
+    .cal-row-actions .btn-secondary{
+      min-height: 32px;
+      min-width: 32px;
+      padding: 6px;
+      border-radius: 10px;
+      display: inline-grid;
+      place-items: center;
+    }
+    .cal-row-actions .is-done{
+      color: #1f7a3a;
+      border-color: rgba(31, 122, 58, 0.35);
+      background: rgba(31, 122, 58, 0.08);
+    }
+    .right{
+      text-align: right;
+    }
+    .list-empty{
+      margin-top: 12px;
+      color: #5d7482;
+      font-size: 0.9rem;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px dashed #d0c6b8;
+      background: rgba(255,255,255,0.55);
+    }
+    @media (max-width: 900px){
+      .cal-grid{
+        grid-template-columns: 1fr;
+      }
+      .span-2{
+        grid-column: span 1;
+      }
+    }
+    @media (max-width: 520px){
+      .cal-shell{
+        padding-top: 76px;
+        padding-left: 12px;
+        padding-right: 12px;
+      }
+      .cal-card{
+        border-radius: 16px;
+        padding: 16px 14px;
+      }
+      .cal-hero h2{
+        font-size: 1.8rem;
+      }
+      .cal-day{
+        min-height: 42px;
+        font-size: 1.05rem;
+      }
+      .cal-form-title{
+        font-size: 1.5rem;
+      }
+      .cal-page .form-group input,
+      .cal-page .form-group select{
+        font-size: 0.98rem;
+      }
+      .cal-page .btn-primary{
+        font-size: 1rem;
+      }
+      .cal-filter-inline,
+      .cal-filter-stack{
+        grid-template-columns: 1fr;
+      }
+      .cal-month-filter{
+        grid-template-columns: 1fr 92px;
+      }
+      .cal-mobile-list{
+        display: grid;
+      }
+      .cal-table-wrap{
+        display: none;
+      }
+      .brand-mark{
+        width: 40px;
+        height: 40px;
+      }
+      .brand-text{
+        font-size: 1.48rem;
+      }
+    }
+  </style>
+</head>
+
+<body class="cal-page">
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="nav-left">
+      <button class="nav-btn" type="button" data-nav="back" aria-label="Volver" title="Volver"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"></path></svg></button>
+      <button class="nav-btn" data-nav="menu" aria-label="Menú" title="Menú"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16"></path><path d="M4 12h16"></path><path d="M4 18h16"></path></svg></button>
+    </div>
+
+    <div class="nav-center">
+      <a class="brand-chip" href="./home.html" aria-label="Ir a Home">
+        <span class="brand-mark">CB</span>
+        <span class="brand-text">ContaBliza</span>
+      </a>
+    </div>
+
+    <div class="nav-right">
+      <button class="nav-btn" data-action="notifications" aria-label="Notificaciones" title="Notificaciones"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 10-12 0c0 7-3 7-3 7h18s-3 0-3-7"></path><path d="M13.73 21a2 2 0 01-3.46 0"></path></svg></button>
+      <button class="nav-btn" id="btnLogout" title="Salir" aria-label="Salir"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 17l5-5-5-5"></path><path d="M15 12H3"></path><path d="M21 5v14"></path></svg></button>
+    </div>
+  </nav>
+
+  <!-- NAV DRAWER -->
+  <div class="nav-drawer" id="navDrawer" aria-hidden="true">
+    <div class="nav-drawer-backdrop" data-nav="close"></div>
+    <div class="nav-drawer-panel" role="menu">
+      <div class="nav-drawer-header">Menú</div>
+      <a class="nav-drawer-item" href="./home.html">
+        <span class="ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 10l9-7 9 7"></path>
+            <path d="M5 10v9h14v-9"></path>
+          </svg>
+        </span>
+        <span>Home</span>
+      </a>
+      <a class="nav-drawer-item" href="./movimientos.html">
+        <span class="ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M8 6h10"></path>
+            <path d="M6 10h12"></path>
+            <path d="M6 14h12"></path>
+            <path d="M8 18h10"></path>
+          </svg>
+        </span>
+        <span>Movimientos</span>
+      </a>
+      <a class="nav-drawer-item" href="./movimiento.html">
+        <span class="ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 5v14"></path>
+            <path d="M5 12h14"></path>
+          </svg>
+        </span>
+        <span>Nuevo</span>
+      </a>
+            <a class="nav-drawer-item" href="./reportes.html">
+        <span class="ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 19V5"></path>
+            <path d="M8 19V9"></path>
+            <path d="M12 19V12"></path>
+            <path d="M16 19V7"></path>
+            <path d="M20 19V10"></path>
+          </svg>
+        </span>
+        <span>Reportes</span>
+      </a>
+      
+      <a class="nav-drawer-item" href="./calendario.html">
+        <span class="ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="5" width="18" height="16" rx="2"></rect>
+            <path d="M16 3v4"></path>
+            <path d="M8 3v4"></path>
+            <path d="M3 9h18"></path>
+          </svg>
+        </span>
+        <span>Calendario</span>
+      </a>
+            <a class="nav-drawer-item" href="./documentos.html">
+        <span class="ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M6 2h9l5 5v15a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"></path>
+            <path d="M14 2v6h6"></path>
+            <path d="M8 13h8"></path>
+            <path d="M8 17h8"></path>
+          </svg>
+        </span>
+        <span>Documentos</span>
+      </a>
+      <a class="nav-drawer-item" href="./config.html">
+        <span class="ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2v2"></path>
+            <path d="M12 20v2"></path>
+            <path d="M4.93 4.93l1.41 1.41"></path>
+            <path d="M17.66 17.66l1.41 1.41"></path>
+            <path d="M2 12h2"></path>
+            <path d="M20 12h2"></path>
+            <path d="M4.93 19.07l1.41-1.41"></path>
+            <path d="M17.66 6.34l1.41-1.41"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+        </span>
+        <span>Configuración</span>
+      </a>
+      <div class="nav-drawer-divider"></div>
+      <button class="nav-drawer-item" data-action="logout" type="button">
+        <span class="ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M10 17l5-5-5-5"></path>
+            <path d="M15 12H3"></path>
+            <path d="M21 5v14"></path>
+          </svg>
+        </span>
+        <span>Cerrar sesión</span>
+      </button>
+    </div>
+  </div>
+
+  <main class="dashboard cal-shell">
+    <section class="card cal-card cal-hero">
+      <h2>Calendario</h2>
+      <p class="cal-sub">Agenda de recordatorios</p>
+    </section>
+
+    <section class="card cal-card">
+      <div class="cal-month-head">
+        <button class="cal-month-btn" id="calPrev" type="button" aria-label="Mes anterior">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M15 18l-6-6 6-6"></path>
+          </svg>
+        </button>
+        <div class="cal-month-copy">
+          <h3 class="cal-month-label" id="calMonthLabel">Mes</h3>
+          <p class="cal-month-meta" id="calMonthMeta">Sin eventos cargados este mes.</p>
+        </div>
+        <button class="cal-month-btn" id="calNext" type="button" aria-label="Mes siguiente">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 18l6-6-6-6"></path>
+          </svg>
+        </button>
+      </div>
+      <div class="cal-weekdays">
+        <div class="cal-weekday">L</div>
+        <div class="cal-weekday">M</div>
+        <div class="cal-weekday">M</div>
+        <div class="cal-weekday">J</div>
+        <div class="cal-weekday">V</div>
+        <div class="cal-weekday">S</div>
+        <div class="cal-weekday sun">D</div>
+      </div>
+      <div class="cal-days" id="calDays"></div>
+    </section>
+
+    <section class="card cal-card">
+      <div class="cal-card-head">
+        <div class="cal-card-copy">
+          <h3 class="cal-form-title">Nuevo evento</h3>
+          <p>Agendá recordatorios rápidos sin salir del calendario.</p>
+        </div>
+      </div>
+
+      <form id="evForm" class="cal-grid">
+        <div class="form-group span-2">
+          <label for="desc">Descripción</label>
+          <input id="desc" type="text" placeholder="Ej: Pago de alquiler, impuesto o cobro pendiente" required>
+        </div>
+
+        <div class="form-group cal-type">
+          <label for="tipo">Tipo</label>
+          <select id="tipo">
+            <option value="RECORDATORIO">Recordatorio</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="fecha">Fecha</label>
+          <input id="fecha" type="date" required>
+        </div>
+
+        <div class="form-group">
+          <label for="monto">Monto (opcional)</label>
+          <input id="monto" type="number" min="0" step="0.01" placeholder="Ej: 2500">
+        </div>
+
+        <div class="form-group">
+          <label for="estado">Estado</label>
+          <select id="estado">
+            <option value="PENDIENTE">Pendiente</option>
+            <option value="LISTO">Listo</option>
+          </select>
+        </div>
+
+        <button class="btn-primary span-2" type="submit">Guardar evento</button>
+      </form>
+
+      <div id="msg" class="cal-msg" style="display:none;"></div>
+    </section>
+
+    <section class="card cal-card">
+      <div class="cal-list-head">
+        <div class="cal-card-copy">
+          <h3>Próximos eventos</h3>
+          <p class="cal-list-sub">Seguimiento rápido de recordatorios y tareas pendientes.</p>
+        </div>
+        <span class="chip"><span>Items</span><span id="count">0</span></span>
+      </div>
+
+      <div class="cal-filter-row">
+        <div class="cal-filter-stack">
+          <div class="cal-month-filter">
+            <select id="monthSelect" aria-label="Mes del listado"></select>
+            <select id="yearSelect" aria-label="Año del listado"></select>
+          </div>
+          <button class="btn-secondary" id="btnClear" type="button">Limpiar</button>
+        </div>
+        <input id="q" type="text" placeholder="Buscar evento...">
+        <div class="cal-filter-inline">
+          <select id="fEstado" aria-label="Estado">
+            <option value="TODOS">Todos</option>
+            <option value="PENDIENTE">Pendiente</option>
+            <option value="LISTO">Listo</option>
+          </select>
+          <div class="chip" aria-hidden="true"><span>Mes activo</span><span id="listMonthLabel">-</span></div>
+        </div>
+      </div>
+
+      <div class="cal-mobile-list" id="eventsListMobile"></div>
+
+      <div class="cal-table-wrap" style="overflow:auto;">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Tipo</th>
+              <th>Descripción</th>
+              <th>Estado</th>
+              <th class="right">Monto</th>
+              <th class="right">Acción</th>
+            </tr>
+          </thead>
+          <tbody id="tbl"></tbody>
+        </table>
+      </div>
+
+      <div class="list-empty" id="emptyState" style="display:none;">No hay eventos para este mes.</div>
+    </section>
+  </main>
+
+  <script src="../js/storage.js"></script>
+  <script src="../js/app.js"></script>
+
+  <script>
+    const KEY = "ContaBliza_calendario";
+
+    const msg = document.getElementById("msg");
+
+    const form = document.getElementById("evForm");
+    const tipo = document.getElementById("tipo");
+    const fecha = document.getElementById("fecha");
+    const monto = document.getElementById("monto");
+    const estado = document.getElementById("estado");
+    const desc = document.getElementById("desc");
+
+    const monthSelect = document.getElementById("monthSelect");
+    const yearSelect = document.getElementById("yearSelect");
+    const fEstado = document.getElementById("fEstado");
+    const q = document.getElementById("q");
+    const btnClear = document.getElementById("btnClear");
+
+    const tbl = document.getElementById("tbl");
+    const eventsListMobile = document.getElementById("eventsListMobile");
+    const emptyState = document.getElementById("emptyState");
+    const count = document.getElementById("count");
+    const calDays = document.getElementById("calDays");
+    const calMonthLabel = document.getElementById("calMonthLabel");
+    const calMonthMeta = document.getElementById("calMonthMeta");
+    const calPrev = document.getElementById("calPrev");
+    const calNext = document.getElementById("calNext");
+    const listMonthLabel = document.getElementById("listMonthLabel");
+
+    const calView = {
+      year: new Date().getFullYear(),
+      month: new Date().getMonth()
+    };
+
+    function fmtMoney(n){
+      return Number(n || 0).toLocaleString("es-UY", { maximumFractionDigits: 2 });
+    }
+
+    function fmtDateHuman(iso){
+      if(!iso) return "";
+      const parts = String(iso).split("-");
+      if(parts.length !== 3) return iso;
+      return parts[2] + "/" + parts[1] + "/" + parts[0];
+    }
+
+    function todayISO(){
+      const d = new Date();
+      const y = d.getFullYear();
+      const m = String(d.getMonth()+1).padStart(2,"0");
+      const day = String(d.getDate()).padStart(2,"0");
+      return y + "-" + m + "-" + day;
+    }
+
+    function getLocalDateISO(d){
+      const y = d.getFullYear();
+      const m = String(d.getMonth()+1).padStart(2,"0");
+      const day = String(d.getDate()).padStart(2,"0");
+      return y + "-" + m + "-" + day;
+    }
+
+    function currentMonth(){
+      const d = new Date();
+      const y = d.getFullYear();
+      const m = String(d.getMonth()+1).padStart(2,"0");
+      return y + "-" + m;
+    }
+
+    function parseMonthValue(ym){
+      const parts = String(ym || "").split("-");
+      if(parts.length !== 2) return null;
+      const y = Number(parts[0]);
+      const m = Number(parts[1]);
+      if(Number.isNaN(y) || Number.isNaN(m)) return null;
+      return { year: y, month: m };
+    }
+
+    function buildMonthValue(){
+      if(!monthSelect || !yearSelect) return currentMonth();
+      const month = String(monthSelect.value || "").padStart(2,"0");
+      const year = String(yearSelect.value || "");
+      if(!/^\d{4}$/.test(year) || !/^\d{2}$/.test(month)) return currentMonth();
+      return year + "-" + month;
+    }
+
+    function setMonthControls(ym){
+      const parsed = parseMonthValue(ym);
+      if(!parsed || !monthSelect || !yearSelect) return;
+      monthSelect.value = String(parsed.month).padStart(2,"0");
+      yearSelect.value = String(parsed.year);
+    }
+
+    function fillMonthControls(){
+      if(!monthSelect || !yearSelect) return;
+      if(!monthSelect.options.length){
+        const months = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+        monthSelect.innerHTML = months.map((name, index) => `<option value="${String(index + 1).padStart(2,"0")}">${name}</option>`).join("");
+      }
+      if(!yearSelect.options.length){
+        const now = new Date().getFullYear();
+        const years = [];
+        for(let year = now + 1; year >= now - 5; year -= 1){
+          years.push(`<option value="${year}">${year}</option>`);
+        }
+        yearSelect.innerHTML = years.join("");
+      }
+    }
+
+    function monthLabel(year, monthIndex){
+      const text = new Intl.DateTimeFormat("es-ES", { month: "long", year: "numeric" })
+        .format(new Date(year, monthIndex, 1));
+      return text.charAt(0).toUpperCase() + text.slice(1);
+    }
+
+    function syncCalViewFromMonth(){
+      const parts = String(buildMonthValue() || "").split("-");
+      if(parts.length !== 2) return;
+      const y = Number(parts[0]);
+      const m = Number(parts[1]) - 1;
+      if(Number.isNaN(y) || Number.isNaN(m)) return;
+      calView.year = y;
+      calView.month = m;
+    }
+
+    function escapeHtml(str){
+      return String(str ?? "")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll("\"","&quot;")
+        .replaceAll(String.fromCharCode(39),"&#039;");
+    }
+
+    function showMsg(text){
+      msg.style.display = "block";
+      msg.textContent = text;
+      setTimeout(() => msg.style.display = "none", 2200);
+    }
+
+    function loadList(){
+      try{
+        const raw = localStorage.getItem(KEY);
+        return raw ? JSON.parse(raw) : [];
+      }catch{
+        return [];
+      }
+    }
+
+    function saveList(list){
+      localStorage.setItem(KEY, JSON.stringify(list));
+    }
+
+    function pushPendingNotification(item, mode){
+      if(!item || item.estado !== "PENDIENTE") return;
+      if(typeof addNotification !== "function") return;
+      const action = mode === "updated" ? "Pendiente actualizada" : "Nueva tarea pendiente";
+      const detail = [item.fecha || "", item.descripcion || item.tipo || "Tarea"].filter(Boolean).join(" - ");
+      addNotification({
+        title: action,
+        body: detail
+      });
+    }
+
+    function addItem(item){
+      const list = loadList();
+      const id = (typeof crypto !== "undefined" && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now());
+      const next = { ...item, id, createdAt: new Date().toISOString() };
+      list.push(next);
+      saveList(list);
+      pushPendingNotification(next, "created");
+      return id;
+    }
+
+    function delItem(id){
+      saveList(loadList().filter(x => x.id !== id));
+    }
+
+    function toggleEstado(id){
+      const list = loadList();
+      const idx = list.findIndex(x => x.id === id);
+      if(idx < 0) return;
+
+      list[idx].estado = (list[idx].estado === "LISTO") ? "PENDIENTE" : "LISTO";
+      list[idx].updatedAt = new Date().toISOString();
+      saveList(list);
+      pushPendingNotification(list[idx], "updated");
+    }
+
+    function isMatch(x, term){
+      if(!term) return true;
+      const t = term.toLowerCase();
+      return (
+        String(x.descripcion||"").toLowerCase().includes(t) ||
+        String(x.tipo||"").toLowerCase().includes(t) ||
+        String(x.estado||"").toLowerCase().includes(t) ||
+        String(x.fecha||"").toLowerCase().includes(t)
+      );
+    }
+
+    function isMonth(x, ym){
+      if(!ym) return true;
+      return String(x.fecha||"").startsWith(ym);
+    }
+
+    function requestNotificationPermission(){
+      if(!("Notification" in window)) return Promise.resolve(false);
+      if(Notification.permission === "granted") return Promise.resolve(true);
+      if(Notification.permission === "denied") return Promise.resolve(false);
+      return Notification.requestPermission().then(p => p === "granted");
+    }
+
+    function fireReminderNotification(item){
+      if(!("Notification" in window)) return;
+      if(Notification.permission !== "granted") return;
+
+      const title = "Recordatorio";
+      const body = item.descripcion || "Recordatorio";
+      const notif = new Notification(title, { body });
+
+      notif.onclick = () => {
+        try{ window.focus(); }catch{}
+        const href = "./calendario.html?reminderId=" + encodeURIComponent(item.id);
+        location.href = href;
+      };
+    }
+
+    function checkReminders(){
+      if(!("Notification" in window)) return;
+      if(Notification.permission !== "granted") return;
+
+      const list = loadList();
+      if(!list.length) return;
+
+      const today = getLocalDateISO(new Date());
+      let changed = false;
+
+      for(const item of list){
+        if(item.tipo !== "RECORDATORIO") continue;
+        if(item.notifiedAt) continue;
+        if(!item.fecha) continue;
+        if(String(item.fecha) > today) continue;
+
+        fireReminderNotification(item);
+        item.notifiedAt = new Date().toISOString();
+        changed = true;
+      }
+
+      if(changed) saveList(list);
+    }
+
+    function renderMonthCalendar(){
+      calMonthLabel.textContent = monthLabel(calView.year, calView.month);
+      setMonthControls(calView.year + "-" + String(calView.month + 1).padStart(2, "0"));
+      if(listMonthLabel) listMonthLabel.textContent = monthLabel(calView.year, calView.month);
+
+      const selected = fecha.value || todayISO();
+      const today = todayISO();
+      const all = loadList();
+      const monthItems = all.filter(x => isMonth(x, buildMonthValue()));
+      const monthDates = new Set(monthItems.map(x => String(x.fecha || "")));
+      if(calMonthMeta){
+        const pending = monthItems.filter(x => x.estado === "PENDIENTE").length;
+        const nextPending = monthItems
+          .filter(x => x.estado === "PENDIENTE" && String(x.fecha || "") >= today)
+          .sort((a, b) => String(a.fecha || "").localeCompare(String(b.fecha || "")))[0];
+        if(!monthItems.length){
+          calMonthMeta.textContent = "Sin eventos cargados este mes.";
+        }else if(nextPending){
+          calMonthMeta.textContent = `${monthItems.length} evento${monthItems.length === 1 ? "" : "s"} · ${pending} pendiente${pending === 1 ? "" : "s"} · Próximo: ${fmtDateHuman(nextPending.fecha)}`;
+        }else{
+          calMonthMeta.textContent = `${monthItems.length} evento${monthItems.length === 1 ? "" : "s"} · ${pending} pendiente${pending === 1 ? "" : "s"}`;
+        }
+      }
+
+      const firstDay = new Date(calView.year, calView.month, 1);
+      const startOffset = (firstDay.getDay() + 6) % 7;
+      const totalDays = new Date(calView.year, calView.month + 1, 0).getDate();
+
+      let html = "";
+      for(let i = 0; i < startOffset; i++){
+        html += "<div class=\"cal-day other spacer\" aria-hidden=\"true\"></div>";
+      }
+
+      for(let day = 1; day <= totalDays; day++){
+        const iso = calView.year
+          + "-"
+          + String(calView.month + 1).padStart(2, "0")
+          + "-"
+          + String(day).padStart(2, "0");
+        const jsDay = new Date(calView.year, calView.month, day).getDay();
+        const classes = ["cal-day"];
+        if(jsDay === 0) classes.push("sun");
+        if(iso === selected) classes.push("selected");
+        if(iso === today) classes.push("today");
+        if(monthDates.has(iso)) classes.push("has-event");
+        html += "<button class=\"" + classes.join(" ") + "\" type=\"button\" data-day=\"" + iso + "\">" + day + "</button>";
+      }
+
+      calDays.innerHTML = html;
+      calDays.querySelectorAll("[data-day]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const iso = btn.getAttribute("data-day");
+          if(!iso) return;
+          fecha.value = iso;
+          setMonthControls(iso.slice(0, 7));
+          syncCalViewFromMonth();
+          renderMonthCalendar();
+          render();
+        });
+      });
+    }
+
+    function render(){
+      const term = q.value.trim();
+      const ym = buildMonthValue() || currentMonth();
+      const est = fEstado.value;
+
+      const all = loadList().slice().sort((a,b) => (a.fecha||"").localeCompare(b.fecha||""));
+
+      const filtered = all.filter(x => {
+        if(!isMonth(x, ym)) return false;
+        if(est !== "TODOS" && x.estado !== est) return false;
+        if(!isMatch(x, term)) return false;
+        return true;
+      });
+
+      count.textContent = String(filtered.length);
+
+      if(!filtered.length){
+        tbl.innerHTML = "";
+        if(eventsListMobile) eventsListMobile.innerHTML = "";
+        emptyState.style.display = "block";
+        emptyState.textContent = ym ? `No hay eventos para ${monthLabel(calView.year, calView.month).toLowerCase()}.` : "No hay eventos para este mes.";
+        renderMonthCalendar();
+        return;
+      }
+      emptyState.style.display = "none";
+
+      let rows = "";
+      let cards = "";
+      for(const x of filtered){
+        rows += "<tr>";
+        rows += "<td>" + escapeHtml(x.fecha||"") + "</td>";
+        rows += "<td>" + escapeHtml(x.tipo||"") + "</td>";
+        rows += "<td style=\"max-width:520px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;\">" + escapeHtml(x.descripcion||"") + "</td>";
+        rows += "<td><span class=\"badge " + (x.estado === "LISTO" ? "badge-success" : "badge-warning") + "\">" + escapeHtml(x.estado) + "</span></td>";
+        rows += "<td class=\"right\">" + (x.monto ? fmtMoney(x.monto) : "") + "</td>";
+        rows += "<td class=\"right\"><span class=\"cal-row-actions\">";
+        rows += "<button class=\"btn-secondary " + (x.estado === "LISTO" ? "is-done" : "") + "\" data-tog=\"" + escapeHtml(x.id) + "\" aria-label=\"" + (x.estado === "LISTO" ? "Volver a pendiente" : "Marcar como listo") + "\" title=\"" + (x.estado === "LISTO" ? "Volver a pendiente" : "Marcar como listo") + "\">";
+        rows += "<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><path d=\"M20 6L9 17l-5-5\"></path></svg>";
+        rows += "</button>";
+        rows += "<button class=\"btn-secondary\" data-del=\"" + escapeHtml(x.id) + "\" aria-label=\"Eliminar evento\" title=\"Eliminar evento\">";
+        rows += "<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><path d=\"M3 6h18\"></path><path d=\"M8 6V4h8v2\"></path><path d=\"M19 6l-1 14H6L5 6\"></path><path d=\"M10 11v6\"></path><path d=\"M14 11v6\"></path></svg>";
+        rows += "</button>";
+        rows += "</span></td></tr>";
+
+        cards += "<article class=\"cal-event-card\">";
+        cards += "<div class=\"cal-event-head\">";
+        cards += "<div><p class=\"cal-event-title\">" + escapeHtml(x.descripcion || x.tipo || "Evento") + "</p></div>";
+        cards += "<div class=\"cal-event-date\">" + escapeHtml(fmtDateHuman(x.fecha || "")) + "</div>";
+        cards += "</div>";
+        cards += "<div class=\"cal-event-meta\">";
+        cards += "<span>" + escapeHtml(x.tipo || "") + "</span>";
+        cards += "<span class=\"badge " + (x.estado === "LISTO" ? "badge-success" : "badge-warning") + "\">" + escapeHtml(x.estado) + "</span>";
+        if(x.monto){
+          cards += "<span>$ " + escapeHtml(fmtMoney(x.monto)) + "</span>";
+        }
+        cards += "</div>";
+        cards += "<div class=\"cal-event-actions\">";
+        cards += "<button class=\"btn-secondary " + (x.estado === "LISTO" ? "is-done" : "") + "\" data-tog=\"" + escapeHtml(x.id) + "\" aria-label=\"" + (x.estado === "LISTO" ? "Volver a pendiente" : "Marcar como listo") + "\" title=\"" + (x.estado === "LISTO" ? "Volver a pendiente" : "Marcar como listo") + "\">";
+        cards += "<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><path d=\"M20 6L9 17l-5-5\"></path></svg>";
+        cards += "</button>";
+        cards += "<button class=\"btn-secondary\" data-del=\"" + escapeHtml(x.id) + "\" aria-label=\"Eliminar evento\" title=\"Eliminar evento\">";
+        cards += "<svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><path d=\"M3 6h18\"></path><path d=\"M8 6V4h8v2\"></path><path d=\"M19 6l-1 14H6L5 6\"></path><path d=\"M10 11v6\"></path><path d=\"M14 11v6\"></path></svg>";
+        cards += "</button>";
+        cards += "</div>";
+        cards += "</article>";
+      }
+      tbl.innerHTML = rows;
+      if(eventsListMobile) eventsListMobile.innerHTML = cards;
+
+      document.querySelectorAll("[data-del]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const id = btn.getAttribute("data-del");
+          delItem(id);
+          render();
+        });
+      });
+
+      document.querySelectorAll("[data-tog]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const id = btn.getAttribute("data-tog");
+          toggleEstado(id);
+          render();
+        });
+      });
+
+      renderMonthCalendar();
+    }
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const f = fecha.value;
+      const d = desc.value.trim();
+      if(!f || !d){
+        showMsg("Completa fecha y descripcion.");
+        return;
+      }
+
+      const newId = addItem({
+        tipo: tipo.value,
+        fecha: f,
+        descripcion: d,
+        estado: estado.value,
+        monto: Number(monto.value || 0)
+      });
+
+      form.reset();
+      fecha.value = todayISO();
+      estado.value = "PENDIENTE";
+      tipo.value = "RECORDATORIO";
+
+      showMsg("Evento guardado.");
+      render();
+
+      if(tipo.value === "RECORDATORIO"){
+        requestNotificationPermission().then(granted => {
+          if(!granted){
+            showMsg("Notificaciones bloqueadas en el navegador.");
+            return;
+          }
+          checkReminders();
+        });
+      }
+    });
+
+    btnClear.addEventListener("click", () => {
+      q.value = "";
+      fEstado.value = "TODOS";
+      setMonthControls(currentMonth());
+      syncCalViewFromMonth();
+      render();
+    });
+
+    q.addEventListener("input", render);
+    fEstado.addEventListener("change", render);
+    monthSelect.addEventListener("change", () => {
+      syncCalViewFromMonth();
+      render();
+    });
+    yearSelect.addEventListener("change", () => {
+      syncCalViewFromMonth();
+      render();
+    });
+    fecha.addEventListener("change", () => {
+      if(!fecha.value) return;
+      setMonthControls(fecha.value.slice(0, 7));
+      syncCalViewFromMonth();
+      render();
+    });
+    calPrev.addEventListener("click", () => {
+      calView.month -= 1;
+      if(calView.month < 0){
+        calView.month = 11;
+        calView.year -= 1;
+      }
+      setMonthControls(calView.year + "-" + String(calView.month + 1).padStart(2, "0"));
+      render();
+    });
+    calNext.addEventListener("click", () => {
+      calView.month += 1;
+      if(calView.month > 11){
+        calView.month = 0;
+        calView.year += 1;
+      }
+      setMonthControls(calView.year + "-" + String(calView.month + 1).padStart(2, "0"));
+      render();
+    });
+
+    function openReminderFromQuery(){
+      const params = new URLSearchParams(location.search || "");
+      const id = params.get("reminderId");
+      if(!id) return;
+      const list = loadList();
+      const item = list.find(x => x.id === id);
+      if(!item) return;
+      q.value = item.descripcion || "";
+      if(item.fecha){
+        fecha.value = String(item.fecha);
+        setMonthControls(String(item.fecha).slice(0, 7));
+        syncCalViewFromMonth();
+      }
+      showMsg("Recordatorio: " + (item.descripcion || "Sin descripcion"));
+      render();
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      fecha.value = todayISO();
+      fillMonthControls();
+      setMonthControls(currentMonth());
+      syncCalViewFromMonth();
+      render();
+      openReminderFromQuery();
+      checkReminders();
+      setInterval(checkReminders, 60 * 1000);
+    });
+  </script>
+
+</body>
+</html>

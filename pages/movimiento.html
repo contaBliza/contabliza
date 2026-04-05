@@ -1,0 +1,958 @@
+﻿<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>ContaBliza - Nuevo movimiento</title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/componentes.css">
+  <link rel="stylesheet" href="../css/pages.css">
+  <style>
+    body.mv-page{
+      background:
+        radial-gradient(980px 460px at 50% -130px, rgba(136, 208, 222, 0.36) 0%, rgba(136, 208, 222, 0) 66%),
+        radial-gradient(620px 290px at 86% 164px, rgba(239, 191, 104, 0.21) 0%, rgba(239, 191, 104, 0) 82%),
+        linear-gradient(180deg, #0a4154 0%, #16576c 224px, #ece9e5 224px, #f1efec 100%);
+      color: #103446;
+    }
+    .mv-page .navbar{
+      height: 62px;
+      background:
+        radial-gradient(260px 100px at 82% 120%, rgba(233, 186, 100, 0.2), rgba(233, 186, 100, 0)),
+        linear-gradient(135deg, rgba(10, 61, 78, 0.92), rgba(18, 83, 104, 0.9));
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 8px 22px rgba(5, 34, 46, 0.34);
+    }
+    .mv-page .navbar::after{
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -1px;
+      height: 2px;
+      background: linear-gradient(90deg, rgba(214, 245, 255, 0.28), rgba(240, 198, 118, 0.9));
+      pointer-events: none;
+    }
+    .mv-page .nav-btn{ color: #f4fafc; }
+    .mv-page .nav-btn:hover{ opacity: 1; background: rgba(255,255,255,0.09); }
+    .brand-chip{
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      color: #ecf6f8;
+      text-shadow: 0 2px 7px rgba(0,0,0,0.28);
+    }
+    .brand-mark{
+      width: 46px;
+      height: 46px;
+      display: block;
+      background: center / contain no-repeat url("../assets/contabliza-mark.svg");
+      filter: drop-shadow(0 7px 16px rgba(9, 38, 49, 0.35));
+      color: transparent;
+      font-size: 0;
+      line-height: 0;
+    }
+    .brand-text{
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 1.66rem;
+      letter-spacing: -0.02em;
+    }
+    .mv-shell{
+      max-width: 690px;
+      margin: 0 auto;
+      padding-top: 82px;
+      padding-bottom: 26px;
+      position: relative;
+    }
+    .mv-shell::before{
+      content: "";
+      position: absolute;
+      left: -10px;
+      right: -10px;
+      top: 194px;
+      height: 58px;
+      border-top-left-radius: 48% 100%;
+      border-top-right-radius: 48% 100%;
+      background: linear-gradient(180deg, rgba(248, 247, 243, 0.95), rgba(236, 233, 227, 0.98));
+      box-shadow: inset 0 1px 0 rgba(245, 209, 138, 0.75);
+      z-index: 0;
+    }
+    .mv-hero{
+      padding: 20px 8px 20px;
+      position: relative;
+      z-index: 1;
+    }
+    .mv-hero h2{
+      color: #ebf6f8;
+      font-size: 2.1rem;
+      margin: 0 0 6px;
+      text-shadow: 0 4px 14px rgba(0,0,0,0.34);
+    }
+    .mv-hero p{
+      color: rgba(235,247,250,0.92);
+      font-size: 1.05rem;
+      margin: 0;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.26);
+    }
+    .mv-card{
+      border-radius: 20px;
+      border: 1px solid #ddd8cf;
+      background:
+        radial-gradient(280px 110px at 100% 0%, rgba(243, 206, 122, 0.16), rgba(243, 206, 122, 0)),
+        linear-gradient(180deg, #faf8f4 0%, #f5f1eb 100%);
+      box-shadow: 0 12px 30px rgba(15, 35, 45, 0.14);
+      padding: 18px 16px 14px;
+      position: relative;
+      z-index: 1;
+    }
+    .mv-type-toggle{
+      margin-bottom: 16px;
+      background: rgba(247, 244, 239, 0.98);
+      border: 1px solid #ddd3c7;
+      border-radius: 999px;
+      padding: 5px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.82);
+    }
+    .mv-type-btn{
+      min-height: 44px;
+      font-size: 0.98rem;
+      font-weight: 700;
+      border-radius: 999px;
+      border-color: transparent;
+      background: transparent;
+      color: #17384b;
+      box-shadow: none;
+    }
+    .mv-type-btn.active-ingreso{
+      background: linear-gradient(135deg, #1e7c45, #237d38);
+      color: #fff;
+      border-color: #1f7a3a;
+      box-shadow: 0 10px 20px rgba(22, 91, 50, 0.2);
+    }
+    .mv-type-btn.active-egreso{
+      background: linear-gradient(135deg, #f7e9ba, #f4d57a);
+      color: #8f291d;
+      border-color: #e2c467;
+      box-shadow: 0 10px 20px rgba(194, 145, 39, 0.14);
+    }
+    #movForm{
+      display: grid;
+      gap: 12px;
+      grid-template-columns: 1fr;
+    }
+    #movForm .form-group{ margin-bottom: 0; }
+    #movForm .form-group label{
+      font-size: 0.78rem;
+      color: #27485a;
+      margin-bottom: 5px;
+      font-weight: 700;
+      letter-spacing: 0.015em;
+      text-transform: uppercase;
+    }
+    #movForm input,
+    #movForm select{
+      min-height: 54px;
+      border-radius: 16px;
+      border-color: #d8d0c4;
+      background: #fffcf9;
+      color: #16374b;
+      font-size: 1rem;
+      padding: 10px 14px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.95), 0 4px 12px rgba(19, 36, 46, 0.04);
+    }
+    #movForm input:focus,
+    #movForm select:focus{
+      outline: none;
+      border-color: #5d8c9d;
+      box-shadow: 0 0 0 3px rgba(63, 128, 150, 0.14);
+    }
+    #movForm .btn-primary{
+      min-height: 56px;
+      border-radius: 16px;
+      font-size: 1rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, rgba(12, 82, 103, 0.95), rgba(23, 109, 128, 0.94));
+      border-color: rgba(12, 82, 103, 0.38);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 12px 24px rgba(10, 43, 56, 0.22);
+    }
+    .mv-grid{
+      display: grid;
+      gap: 12px;
+      grid-template-columns: 1fr 1fr;
+    }
+    .mv-grid .form-group,
+    .mv-span{
+      min-width: 0;
+    }
+    .mv-span{
+      grid-column: 1 / -1;
+    }
+    .mv-attach-title{
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: #204559;
+      font-size: 0.88rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .attach-actions{
+      display: grid;
+      gap: 8px;
+      grid-template-columns: 1fr 1fr;
+    }
+    .attach-actions .btn-secondary{
+      min-height: 46px;
+      border-radius: 14px;
+      font-size: 0.92rem;
+      font-family: var(--font-display);
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: rgba(255, 252, 249, 0.86);
+      color: #26546a;
+      border-color: #8fb0bd;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.78);
+      cursor: pointer;
+      text-decoration: none;
+      text-transform: none;
+    }
+    .attach-actions .btn-secondary svg{
+      flex: 0 0 auto;
+    }
+    .attach-actions .attach-text{
+      font-family: var(--font-display);
+      font-size: 0.84rem;
+      font-weight: 500;
+      line-height: 1;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+    .attach-box{
+      border-top: 1px solid rgba(213, 204, 193, 0.85);
+      padding-top: 10px;
+    }
+    #adjuntoEstado{
+      margin-top: 4px !important;
+      color: #657a87 !important;
+      font-size: 0.88rem !important;
+    }
+    #savedMsg{
+      margin-top: 10px;
+      color: #0d455a;
+      background: #dceff5;
+      border: 1px solid #bad7e2;
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-size: 0.92rem;
+    }
+    .camera-panel{
+      border-radius: 18px;
+      border: 1px solid #ddd8cf;
+      background: #f7f4ef;
+      box-shadow: 0 16px 36px rgba(15, 35, 45, 0.2);
+      padding: 16px;
+    }
+    .camera-header{
+      color: #0f3244;
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .camera-video{
+      width: 100%;
+      border-radius: 14px;
+      border: 1px solid #d7d0c6;
+      background: #0f1f27;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.12);
+    }
+    .camera-actions{
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+    .camera-actions .btn-secondary,
+    .camera-actions .btn-primary{
+      min-height: 42px;
+      border-radius: 12px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      padding: 0 14px;
+    }
+    @media (max-width: 560px){
+      .mv-shell{
+        padding-top: 76px;
+        padding-left: 12px;
+        padding-right: 12px;
+      }
+      .mv-shell::before{
+        left: -2px;
+        right: -2px;
+        top: 174px;
+        height: 52px;
+      }
+      .brand-mark{ width:40px; height:40px; }
+      .brand-text{ font-size:1.48rem; }
+      .mv-hero h2{ font-size:1.85rem; }
+      .mv-hero p{ font-size:0.98rem; }
+      .mv-grid{ grid-template-columns: 1fr; }
+      .attach-actions{ grid-template-columns: 1fr; }
+      #movForm .btn-primary{ min-height: 50px; }
+      .attach-actions .btn-secondary{
+        min-height: 44px;
+        font-size: 0.9rem;
+      }
+      .camera-panel{
+        border-radius: 16px;
+        padding: 14px;
+      }
+      .camera-actions .btn-secondary,
+      .camera-actions .btn-primary{
+        min-height: 40px;
+        font-size: 0.88rem;
+      }
+    }
+  </style>
+</head>
+
+<body class="mv-page">
+
+  <!-- =============================
+       NAVBAR
+       ============================= -->
+  <nav class="navbar">
+    <div class="nav-left">
+            <button class="nav-btn" type="button" data-nav="back" aria-label="Volver" title="Volver"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"></path></svg></button>
+      <button class="nav-btn" data-nav="menu" aria-label="Menú" title="Menú"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16"></path><path d="M4 12h16"></path><path d="M4 18h16"></path></svg></button>
+    </div>
+
+    <div class="nav-center">
+      <a class="brand-chip" href="./home.html" aria-label="Ir a Home">
+        <span class="brand-mark">CB</span>
+        <span class="brand-text">ContaBliza</span>
+      </a>
+    </div>
+
+    <div class="nav-right">
+      <button class="nav-btn" data-action="notifications" aria-label="Notificaciones" title="Notificaciones"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 10-12 0c0 7-3 7-3 7h18s-3 0-3-7"></path><path d="M13.73 21a2 2 0 01-3.46 0"></path></svg></button>
+      <button class="nav-btn" id="btnLogout" title="Salir" aria-label="Salir"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 17l5-5-5-5"></path><path d="M15 12H3"></path><path d="M21 5v14"></path></svg></button>
+    </div>
+  </nav>
+  <!-- NAV DRAWER -->
+  <div class="nav-drawer" id="navDrawer" aria-hidden="true">
+    <div class="nav-drawer-backdrop" data-nav="close"></div>
+    <div class="nav-drawer-panel" role="menu">
+      <div class="nav-drawer-header">Menú</div>
+      <a class="nav-drawer-item" href="./home.html">
+        <span class="ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 10l9-7 9 7"></path>
+            <path d="M5 10v9h14v-9"></path>
+          </svg>
+        </span>
+        <span>Home</span>
+      </a>
+      <a class="nav-drawer-item" href="./movimientos.html">
+        <span class="ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M8 6h10"></path>
+            <path d="M6 10h12"></path>
+            <path d="M6 14h12"></path>
+            <path d="M8 18h10"></path>
+          </svg>
+        </span>
+        <span>Movimientos</span>
+      </a>
+      <a class="nav-drawer-item" href="./movimiento.html">
+        <span class="ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 5v14"></path>
+            <path d="M5 12h14"></path>
+          </svg>
+        </span>
+        <span>Nuevo</span>
+      </a>
+      <a class="nav-drawer-item" href="./reportes.html">
+        <span class="ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 19V5"></path>
+            <path d="M8 19V9"></path>
+            <path d="M12 19V12"></path>
+            <path d="M16 19V7"></path>
+            <path d="M20 19V10"></path>
+          </svg>
+        </span>
+        <span>Reportes</span>
+      </a>
+      <a class="nav-drawer-item" href="./calendario.html">
+        <span class="ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="5" width="18" height="16" rx="2"></rect>
+            <path d="M16 3v4"></path>
+            <path d="M8 3v4"></path>
+            <path d="M3 9h18"></path>
+          </svg>
+        </span>
+        <span>Calendario</span>
+      </a>
+            <a class="nav-drawer-item" href="./documentos.html">
+        <span class="ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M6 2h9l5 5v15a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"></path>
+            <path d="M14 2v6h6"></path>
+            <path d="M8 13h8"></path>
+            <path d="M8 17h8"></path>
+          </svg>
+        </span>
+        <span>Documentos</span>
+      </a>
+      <a class="nav-drawer-item" href="./config.html">
+        <span class="ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2v2"></path>
+            <path d="M12 20v2"></path>
+            <path d="M4.93 4.93l1.41 1.41"></path>
+            <path d="M17.66 17.66l1.41 1.41"></path>
+            <path d="M2 12h2"></path>
+            <path d="M20 12h2"></path>
+            <path d="M4.93 19.07l1.41-1.41"></path>
+            <path d="M17.66 6.34l1.41-1.41"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+        </span>
+        <span>Configuración</span>
+      </a>
+      <div class="nav-drawer-divider"></div>
+      <button class="nav-drawer-item" data-action="logout" type="button">
+        <span class="ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M10 17l5-5-5-5"></path>
+            <path d="M15 12H3"></path>
+            <path d="M21 5v14"></path>
+          </svg>
+        </span>
+        <span>Cerrar sesión</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- =============================
+       CONTENT
+       ============================= -->
+  <main class="dashboard mv-shell">
+    <section class="mv-hero">
+      <h2>Nuevo movimiento</h2>
+      <p>Registrar ingreso o gasto individual</p>
+    </section>
+
+    <section class="mv-card">
+      <div class="mv-type-toggle" role="tablist" aria-label="Tipo de movimiento">
+        <button class="mv-type-btn active-ingreso" id="btnIngreso" type="button">
+          Ingreso
+        </button>
+        <button class="mv-type-btn" id="btnEgreso" type="button">
+          Gasto
+        </button>
+      </div>
+
+      <form id="movForm">
+        <div class="mv-grid">
+          <div class="form-group mv-span">
+            <label for="monto">Monto</label>
+            <input id="monto" type="number" min="0" step="0.01" placeholder="Ej: 2500" required>
+          </div>
+
+          <div class="form-group">
+            <label for="moneda">Moneda</label>
+            <select id="moneda" required>
+              <option value="UYU" selected>UYU</option>
+              <option value="USD">USD</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="medio">Cuenta / Medio</label>
+            <select id="medio" required></select>
+          </div>
+
+          <div class="form-group">
+            <label for="fecha">Fecha</label>
+            <input id="fecha" type="date" required>
+          </div>
+
+          <div class="form-group">
+            <label for="concepto">Concepto</label>
+            <input id="concepto" type="text" placeholder="Ej: Sueldo, Supermercado, Alquiler" required>
+          </div>
+
+          <div class="form-group mv-span">
+            <label for="categoria">Categoría</label>
+            <select id="categoria"></select>
+          </div>
+
+          <div class="form-group mv-span" id="categoriaCustomWrap" style="display:none;">
+            <label for="categoriaCustom">Nueva categoría</label>
+            <input id="categoriaCustom" type="text" placeholder="Ej: Ventas, Servicios, Impuestos">
+          </div>
+
+          <div class="form-group mv-span attach-box">
+            <div class="mv-attach-title">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M21.44 11.05l-8.49 8.49a5.5 5.5 0 01-7.78-7.78l8.49-8.49a3.5 3.5 0 014.95 4.95l-8.49 8.49a1.5 1.5 0 01-2.12-2.12l7.78-7.78"></path>
+              </svg>
+              <span>Adjuntar comprobante</span>
+            </div>
+            <div class="attach-actions">
+              <label class="btn-secondary" for="adjuntoArchivo">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+                  <path d="M14 3v6h6"></path>
+                  <path d="M12 18v-6"></path>
+                  <path d="M9 15l3-3 3 3"></path>
+                </svg>
+                <span class="attach-text">Subir archivo</span>
+              </label>
+              <button class="btn-secondary" id="btnTomarFoto" type="button">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path d="M4 7h3l2-2h6l2 2h3v12H4z"></path>
+                  <circle cx="12" cy="13" r="3"></circle>
+                </svg>
+                <span class="attach-text">Tomar foto</span>
+              </button>
+            </div>
+            <div id="adjuntoEstado">
+              Ningún archivo seleccionado
+            </div>
+            <img id="adjuntoPreview" alt="Vista previa del comprobante" style="display:none; margin-top:10px; max-width:220px; width:100%; height:auto; border-radius:10px; box-shadow:var(--shadow);">
+            <iframe id="adjuntoPreviewPdf" title="Vista previa del PDF" style="display:none; margin-top:10px; width:220px; height:280px; border:1px solid var(--line); border-radius:10px; background:#fff;"></iframe>
+            <div id="adjuntoPreviewAlt" style="display:none; margin-top:10px; padding:10px 12px; border-radius:10px; border:1px solid var(--line); background:var(--soft); font-size:0.9rem;">
+            Archivo adjunto
+            </div>
+            <input id="adjuntoArchivo" type="file" accept="image/*,application/pdf" style="display:none;">
+            <input id="adjuntoFoto" type="file" accept="image/*" capture="environment" style="display:none;">
+          </div>
+
+          <div class="form-group mv-span">
+            <label for="factura">Referencia (Opcional)</label>
+            <input id="factura" type="text" placeholder="Ej: A-1234 / Recibo 45">
+          </div>
+        </div>
+
+        <button class="btn-primary mv-span" type="submit">
+          Guardar movimiento
+        </button>
+      </form>
+
+      <div id="savedMsg" class="chart-empty" style="display:none; margin-top:12px;">
+        Movimiento guardado correctamente!
+      </div>
+    </section>
+  </main>
+
+  <!-- CAMERA MODAL -->
+  <div class="camera-modal" id="cameraModal" aria-hidden="true" role="dialog" aria-label="Tomar foto">
+    <div class="camera-panel">
+      <div class="camera-header">Tomar foto</div>
+      <video id="cameraVideo" class="camera-video" autoplay playsinline></video>
+      <canvas id="cameraCanvas" style="display:none;"></canvas>
+      <div class="camera-actions">
+        <button class="btn-secondary" id="cameraCapture" type="button">Capturar</button>
+        <button class="btn-primary" id="cameraUse" type="button" disabled>Usar foto</button>
+        <button class="btn-secondary" id="cameraClose" type="button">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =============================
+       SCRIPTS
+       ============================= -->
+  <script src="../js/storage.js"></script>
+  <script src="../js/app.js"></script>
+
+  <script>
+    // =============================
+    // movimiento.html - ingreso / egreso simple
+    // =============================
+
+    const form = document.getElementById("movForm");
+    const savedMsg = document.getElementById("savedMsg");
+
+    const btnIngreso = document.getElementById("btnIngreso");
+    const btnEgreso = document.getElementById("btnEgreso");
+
+    const monto = document.getElementById("monto");
+    const moneda = document.getElementById("moneda");
+    const medio = document.getElementById("medio");
+    const fecha = document.getElementById("fecha");
+    const concepto = document.getElementById("concepto");
+    const factura = document.getElementById("factura");
+    const categoria = document.getElementById("categoria");
+    const categoriaCustomWrap = document.getElementById("categoriaCustomWrap");
+    const categoriaCustom = document.getElementById("categoriaCustom");
+    const adjuntoArchivo = document.getElementById("adjuntoArchivo");
+    const adjuntoFoto = document.getElementById("adjuntoFoto");
+    const adjuntoEstado = document.getElementById("adjuntoEstado");
+    const adjuntoPreview = document.getElementById("adjuntoPreview");
+    const adjuntoPreviewPdf = document.getElementById("adjuntoPreviewPdf");
+    const adjuntoPreviewAlt = document.getElementById("adjuntoPreviewAlt");
+    const btnTomarFoto = document.getElementById("btnTomarFoto");
+    const cameraModal = document.getElementById("cameraModal");
+    const cameraVideo = document.getElementById("cameraVideo");
+    const cameraCanvas = document.getElementById("cameraCanvas");
+    const cameraCapture = document.getElementById("cameraCapture");
+    const cameraUse = document.getElementById("cameraUse");
+    const cameraClose = document.getElementById("cameraClose");
+
+    let currentTipo = "ingreso";
+    let cameraStream = null;
+    let cameraFile = null;
+    let previewUrl = null;
+
+    function getMediosSafe(){
+      if(typeof getMedios === "function") return getMedios();
+      return [
+        { id: "caja", name: "Caja" },
+        { id: "banco", name: "Banco" },
+        { id: "tarjeta", name: "Tarjeta" }
+      ];
+    }
+
+    function fillMedioOptions(){
+      const medios = getMediosSafe();
+      medio.innerHTML = medios.map(m =>
+        `<option value="${m.id}">${m.name}</option>`
+      ).join("");
+
+      if(medios.some(m => m.id === "banco")) medio.value = "banco";
+      else if(medios.length) medio.value = medios[0].id;
+    }
+
+    function setTipo(tipo){
+      currentTipo = tipo;
+
+      btnIngreso.classList.remove("active-ingreso");
+      btnEgreso.classList.remove("active-egreso");
+
+      if(tipo === "ingreso"){
+        btnIngreso.classList.add("active-ingreso");
+      } else {
+        btnEgreso.classList.add("active-egreso");
+      }
+    }
+
+    function getMovimientosSafe(){
+      if(typeof listMovimientosSortedDesc === "function") return listMovimientosSortedDesc();
+      if(typeof getMovimientos === "function") return getMovimientos();
+      return [];
+    }
+
+    function getCategoriasBase(){
+      if(typeof getCategorias === "function") return getCategorias();
+      return ["Ventas", "Compras", "Servicios", "Impuestos", "Sueldos", "Otros"];
+    }
+
+    function fillCategoriaOptions(){
+      if(!categoria) return;
+      const base = getCategoriasBase();
+      const movs = getMovimientosSafe();
+      const extra = movs.map(m => String(m.categoria || "").trim()).filter(Boolean);
+      const set = new Set([...base, ...extra]);
+      const list = Array.from(set).sort((a,b) => a.localeCompare(b));
+      const current = categoria.value || "";
+      categoria.innerHTML = [
+        `<option value="">Sin categoría</option>`,
+        ...list.map(n => `<option value="${n}">${n}</option>`),
+        `<option value="__other__">Otra categoría...</option>`
+      ].join("");
+      if(Array.from(categoria.options).some(option => option.value === current)){
+        categoria.value = current;
+      }else if(current){
+        categoria.value = "__other__";
+        if(categoriaCustom) categoriaCustom.value = current;
+      }else{
+        categoria.value = "";
+      }
+      syncCategoriaCustom();
+    }
+
+    function syncCategoriaCustom(){
+      const showCustom = categoria && categoria.value === "__other__";
+      if(categoriaCustomWrap) categoriaCustomWrap.style.display = showCustom ? "block" : "none";
+      if(categoriaCustom && !showCustom){
+        categoriaCustom.value = "";
+      }
+    }
+
+    function setAdjuntoEstado(file){
+      if(!adjuntoEstado) return;
+      adjuntoEstado.textContent = file?.name ? `Adjunto: ${file.name}` : "Ningún archivo seleccionado";
+    }
+
+    function clearAdjuntos(){
+      adjuntoArchivo.value = "";
+      adjuntoFoto.value = "";
+      setAdjuntoEstado(null);
+      cameraFile = null;
+      cameraUse.disabled = true;
+      if(adjuntoPreview){
+        if(previewUrl){
+          URL.revokeObjectURL(previewUrl);
+          previewUrl = null;
+        }
+        adjuntoPreview.src = "";
+        adjuntoPreview.style.display = "none";
+      }
+      if(adjuntoPreviewPdf){
+        adjuntoPreviewPdf.src = "";
+        adjuntoPreviewPdf.style.display = "none";
+      }
+      if(adjuntoPreviewAlt){
+        adjuntoPreviewAlt.textContent = "Archivo adjunto";
+        adjuntoPreviewAlt.style.display = "none";
+      }
+    }
+
+    function setAdjuntoPreview(file){
+      if(!adjuntoPreview) return;
+      if(!file){
+        if(previewUrl){
+          URL.revokeObjectURL(previewUrl);
+          previewUrl = null;
+        }
+        adjuntoPreview.src = "";
+        adjuntoPreview.style.display = "none";
+        if(adjuntoPreviewAlt){
+          adjuntoPreviewAlt.textContent = "Archivo adjunto";
+          adjuntoPreviewAlt.style.display = "none";
+        }
+        return;
+      }
+
+      if(!file.type?.startsWith("image/")){
+        if(previewUrl){
+          URL.revokeObjectURL(previewUrl);
+          previewUrl = null;
+        }
+        adjuntoPreview.src = "";
+        adjuntoPreview.style.display = "none";
+        if(adjuntoPreviewPdf){
+          if(file.type?.includes("pdf")){
+            adjuntoPreviewPdf.src = URL.createObjectURL(file);
+            adjuntoPreviewPdf.style.display = "block";
+          }else{
+            adjuntoPreviewPdf.src = "";
+            adjuntoPreviewPdf.style.display = "none";
+          }
+        }
+        if(adjuntoPreviewAlt){
+          const label = file.type?.includes("pdf") ? "PDF adjunto" : "Archivo adjunto";
+          adjuntoPreviewAlt.textContent = `${label}: ${file.name || "sin nombre"}`;
+          adjuntoPreviewAlt.style.display = file.type?.includes("pdf") ? "none" : "block";
+        }
+        return;
+      }
+
+      if(previewUrl){
+        URL.revokeObjectURL(previewUrl);
+      }
+      previewUrl = URL.createObjectURL(file);
+      adjuntoPreview.src = previewUrl;
+      adjuntoPreview.style.display = "block";
+      if(adjuntoPreviewPdf){
+        adjuntoPreviewPdf.src = "";
+        adjuntoPreviewPdf.style.display = "none";
+      }
+      if(adjuntoPreviewAlt){
+        adjuntoPreviewAlt.style.display = "none";
+      }
+    }
+
+    adjuntoArchivo.addEventListener("change", () => {
+      const file = adjuntoArchivo?.files?.[0] || null;
+      if(file) adjuntoFoto.value = "";
+      cameraFile = null;
+      cameraUse.disabled = true;
+      setAdjuntoEstado(file);
+      setAdjuntoPreview(file);
+    });
+
+    adjuntoFoto.addEventListener("change", () => {
+      const file = adjuntoFoto?.files?.[0] || null;
+      if(file) adjuntoArchivo.value = "";
+      cameraFile = null;
+      cameraUse.disabled = true;
+      setAdjuntoEstado(file);
+      setAdjuntoPreview(file);
+    });
+
+    function openCameraModal(){
+      if(!navigator.mediaDevices?.getUserMedia){
+        adjuntoFoto.click();
+        return;
+      }
+
+      navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+        .then(stream => {
+          cameraStream = stream;
+          cameraVideo.srcObject = stream;
+          cameraModal.classList.add("is-open");
+          cameraModal.setAttribute("aria-hidden", "false");
+        })
+        .catch(() => {
+          adjuntoFoto.click();
+        });
+    }
+
+    function closeCameraModal(){
+      if(cameraStream){
+        cameraStream.getTracks().forEach(t => t.stop());
+        cameraStream = null;
+      }
+      cameraVideo.srcObject = null;
+      cameraModal.classList.remove("is-open");
+      cameraModal.setAttribute("aria-hidden", "true");
+    }
+
+    btnTomarFoto.addEventListener("click", openCameraModal);
+    cameraClose.addEventListener("click", closeCameraModal);
+
+    cameraCapture.addEventListener("click", () => {
+      if(!cameraVideo.videoWidth) return;
+      const width = cameraVideo.videoWidth;
+      const height = cameraVideo.videoHeight;
+      cameraCanvas.width = width;
+      cameraCanvas.height = height;
+      const ctx = cameraCanvas.getContext("2d");
+      ctx.drawImage(cameraVideo, 0, 0, width, height);
+
+      cameraCanvas.toBlob((blob) => {
+        if(!blob) return;
+        const file = new File([blob], `comprobante-${Date.now()}.jpg`, { type: "image/jpeg" });
+        cameraFile = file;
+        adjuntoArchivo.value = "";
+        adjuntoFoto.value = "";
+        setAdjuntoEstado(file);
+        setAdjuntoPreview(file);
+        cameraUse.disabled = false;
+      }, "image/jpeg", 0.9);
+    });
+
+    cameraUse.addEventListener("click", () => {
+      closeCameraModal();
+    });
+
+    function readFileAsDataUrl(file){
+      return new Promise(resolve => {
+        if(!file) return resolve(null);
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result || null);
+        reader.onerror = () => resolve(null);
+        reader.readAsDataURL(file);
+      });
+    }
+
+    btnIngreso.addEventListener("click", () => setTipo("ingreso"));
+    btnEgreso.addEventListener("click", () => setTipo("egreso"));
+    if(categoria){
+      categoria.addEventListener("change", syncCategoriaCustom);
+    }
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const montoVal = Number(monto.value || 0);
+      const fechaVal = fecha.value;
+      const medioId = medio.value;
+      const monedaVal = moneda.value;
+      const conceptoVal = concepto.value.trim();
+      const facturaVal = factura ? factura.value.trim() : "";
+      const categoriaVal = categoria
+        ? (categoria.value === "__other__" ? String(categoriaCustom?.value || "").trim() : String(categoria.value || "").trim())
+        : "";
+      const adjFile = cameraFile || adjuntoFoto?.files?.[0] || adjuntoArchivo?.files?.[0] || null;
+      const adjName = adjFile?.name || "";
+
+      if(!montoVal || montoVal <= 0 || !fechaVal || !medioId || !conceptoVal){
+        savedMsg.textContent = "Completa monto, fecha, concepto y cuenta/medio.";
+        savedMsg.style.display = "block";
+        setTimeout(() => savedMsg.style.display = "none", 2000);
+        return;
+      }
+
+      if(typeof addMovimiento !== "function"){
+        savedMsg.textContent = "Falta addMovimiento() en storage.js";
+        savedMsg.style.display = "block";
+        setTimeout(() => savedMsg.style.display = "none", 2000);
+        return;
+      }
+
+      readFileAsDataUrl(adjFile).then((dataUrl) => {
+        addMovimiento({
+          fecha: fechaVal,
+          tipo: currentTipo,
+          concepto: conceptoVal,
+          monto: montoVal,
+          moneda: monedaVal,
+          medioId,
+          categoria: categoriaVal || null,
+          factura: facturaVal || null,
+          adjuntoName: adjName || null,
+          adjuntoDataUrl: dataUrl || null,
+          adjuntoMime: adjFile?.type || null
+        });
+
+        form.reset();
+        clearAdjuntos();
+        fecha.value = new Date().toISOString().slice(0, 10);
+        fillMedioOptions();
+        fillCategoriaOptions();
+        if(categoriaCustom) categoriaCustom.value = "";
+        setTipo(currentTipo);
+        moneda.value = (typeof getSettings === "function" ? (getSettings()?.moneda || "UYU") : "UYU");
+
+        savedMsg.style.display = "block";
+        setTimeout(() => savedMsg.style.display = "none", 2000);
+      });
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+      fecha.value = new Date().toISOString().slice(0, 10);
+      fillMedioOptions();
+      fillCategoriaOptions();
+      setTipo("ingreso");
+      clearAdjuntos();
+      if(typeof getSettings === "function"){
+        const s = getSettings();
+        if(s?.moneda) moneda.value = s.moneda;
+      }
+    });
+
+    window.addEventListener("cb:settings-updated", () => {
+      fillCategoriaOptions();
+      fillMedioOptions();
+      if(typeof getSettings === "function"){
+        const s = getSettings();
+        if(s?.moneda) moneda.value = s.moneda;
+      }
+    });
+
+    window.addEventListener("storage", (e) => {
+      if(e.key === "contabliza_settings"){
+        fillCategoriaOptions();
+        fillMedioOptions();
+      }
+    });
+  </script>
+
+</body>
+</html>
+
+

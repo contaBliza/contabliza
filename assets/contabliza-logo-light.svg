@@ -1,0 +1,22 @@
+<svg width="456" height="128" viewBox="0 0 456 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="cbGradient" x1="18" y1="18" x2="104" y2="104" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#35D8D4"/>
+      <stop offset="1" stop-color="#18B7D7"/>
+    </linearGradient>
+    <style>
+      text{
+        font-family: "Segoe UI", "Poppins", "Montserrat", Arial, sans-serif;
+        font-weight: 600;
+        letter-spacing: -0.03em;
+      }
+    </style>
+  </defs>
+  <g transform="translate(2 2) scale(1.08)">
+    <path d="M88 24H57C38.7746 24 24 38.7746 24 57C24 75.2254 38.7746 90 57 90H74" stroke="url(#cbGradient)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M60 24V89" stroke="url(#cbGradient)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M60 24H79C88.9411 24 97 32.0589 97 42C97 51.9411 88.9411 60 79 60H60" stroke="url(#cbGradient)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M60 60H82C91.9411 60 100 68.0589 100 78C100 87.9411 91.9411 96 82 96H60" stroke="url(#cbGradient)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text x="144" y="81" font-size="55" fill="#FFFFFF">ContaBliza</text>
+</svg>

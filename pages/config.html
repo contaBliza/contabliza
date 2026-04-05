@@ -1,0 +1,678 @@
+﻿<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>ContaBliza - Configuración</title>
+
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/componentes.css">
+  <link rel="stylesheet" href="../css/pages.css">
+
+  <style>
+    :root{
+      --cfg-card: rgba(248, 245, 240, 0.96);
+      --cfg-line: #ddd5ca;
+      --cfg-copy: #103446;
+      --cfg-muted: #647985;
+      --cfg-shadow: 0 16px 34px rgba(15, 35, 45, 0.14);
+      --cfg-soft: rgba(255,255,255,0.72);
+    }
+    body.cfg-page{
+      background:
+        radial-gradient(980px 460px at 50% -130px, rgba(136, 208, 222, 0.36) 0%, rgba(136, 208, 222, 0) 66%),
+        radial-gradient(620px 290px at 86% 164px, rgba(239, 191, 104, 0.21) 0%, rgba(239, 191, 104, 0) 82%),
+        linear-gradient(180deg, #0a4154 0%, #16576c 224px, #ece9e5 224px, #f1efec 100%);
+      color: #103446;
+    }
+    .cfg-page .navbar{
+      height: 62px;
+      background:
+        radial-gradient(260px 100px at 82% 120%, rgba(233, 186, 100, 0.2), rgba(233, 186, 100, 0)),
+        linear-gradient(135deg, rgba(10, 61, 78, 0.92), rgba(18, 83, 104, 0.9));
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 8px 22px rgba(5, 34, 46, 0.34);
+    }
+    .cfg-page .navbar::after{
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -1px;
+      height: 2px;
+      background: linear-gradient(90deg, rgba(214, 245, 255, 0.28), rgba(240, 198, 118, 0.9));
+      pointer-events: none;
+    }
+    .cfg-page .nav-btn{ color: #f4fafc; }
+    .cfg-page .nav-btn:hover{ opacity: 1; background: rgba(255,255,255,0.09); }
+    .brand-chip{
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      color: #ecf6f8;
+      text-shadow: 0 2px 7px rgba(0,0,0,0.28);
+    }
+    .brand-mark{
+      width: 46px;
+      height: 46px;
+      display: block;
+      background: center / contain no-repeat url("../assets/contabliza-mark.svg");
+      filter: drop-shadow(0 7px 16px rgba(9, 38, 49, 0.35));
+      color: transparent;
+      font-size: 0;
+      line-height: 0;
+    }
+    .brand-text{
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 1.66rem;
+      letter-spacing: -0.02em;
+    }
+    .cfg-shell{
+      max-width: 690px;
+      margin: 0 auto;
+      padding-top: 82px;
+      padding-left: 14px;
+      padding-right: 14px;
+      padding-bottom: 26px;
+      position: relative;
+    }
+    .cfg-shell::before{
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 194px;
+      height: 58px;
+      border-top-left-radius: 48% 100%;
+      border-top-right-radius: 48% 100%;
+      background: linear-gradient(180deg, rgba(248, 247, 243, 0.95), rgba(236, 233, 227, 0.98));
+      box-shadow: inset 0 1px 0 rgba(245, 209, 138, 0.75);
+      z-index: 0;
+    }
+    .cfg-hero{
+      padding: 20px 2px 18px;
+      position: relative;
+      z-index: 1;
+    }
+    .cfg-hero h2{
+      color: #ebf6f8;
+      font-size: 2.12rem;
+      margin: 0 0 4px;
+      text-shadow: 0 4px 14px rgba(0,0,0,0.34);
+    }
+    .cfg-sub{
+      color: #dbeef3;
+      margin: 0;
+      font-size: 0.98rem;
+      line-height: 1.35;
+    }
+    .cfg-card{
+      border-radius: 22px;
+      border: 1px solid var(--cfg-line);
+      background: var(--cfg-card);
+      box-shadow: var(--cfg-shadow);
+      padding: 18px 16px;
+      margin-bottom: 12px;
+      position: relative;
+      z-index: 1;
+    }
+    .cfg-title{
+      margin: 0 0 4px;
+      font-size: 1.58rem;
+      color: #0e3345;
+    }
+    .cfg-lead{
+      color: var(--cfg-muted);
+      margin: 0 0 14px;
+      font-size: 0.95rem;
+      line-height: 1.3;
+    }
+    .cfg-form{
+      display: grid;
+      gap: 12px;
+    }
+    .cfg-form label{
+      display: block;
+      margin-bottom: 5px;
+      color: #394a55;
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+    .cfg-form input,
+    .cfg-form select{
+      width: 100%;
+      min-height: 48px;
+      border-radius: 14px;
+      border: 1px solid #cbc4ba;
+      background: #f7f5f2;
+      color: #142f3e;
+      font-size: 1rem;
+      padding: 10px 14px;
+      box-sizing: border-box;
+    }
+    .cfg-form input:disabled{
+      opacity: 0.8;
+    }
+    #catList{
+      display: grid;
+      gap: 8px;
+      margin-top: 4px;
+    }
+    .cat-row{
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 88px;
+      gap: 8px;
+      align-items: center;
+    }
+    .cat-row input{
+      min-width: 0;
+      background: rgba(255,255,255,0.86);
+    }
+    .cat-row .btn-secondary{
+      min-height: 34px;
+      border-radius: 11px;
+      font-weight: 600;
+      font-size: 0.8rem;
+      background: rgba(255, 244, 242, 0.92);
+      color: #b44740;
+      border-color: rgba(197, 82, 72, 0.24);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.92);
+      padding: 0 8px;
+    }
+    .cfg-inline-head{
+      display: grid;
+      gap: 3px;
+      margin-bottom: 4px;
+    }
+    .cfg-inline-head label{
+      margin-bottom: 0;
+    }
+    .cfg-inline-note{
+      color: var(--cfg-muted);
+      font-size: 0.8rem;
+      line-height: 1.2;
+    }
+    .cfg-add{
+      width: fit-content;
+      min-height: 42px;
+      border-radius: 12px;
+      padding: 0 14px;
+      font-weight: 600;
+      font-size: 0.94rem;
+      margin-top: 2px;
+    }
+    .cfg-save{
+      width: 100%;
+      min-height: 52px;
+      border-radius: 16px;
+      border: 1px solid rgba(226, 217, 204, 0.92);
+      background: linear-gradient(135deg, #0d566d 0%, #236e80 100%);
+      color: #f3f9fb;
+      font-size: 1.04rem;
+      font-weight: 700;
+      box-shadow: 0 10px 24px rgba(14, 43, 56, 0.18);
+      margin-top: 6px;
+    }
+    .cfg-muted{
+      color: var(--cfg-muted);
+      font-size: 0.95rem;
+      line-height: 1.3;
+      margin: 0 0 12px;
+    }
+    .cfg-actions{
+      display: grid;
+      gap: 8px;
+    }
+    .cfg-actions .btn-secondary,
+    .cfg-actions .btn-primary{
+      min-height: 48px;
+      border-radius: 14px;
+      font-size: 0.98rem;
+      font-weight: 600;
+      text-align: left;
+      justify-content: flex-start;
+      padding-left: 16px;
+    }
+    .cfg-danger{
+      border-color: rgba(197, 82, 72, 0.28) !important;
+      color: #b44740 !important;
+      background: rgba(255, 244, 242, 0.92) !important;
+    }
+    #ioWrap{
+      margin-top: 12px;
+      border-radius: 16px;
+      background: var(--cfg-soft);
+      border: 1px solid var(--cfg-line);
+      padding: 14px;
+      box-shadow: 0 10px 24px rgba(15, 35, 45, 0.1);
+    }
+    #io{
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid #cbc4ba;
+      background: #f7f5f2;
+      color: #223944;
+      font-size: 0.95rem;
+      padding: 10px;
+      box-sizing: border-box;
+    }
+    .cfg-io-actions{
+      display: grid;
+      gap: 8px;
+      margin-top: 10px;
+      max-width: 360px;
+    }
+    .cfg-io-actions .btn-secondary,
+    .cfg-io-actions .btn-primary{
+      min-height: 42px;
+      border-radius: 12px;
+      font-size: 0.92rem;
+      font-weight: 600;
+    }
+    #msg{
+      margin-top: 10px;
+      text-align: center;
+      color: var(--cfg-muted);
+      font-size: 0.92rem;
+    }
+    .cfg-note{
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 11px 12px;
+      border-radius: 14px;
+      border: 1px solid var(--cfg-line);
+      background: rgba(246, 243, 238, 0.92);
+      color: var(--cfg-muted);
+      font-size: 0.86rem;
+      line-height: 1.3;
+    }
+    .cfg-note svg{
+      flex: 0 0 auto;
+      color: #7c8d97;
+    }
+    @media (max-width: 560px){
+      .cfg-shell{
+        padding-top: 76px;
+        padding-left: 12px;
+        padding-right: 12px;
+      }
+      .cfg-shell::before{
+        left: 0;
+        right: 0;
+        top: 174px;
+        height: 52px;
+      }
+      .brand-mark{ width:40px; height:40px; }
+      .brand-text{ font-size:1.48rem; }
+      .cfg-hero h2{ font-size:1.95rem; }
+      .cfg-title{ font-size: 1.7rem; }
+      .cat-row{
+        grid-template-columns: minmax(0, 1fr) 84px;
+      }
+    }
+  </style>
+</head>
+
+<body class="cfg-page">
+  <nav class="navbar">
+    <div class="nav-left">
+      <button class="nav-btn" type="button" data-nav="back" aria-label="Volver" title="Volver"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"></path></svg></button>
+      <button class="nav-btn" data-nav="menu" aria-label="Menú" title="Menú"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16"></path><path d="M4 12h16"></path><path d="M4 18h16"></path></svg></button>
+    </div>
+
+    <div class="nav-center">
+      <a class="brand-chip" href="./home.html" aria-label="Ir a Home">
+        <span class="brand-mark">CB</span>
+        <span class="brand-text">ContaBliza</span>
+      </a>
+    </div>
+
+    <div class="nav-right">
+      <button class="nav-btn" data-action="notifications" aria-label="Notificaciones" title="Notificaciones"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 10-12 0c0 7-3 7-3 7h18s-3 0-3-7"></path><path d="M13.73 21a2 2 0 01-3.46 0"></path></svg></button>
+      <button class="nav-btn" id="btnLogout" title="Salir" aria-label="Salir"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 17l5-5-5-5"></path><path d="M15 12H3"></path><path d="M21 5v14"></path></svg></button>
+    </div>
+  </nav>
+
+  <div class="nav-drawer" id="navDrawer" aria-hidden="true">
+    <div class="nav-drawer-backdrop" data-nav="close"></div>
+    <div class="nav-drawer-panel" role="menu">
+      <div class="nav-drawer-header">Menú</div>
+      <a class="nav-drawer-item" href="./home.html"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10l9-7 9 7"></path><path d="M5 10v9h14v-9"></path></svg></span><span>Home</span></a>
+      <a class="nav-drawer-item" href="./movimientos.html"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h10"></path><path d="M6 10h12"></path><path d="M6 14h12"></path><path d="M8 18h10"></path></svg></span><span>Movimientos</span></a>
+      <a class="nav-drawer-item" href="./movimiento.html"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg></span><span>Nuevo</span></a>
+      <a class="nav-drawer-item" href="./reportes.html"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5"></path><path d="M8 19V9"></path><path d="M12 19V12"></path><path d="M16 19V7"></path><path d="M20 19V10"></path></svg></span><span>Reportes</span></a>
+      <a class="nav-drawer-item" href="./calendario.html"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M16 3v4"></path><path d="M8 3v4"></path><path d="M3 9h18"></path></svg></span><span>Calendario</span></a>
+      <a class="nav-drawer-item" href="./documentos.html"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2h9l5 5v15a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"></path><path d="M14 2v6h6"></path><path d="M8 13h8"></path><path d="M8 17h8"></path></svg></span><span>Documentos</span></a>
+      <a class="nav-drawer-item" href="./config.html"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="M4.93 4.93l1.41 1.41"></path><path d="M17.66 17.66l1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="M4.93 19.07l1.41-1.41"></path><path d="M17.66 6.34l1.41-1.41"></path><circle cx="12" cy="12" r="3"></circle></svg></span><span>Configuración</span></a>
+      <div class="nav-drawer-divider"></div>
+      <button class="nav-drawer-item" data-action="logout" type="button"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 17l5-5-5-5"></path><path d="M15 12H3"></path><path d="M21 5v14"></path></svg></span><span>Cerrar sesión</span></button>
+    </div>
+  </div>
+
+  <main class="cfg-shell">
+    <section class="cfg-hero">
+      <h2>Configuración</h2>
+      <p class="cfg-sub">Moneda, medios y mantenimiento.</p>
+    </section>
+
+    <section class="cfg-card">
+      <h3 class="cfg-title">Ajustes</h3>
+      <p class="cfg-lead">Moneda base, nombres de medios y categorías de uso diario.</p>
+      <form id="settingsForm" class="cfg-form">
+        <div>
+          <label for="moneda">Moneda</label>
+          <select id="moneda">
+            <option value="UYU" selected>UYU</option>
+            <option value="USD">USD</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="medioCaja">Nombre Caja</label>
+          <input id="medioCaja" type="text" placeholder="Ej: Efectivo" required>
+        </div>
+
+        <div>
+          <label for="medioBanco">Nombre Banco</label>
+          <input id="medioBanco" type="text" placeholder="Ej: Banco" required>
+        </div>
+
+        <div>
+          <label for="medioTarjeta">Nombre Tarjeta</label>
+          <input id="medioTarjeta" type="text" placeholder="Ej: Visa Crédito" required>
+        </div>
+
+        <div style="display:none;">
+          <label for="formatoFecha">Formato fecha</label>
+          <input id="formatoFecha" type="text" value="YYYY-MM-DD" disabled>
+        </div>
+
+        <div>
+          <div class="cfg-inline-head">
+            <label for="catList" style="font-size:1rem; font-weight:700; color:#132f40;">Categorías</label>
+            <span class="cfg-inline-note">Editá o quitá las que usás.</span>
+          </div>
+          <div id="catList"></div>
+          <button class="btn-secondary cfg-add" id="catAdd" type="button">+ Agregar categoría</button>
+        </div>
+
+        <button class="cfg-save" type="submit">Guardar configuración</button>
+      </form>
+      <div id="msg" class="chart-empty" style="display:none;"></div>
+    </section>
+
+    <section class="cfg-card">
+      <h3 class="cfg-title">Mantenimiento</h3>
+      <p class="cfg-muted">Exportá o importá tu base local para respaldo y mantenimiento.</p>
+
+      <div class="cfg-note">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="12" cy="12" r="9"></circle>
+          <path d="M12 8h.01"></path>
+          <path d="M11 12h1v4h1"></path>
+        </svg>
+        <span>Todo se guarda localmente en este dispositivo. Exportar JSON sirve como backup antes de importar o borrar datos.</span>
+      </div>
+
+      <div class="cfg-actions">
+        <button class="btn-secondary" id="btnExport" type="button">Exportar JSON</button>
+        <button class="btn-secondary" id="btnImport" type="button">Importar (pegar JSON)</button>
+        <button class="btn-secondary cfg-danger" id="btnClearAll" type="button">Borrar TODO</button>
+      </div>
+
+      <div id="ioWrap" style="display:none;">
+        <label class="cfg-muted" for="io" style="margin-bottom:6px; display:block;">Pega o copia JSON</label>
+        <textarea id="io" rows="10"></textarea>
+
+        <div class="cfg-io-actions">
+          <button class="btn-primary" id="btnApplyImport" type="button">Aplicar importación</button>
+          <button class="btn-secondary" id="btnCloseIO" type="button">Cerrar</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="../js/storage.js"></script>
+  <script src="../js/app.js"></script>
+
+  <script>
+    const msg = document.getElementById("msg");
+
+    const settingsForm = document.getElementById("settingsForm");
+    const moneda = document.getElementById("moneda");
+    const medioCaja = document.getElementById("medioCaja");
+    const medioBanco = document.getElementById("medioBanco");
+    const medioTarjeta = document.getElementById("medioTarjeta");
+    const catList = document.getElementById("catList");
+    const catAdd = document.getElementById("catAdd");
+
+    const btnExport = document.getElementById("btnExport");
+    const btnImport = document.getElementById("btnImport");
+    const btnClearAll = document.getElementById("btnClearAll");
+    const ioWrap = document.getElementById("ioWrap");
+    const io = document.getElementById("io");
+    const btnApplyImport = document.getElementById("btnApplyImport");
+    const btnCloseIO = document.getElementById("btnCloseIO");
+
+    function showMsg(text){
+      msg.style.display = "block";
+      msg.textContent = text;
+      setTimeout(() => msg.style.display = "none", 2200);
+    }
+
+    function loadSettingsToUI(){
+      if(typeof getSettings !== "function") return;
+
+      const s = getSettings();
+      if(s?.moneda) moneda.value = s.moneda;
+
+      const medios = Array.isArray(s?.medios) ? s.medios : [];
+      const caja = medios.find(m => m.id === "caja")?.name || "Caja";
+      const banco = medios.find(m => m.id === "banco")?.name || "Banco";
+      const tarjeta = medios.find(m => m.id === "tarjeta")?.name || "Tarjeta";
+
+      if(medioCaja) medioCaja.value = caja;
+      if(medioBanco) medioBanco.value = banco;
+      if(medioTarjeta) medioTarjeta.value = tarjeta;
+
+      renderCategorias(Array.isArray(s?.categorias) ? s.categorias : []);
+    }
+
+    function renderCategorias(list){
+      if(!catList) return;
+      const items = (list && list.length) ? list : ["Ventas", "Compras", "Servicios", "Impuestos", "Sueldos", "Otros"];
+      catList.innerHTML = items.map((c, idx) => `
+        <div class="cat-row">
+          <input id="cat_${idx}" class="cat-input" type="text" data-old="${(c || "").replace(/"/g, "&quot;")}" value="${(c || "").replace(/"/g, "&quot;")}">
+          <button class="btn-secondary" type="button" data-cat-del="${idx}" data-cat-old="${(c || "").replace(/"/g, "&quot;")}">Quitar</button>
+        </div>
+      `).join("");
+
+      catList.querySelectorAll("[data-cat-del]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const id = Number(btn.getAttribute("data-cat-del"));
+          const current = getCategoriasFromUI();
+          const original = normalizeCategoria(btn.getAttribute("data-cat-old"));
+          const target = original || current[id] || "";
+          const usedCount = countMovimientosByCategoria(target);
+          if(usedCount > 0){
+            showMsg(`No podés quitar "${target}": tiene ${usedCount} movimiento${usedCount === 1 ? "" : "s"} asociado${usedCount === 1 ? "" : "s"}.`);
+            return;
+          }
+          current.splice(id, 1);
+          renderCategorias(current);
+        });
+      });
+    }
+
+    function normalizeCategoria(val){
+      return (val || "").trim().replace(/\s+/g, " ");
+    }
+
+    function getCategoriasFromUI(){
+      const inputs = Array.from(document.querySelectorAll(".cat-input"));
+      const raw = inputs.map(i => normalizeCategoria(i.value)).filter(Boolean);
+      const seen = new Set();
+      const list = [];
+      for(const c of raw){
+        const key = c.toLowerCase();
+        if(seen.has(key)) continue;
+        seen.add(key);
+        list.push(c);
+      }
+      return list;
+    }
+
+    function getRenameMapFromUI(){
+      const inputs = Array.from(document.querySelectorAll(".cat-input"));
+      const map = new Map();
+      for(const i of inputs){
+        const oldVal = normalizeCategoria(i.getAttribute("data-old"));
+        const newVal = normalizeCategoria(i.value);
+        if(!oldVal || !newVal) continue;
+        if(oldVal.toLowerCase() === newVal.toLowerCase()) continue;
+        map.set(oldVal.toLowerCase(), newVal);
+      }
+      return map;
+    }
+
+    function countMovimientosByCategoria(catName){
+      const target = normalizeCategoria(catName).toLowerCase();
+      if(!target) return 0;
+      if(typeof getMovimientos !== "function") return 0;
+      return getMovimientos().filter(m => normalizeCategoria(m.categoria).toLowerCase() === target).length;
+    }
+
+    function applyCategoriaRenames(map){
+      if(!map || map.size === 0) return;
+      if(typeof getMovimientos !== "function" || typeof saveMovimientos !== "function") return;
+      const movs = getMovimientos();
+      let changed = 0;
+      const updated = movs.map(m => {
+        const cat = normalizeCategoria(m.categoria);
+        const key = cat.toLowerCase();
+        if(map.has(key)){
+          changed += 1;
+          return { ...m, categoria: map.get(key) };
+        }
+        return m;
+      });
+      saveMovimientos(updated);
+      return changed;
+    }
+
+    settingsForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      if(typeof getSettings !== "function" || typeof saveSettings !== "function"){
+        showMsg("Falta getSettings()/saveSettings() en storage.js");
+        return;
+      }
+
+      const s = getSettings();
+      const renameMap = getRenameMapFromUI();
+      const next = {
+        ...s,
+        moneda: moneda.value,
+        categorias: getCategoriasFromUI(),
+        medios: [
+          { id: "caja", name: (medioCaja?.value || "Caja").trim() || "Caja" },
+          { id: "banco", name: (medioBanco?.value || "Banco").trim() || "Banco" },
+          { id: "tarjeta", name: (medioTarjeta?.value || "Tarjeta").trim() || "Tarjeta" }
+        ]
+      };
+
+      if(next.categorias.length === 0){
+        showMsg("Agregá al menos una categoría.");
+        return;
+      }
+
+      const changed = applyCategoriaRenames(renameMap) || 0;
+      saveSettings(next);
+      renderCategorias(next.categorias);
+      if(changed > 0){
+        showMsg(`Configuración guardada. Se actualizaron ${changed} movimiento${changed === 1 ? "" : "s"}.`);
+      }else{
+        showMsg("Configuración guardada.");
+      }
+    });
+
+    function exportAll(){
+      const dump = {};
+      for(let i=0; i<localStorage.length; i++){
+        const k = localStorage.key(i);
+        dump[k] = localStorage.getItem(k);
+      }
+      return dump;
+    }
+
+    btnExport.addEventListener("click", () => {
+      ioWrap.style.display = "block";
+      io.value = JSON.stringify(exportAll(), null, 2);
+      showMsg("Export listo (copialo).");
+    });
+
+    btnImport.addEventListener("click", () => {
+      ioWrap.style.display = "block";
+      io.value = "";
+      showMsg("Pega el JSON y aplica la importación.");
+    });
+
+    btnCloseIO.addEventListener("click", () => {
+      ioWrap.style.display = "none";
+      io.value = "";
+    });
+
+    btnApplyImport.addEventListener("click", () => {
+      const raw = io.value.trim();
+      if(!raw){
+        showMsg("Pega un JSON primero.");
+        return;
+      }
+
+      let parsed;
+      try{
+        parsed = JSON.parse(raw);
+      }catch{
+        showMsg("JSON inválido.");
+        return;
+      }
+
+      const ok = confirm("Esto va a pisar tu localStorage actual. Seguro?");
+      if(!ok) return;
+
+      localStorage.clear();
+      for(const k of Object.keys(parsed)){
+        localStorage.setItem(k, parsed[k]);
+      }
+
+      showMsg("Import aplicado.");
+      loadSettingsToUI();
+    });
+
+    btnClearAll.addEventListener("click", () => {
+      const ok = confirm("Borrar TODO el localStorage de ContaBliza? (Esto no se puede deshacer)");
+      if(!ok) return;
+
+      localStorage.clear();
+      showMsg("Borrado. (recarga la pagina)");
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+      loadSettingsToUI();
+    });
+
+    if(catAdd){
+      catAdd.addEventListener("click", () => {
+        const current = getCategoriasFromUI();
+        current.push("");
+        renderCategorias(current);
+      });
+    }
+  </script>
+
+</body>
+</html>
