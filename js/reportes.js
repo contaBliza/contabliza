@@ -40,6 +40,7 @@
     let pieChart = null;
     let cmpChart = null;
     let pieActiveIndex = null;
+    let pieSelectedSegmentIndex = null;
     let lastPieState = null;
     let cmpFallbackRegions = [];
     let cmpSelectedIndex = null;
@@ -143,9 +144,9 @@
     function getMediosSafe(){
       if(typeof getMedios === "function") return getMedios();
       return [
-        { id: "caja", name: "Caja" },
-        { id: "banco", name: "Banco" },
-        { id: "tarjeta", name: "Tarjeta" }
+        { id: "caja", name: "Efectivo" },
+        { id: "banco", name: "Tarjeta Débito" },
+        { id: "tarjeta", name: "Tarjeta de Crédito" }
       ];
     }
 
@@ -193,13 +194,14 @@
       }
     }
 
-    function calcIngresosEgresos(monedaFilter){
+    function getCurrentFilteredMovs(monedaFilter){
       const movs = getMovimientosSafe();
       buildMedioFilter();
       const { desde, hasta } = getFiltroFechas();
       const catVal = categoriaSelect ? categoriaSelect.value : "__all__";
       const monedaVal = monedaFilter || "UYU";
       const medioVal = medioSelect ? medioSelect.value : "__all__";
+
       buildCategoriaFilter(movs, (m) => {
         if(medioVal !== "__all__" && String(m.medioId || "") !== String(medioVal)) return false;
         if(monedaVal !== "__all__" && String(m.moneda || "") !== String(monedaVal)) return false;
@@ -208,25 +210,31 @@
         return true;
       });
 
+      return movs.filter((m) => {
+        if(m.fecha && !inRangeISO(m.fecha, desde, hasta)) return false;
+        if(!m.fecha && (desde || hasta)) return false;
+        if(catVal !== "__all__"){
+          if(catVal === "__none__" && m.categoria) return false;
+          if(catVal !== "__none__" && String(m.categoria || "") !== String(catVal)) return false;
+        }
+        if(monedaVal !== "__all__" && String(m.moneda || "") !== String(monedaVal)) return false;
+        if(medioVal !== "__all__" && String(m.medioId || "") !== String(medioVal)) return false;
+        return true;
+      });
+    }
+
+    function calcIngresosEgresos(monedaFilter){
+      const movs = getCurrentFilteredMovs(monedaFilter);
       let ingresos = 0;
       let egresos = 0;
 
       for(const m of movs){
-        if(m.fecha && !inRangeISO(m.fecha, desde, hasta)) continue;
-        if(!m.fecha && (desde || hasta)) continue;
-        if(catVal !== "__all__"){
-          if(catVal === "__none__" && m.categoria) continue;
-          if(catVal !== "__none__" && String(m.categoria || "") !== String(catVal)) continue;
-        }
-        if(monedaVal !== "__all__" && String(m.moneda || "") !== String(monedaVal)) continue;
-        if(medioVal !== "__all__" && String(m.medioId || "") !== String(medioVal)) continue;
-
         const monto = Number(m.monto || 0);
         if(m.tipo === "ingreso") ingresos += monto;
         if(m.tipo === "egreso") egresos += monto;
       }
 
-      return { ingresos, egresos, resultado: ingresos - egresos };
+      return { ingresos, egresos, resultado: ingresos - egresos, movs };
     }
 
     function filterMovsForSummary(monedaVal, medioVal, catVal, desde, hasta){
@@ -484,8 +492,8 @@
         "          <div class=\"donut\">",
         "            <div class=\"donut-center\">",
         "              <div>",
-        "                <small>Total</small>",
-        `                <div class=\"donut-total\">${fmtMoney(ingresoSafe + egresoSafe, moneda)}</div>`,
+        "                <small>Saldo</small>",
+        `                <div class=\"donut-total\">${fmtMoney(balance, moneda)}</div>`,
         "              </div>",
         "            </div>",
         "          </div>",
@@ -927,8 +935,74 @@
     }
 
     function getPieFocusLabel(item){
-      if(!item) return "Total";
+      if(!item) return "Saldo";
       return item.label;
+    }
+
+    function getPieCenterState(items, focusMode, selectedIndex = null){
+      if(selectedIndex === null || !items[selectedIndex]){
+        return {
+          label: focusMode === "ingresos" ? "Ingresos" : focusMode === "gastos" ? "Gastos" : "Saldo",
+          value: focusMode === "ingresos"
+            ? Number(lastPieState?.res?.ingresos || 0)
+            : focusMode === "gastos"
+              ? Number(lastPieState?.res?.egresos || 0)
+              : Number(lastPieState?.res?.resultado || 0)
+        };
+      }
+
+      const total = items.reduce((acc, item) => acc + Number(item.value || 0), 0);
+      const current = items[selectedIndex];
+      const share = total > 0 ? ((Number(current.value || 0) / total) * 100).toFixed(1) : "0.0";
+      return {
+        label: current.label,
+        value: `${share}%`
+      };
+    }
+
+    function buildPieCategoryItems(movs, tipo){
+      const palette = tipo === "egreso"
+        ? ["#c73535", "#d54c4c", "#df6868", "#e98a8a", "#f2b1b1"]
+        : ["#1f8b4c", "#30985a", "#4aa970", "#6fbc8f", "#97d1af"];
+      const label = tipo === "egreso" ? "Gastos" : "Ingresos";
+      const grouped = new Map();
+
+      movs
+        .filter(m => String(m.tipo || "") === tipo)
+        .forEach((m) => {
+          const key = String(m.categoria || "").trim() || "Sin categoría";
+          grouped.set(key, (grouped.get(key) || 0) + Number(m.monto || 0));
+        });
+
+      const sorted = Array.from(grouped.entries())
+        .map(([name, amount]) => ({ name, amount }))
+        .filter(item => item.amount > 0)
+        .sort((a, b) => b.amount - a.amount);
+
+      if(!sorted.length) return [];
+
+      const visible = sorted.slice(0, 4).map((item, index) => ({
+        label: item.name,
+        value: item.amount,
+        rawValue: item.amount,
+        color: palette[index] || palette[palette.length - 1]
+      }));
+
+      const remaining = sorted.slice(4).reduce((acc, item) => acc + item.amount, 0);
+      if(remaining > 0){
+        visible.push({
+          label: "Otros",
+          value: remaining,
+          rawValue: remaining,
+          color: palette[palette.length - 1]
+        });
+      }
+
+      if(visible.length === 1){
+        visible[0].label = label;
+      }
+
+      return visible;
     }
 
     function updatePieDots(){
@@ -941,7 +1015,7 @@
       });
     }
 
-    function drawPieFallback(canvas, labels, values, colors, rawValues = values){
+    function drawPieFallback(canvas, labels, values, colors, rawValues = values, centerState = null){
       const ctx = canvas.getContext("2d");
       if(!ctx) return;
       const width = Math.min(canvas.clientWidth || 300, 270);
@@ -950,15 +1024,13 @@
       canvas.height = height;
       ctx.clearRect(0, 0, width, height);
 
-      const total = values.reduce((acc, n) => acc + n, 0);
+      const chartValues = values;
+      const chartColors = colors;
+      const total = chartValues.reduce((acc, n) => acc + n, 0);
       if(total <= 0) return;
 
-      const activeItem = pieActiveIndex === null ? null : {
-        label: labels[pieActiveIndex],
-        rawValue: rawValues[pieActiveIndex]
-      };
-      const displayLabel = getPieFocusLabel(activeItem);
-      const displayValue = activeItem ? rawValues[pieActiveIndex] : total;
+      const displayLabel = centerState?.label || "Saldo";
+      const displayValue = centerState?.value ?? Number(lastPieState?.res?.resultado || 0);
 
       const cx = width * 0.5;
       const cy = height * 0.5;
@@ -968,7 +1040,7 @@
       const gap = 0.02;
       let current = start;
 
-      values.forEach((value, index) => {
+      chartValues.forEach((value, index) => {
         const angle = (value / total) * Math.PI * 2;
         const segStart = current + gap;
         const segEnd = current + angle - gap;
@@ -980,8 +1052,7 @@
         ctx.moveTo(cx, cy);
         ctx.arc(cx, cy, radius, segStart, segEnd);
         ctx.closePath();
-        const isDimmed = pieActiveIndex !== null && pieActiveIndex !== index;
-        ctx.fillStyle = isDimmed ? `${colors[index]}55` : colors[index];
+        ctx.fillStyle = chartColors[index];
         ctx.fill();
         current += angle;
       });
@@ -997,7 +1068,7 @@
       ctx.fillText(displayLabel, cx, cy - 6);
       ctx.fillStyle = "#183949";
       ctx.font = "700 20px sans-serif";
-      ctx.fillText(displayValue.toLocaleString("es-UY"), cx, cy + 18);
+      ctx.fillText(typeof displayValue === "number" ? displayValue.toLocaleString("es-UY") : String(displayValue), cx, cy + 18);
     }
 
     function drawComparativoFallback(canvas, labelA, labelB, dataA, dataB, moneda){
@@ -1100,22 +1171,27 @@
       renderComparativoTouchDetail(cmpSelectedIndex);
     }
 
-    function renderPieBreakdown(items, moneda){
+    function renderPieBreakdown(items, moneda, focusMode = null){
       if(!pieBreakdown) return;
       const total = items.reduce((acc, item) => acc + item.value, 0);
+      const shareSuffix = focusMode === "ingresos"
+        ? "de los ingresos"
+        : focusMode === "gastos"
+          ? "de los gastos"
+          : "del gráfico";
       const flowCards = items.map((item) => {
         const share = total > 0 ? ((item.value / total) * 100).toFixed(1) : "0.0";
         return `
           <div class="pie-summary-item">
             <span class="pie-summary-label"><span class="pie-summary-swatch" style="background:${item.color};"></span>${item.label}</span>
             <span class="pie-summary-value">${escapeHtml(fmtMoney(item.rawValue, moneda))}</span>
-            <span class="pie-summary-share">${share}% del gráfico</span>
+            <span class="pie-summary-share">${share}% ${shareSuffix}</span>
           </div>
         `;
       }).join("");
 
       const resultado = lastPieState?.res?.resultado || 0;
-      const resultLabel = Number(resultado) < 0 ? "Debes" : "Te quedan";
+      const resultLabel = Number(resultado) < 0 ? "Debes" : "Saldo";
       const resultNote = Number(resultado) < 0 ? "Resultado neto del período" : "Saldo neto del período";
       pieBreakdown.innerHTML = `${flowCards}
         <div class="pie-summary-item is-result">
@@ -1131,11 +1207,11 @@
 
       const ingresos = Number(res?.ingresos || 0);
       const egresos = Number(res?.egresos || 0);
-      const pieItems = [
+      const defaultPieItems = [
         { label: "Ingresos", value: ingresos, rawValue: ingresos, color: "#1f8b4c" },
         { label: "Gastos", value: egresos, rawValue: egresos, color: "#c73535" }
       ];
-      if(pieActiveIndex !== null && pieActiveIndex > pieItems.length - 1){
+      if(pieActiveIndex !== null && pieActiveIndex > defaultPieItems.length - 1){
         pieActiveIndex = null;
       }
 
@@ -1154,7 +1230,26 @@
       if(pieEmpty) pieEmpty.style.display = "none";
       lastPieState = { res, moneda };
       updatePieDots();
-      renderPieBreakdown(pieItems, moneda);
+
+      const focusedType = pieActiveIndex === 0 ? "ingreso" : pieActiveIndex === 1 ? "egreso" : null;
+      const focusedMode = pieActiveIndex === 0 ? "ingresos" : pieActiveIndex === 1 ? "gastos" : null;
+      const focusedTotal = focusedType === "ingreso" ? ingresos : egresos;
+      const categoryItems = focusedType ? buildPieCategoryItems(Array.isArray(res?.movs) ? res.movs : [], focusedType) : [];
+      const focusedFallback = focusedType
+        ? [{
+            label: focusedType === "ingreso" ? "Ingresos" : "Gastos",
+            value: focusedTotal,
+            rawValue: focusedTotal,
+            color: focusedType === "ingreso" ? "#1f8b4c" : "#c73535"
+          }]
+        : [];
+      const pieItems = focusedType ? (categoryItems.length ? categoryItems : focusedFallback) : defaultPieItems;
+      if(pieSelectedSegmentIndex !== null && pieSelectedSegmentIndex > pieItems.length - 1){
+        pieSelectedSegmentIndex = null;
+      }
+      const centerState = getPieCenterState(pieItems, focusedMode, pieSelectedSegmentIndex);
+
+      renderPieBreakdown(pieItems, moneda, focusedMode);
       pieCanvas.style.display = "block";
 
       if(typeof Chart === "undefined"){
@@ -1164,31 +1259,31 @@
           pieItems.map(item => item.label),
           pieItems.map(item => item.value),
           pieItems.map(item => item.color),
-          pieItems.map(item => item.rawValue)
+          pieItems.map(item => item.rawValue),
+          centerState
         );
         return;
       }
 
       destroyPieChart();
 
-      const focusedItem = pieActiveIndex === null ? null : pieItems[pieActiveIndex];
-      const displayLabel = getPieFocusLabel(focusedItem);
-      const displayValue = focusedItem ? focusedItem.rawValue : pieItems.reduce((acc, item) => acc + item.value, 0);
+      const displayLabel = centerState.label;
+      const displayValue = centerState.value;
+      const chartLabels = pieItems.map(item => item.label);
+      const chartData = pieItems.map(item => item.value);
+      const chartColors = pieItems.map(item => item.color);
 
       pieChart = new Chart(pieCanvas, {
         type: "doughnut",
         data: {
-          labels: pieItems.map(item => item.label),
+          labels: chartLabels,
           datasets: [{
-            data: pieItems.map(item => item.value),
-            backgroundColor: pieItems.map((item, index) => {
-              if(pieActiveIndex === null || pieActiveIndex === index) return item.color;
-              return `${item.color}55`;
-            }),
+            data: chartData,
+            backgroundColor: chartColors,
             borderColor: "#f5f3f0",
             borderWidth: 3,
             hoverOffset: 6,
-            offset: pieItems.map((_, index) => pieActiveIndex === index ? 10 : 0)
+            offset: chartData.map(() => 0)
           }]
         },
         plugins: [{
@@ -1207,7 +1302,7 @@
             ctx.fillText(displayLabel, x, y - 8);
             ctx.fillStyle = "#183949";
             ctx.font = "700 18px sans-serif";
-            ctx.fillText(Number(displayValue || 0).toLocaleString("es-UY"), x, y + 18);
+            ctx.fillText(typeof displayValue === "number" ? Number(displayValue || 0).toLocaleString("es-UY") : String(displayValue), x, y + 18);
             ctx.restore();
           }
         }],
@@ -1231,9 +1326,8 @@
             tooltip: {
               callbacks: {
                 label: function(ctx){
-                  const idx = ctx.dataIndex;
                   const label = ctx.label || "";
-                  const value = ctx.parsed;
+                  const value = Number(ctx.parsed || 0);
                   return `${label}: ${fmtMoney(value, moneda || "UYU")}`;
                 }
               }
@@ -1570,6 +1664,7 @@
     if(pieDotIngresos){
       pieDotIngresos.addEventListener("click", () => {
         pieActiveIndex = pieActiveIndex === 0 ? null : 0;
+        pieSelectedSegmentIndex = null;
         updatePieDots();
         if(lastPieState) renderPie(lastPieState.res, lastPieState.moneda);
       });
@@ -1577,7 +1672,17 @@
     if(pieDotGastos){
       pieDotGastos.addEventListener("click", () => {
         pieActiveIndex = pieActiveIndex === 1 ? null : 1;
+        pieSelectedSegmentIndex = null;
         updatePieDots();
+        if(lastPieState) renderPie(lastPieState.res, lastPieState.moneda);
+      });
+    }
+    if(pieCanvas){
+      pieCanvas.addEventListener("click", (event) => {
+        if(typeof Chart === "undefined" || !pieChart) return;
+        const points = pieChart.getElementsAtEventForMode(event, "nearest", { intersect: true }, false);
+        const nextIndex = points && points.length ? points[0].index : null;
+        pieSelectedSegmentIndex = nextIndex === pieSelectedSegmentIndex ? null : nextIndex;
         if(lastPieState) renderPie(lastPieState.res, lastPieState.moneda);
       });
     }

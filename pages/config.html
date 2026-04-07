@@ -371,18 +371,18 @@
         </div>
 
         <div>
-          <label for="medioCaja">Nombre Caja</label>
+          <label for="medioCaja">Nombre Efectivo</label>
           <input id="medioCaja" type="text" placeholder="Ej: Efectivo" required>
         </div>
 
         <div>
-          <label for="medioBanco">Nombre Banco</label>
-          <input id="medioBanco" type="text" placeholder="Ej: Banco" required>
+          <label for="medioBanco">Nombre Tarjeta Débito</label>
+          <input id="medioBanco" type="text" placeholder="Ej: Tarjeta Débito" required>
         </div>
 
         <div>
-          <label for="medioTarjeta">Nombre Tarjeta</label>
-          <input id="medioTarjeta" type="text" placeholder="Ej: Visa Crédito" required>
+          <label for="medioTarjeta">Nombre Tarjeta de Crédito</label>
+          <input id="medioTarjeta" type="text" placeholder="Ej: Tarjeta de Crédito" required>
         </div>
 
         <div style="display:none;">
@@ -470,9 +470,9 @@
       if(s?.moneda) moneda.value = s.moneda;
 
       const medios = Array.isArray(s?.medios) ? s.medios : [];
-      const caja = medios.find(m => m.id === "caja")?.name || "Caja";
-      const banco = medios.find(m => m.id === "banco")?.name || "Banco";
-      const tarjeta = medios.find(m => m.id === "tarjeta")?.name || "Tarjeta";
+      const caja = medios.find(m => m.id === "caja")?.name || "Efectivo";
+      const banco = medios.find(m => m.id === "banco")?.name || "Tarjeta Débito";
+      const tarjeta = medios.find(m => m.id === "tarjeta")?.name || "Tarjeta de Crédito";
 
       if(medioCaja) medioCaja.value = caja;
       if(medioBanco) medioBanco.value = banco;
@@ -579,9 +579,9 @@
         moneda: moneda.value,
         categorias: getCategoriasFromUI(),
         medios: [
-          { id: "caja", name: (medioCaja?.value || "Caja").trim() || "Caja" },
-          { id: "banco", name: (medioBanco?.value || "Banco").trim() || "Banco" },
-          { id: "tarjeta", name: (medioTarjeta?.value || "Tarjeta").trim() || "Tarjeta" }
+          { id: "caja", name: (medioCaja?.value || "Efectivo").trim() || "Efectivo" },
+          { id: "banco", name: (medioBanco?.value || "Tarjeta Débito").trim() || "Tarjeta Débito" },
+          { id: "tarjeta", name: (medioTarjeta?.value || "Tarjeta de Crédito").trim() || "Tarjeta de Crédito" }
         ]
       };
 

@@ -57,6 +57,32 @@ function remove(key) {
   localStorage.removeItem(key);
 }
 
+const DEFAULT_MEDIOS = [
+  { id: "caja", name: "Efectivo" },
+  { id: "banco", name: "Tarjeta Débito" },
+  { id: "tarjeta", name: "Tarjeta de Crédito" }
+];
+
+function normalizeMedios(medios) {
+  const base = Array.isArray(medios) ? medios : [];
+  const legacyMap = {
+    caja: "Caja",
+    banco: "Banco",
+    tarjeta: "Tarjeta"
+  };
+
+  return DEFAULT_MEDIOS.map((medio) => {
+    const saved = base.find(item => item?.id === medio.id);
+    if (!saved) return { ...medio };
+
+    const name = String(saved.name || "").trim();
+    if (!name || name === legacyMap[medio.id]) {
+      return { ...medio };
+    }
+    return { id: medio.id, name };
+  });
+}
+
 /* =============================
    SESSION
    ============================= */
@@ -163,16 +189,26 @@ function clearNotifications() {
    ============================= */
 
 function getSettings() {
-  return load(STORAGE_KEYS.SETTINGS, {
+  const fallback = {
     moneda: "UYU",
     formatoFecha: "YYYY-MM-DD",
     categorias: ["Ventas", "Compras", "Servicios", "Impuestos", "Sueldos", "Otros"],
-    medios: [
-      { id: "caja", name: "Caja" },
-      { id: "banco", name: "Banco" },
-      { id: "tarjeta", name: "Tarjeta" }
-    ]
-  });
+    medios: DEFAULT_MEDIOS.map(m => ({ ...m }))
+  };
+
+  const settings = load(STORAGE_KEYS.SETTINGS, fallback);
+  const normalized = {
+    ...fallback,
+    ...(settings || {}),
+    medios: normalizeMedios(settings?.medios),
+    categorias: Array.isArray(settings?.categorias) && settings.categorias.length ? settings.categorias : fallback.categorias
+  };
+
+  if (JSON.stringify(settings) !== JSON.stringify(normalized)) {
+    save(STORAGE_KEYS.SETTINGS, normalized);
+  }
+
+  return normalized;
 }
 
 function saveSettings(settings) {
@@ -185,11 +221,7 @@ function saveSettings(settings) {
 function getMedios() {
   const s = getSettings();
   if (Array.isArray(s?.medios) && s.medios.length) return s.medios;
-  return [
-    { id: "caja", name: "Caja" },
-    { id: "banco", name: "Banco" },
-    { id: "tarjeta", name: "Tarjeta" }
-  ];
+  return DEFAULT_MEDIOS.map(m => ({ ...m }));
 }
 
 function getCategorias() {
