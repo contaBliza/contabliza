@@ -49,8 +49,24 @@ function load(key, fallback = null) {
   }
 }
 
+function isStorageQuotaError(error) {
+  return !!error && (
+    error.name === "QuotaExceededError" ||
+    error.name === "NS_ERROR_DOM_QUOTA_REACHED" ||
+    error.code === 22 ||
+    error.code === 1014
+  );
+}
+
 function save(key, value) {
-  localStorage.setItem(key, JSON.stringify(value));
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch (error) {
+    if (isStorageQuotaError(error)) {
+      throw new Error("No hay espacio suficiente para guardar estos datos. Reduce o elimina adjuntos e intenta de nuevo.");
+    }
+    throw error;
+  }
 }
 
 function remove(key) {

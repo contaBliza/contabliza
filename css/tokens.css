@@ -16,7 +16,7 @@
 
   /* Tipografía */
   --font-base: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
-  --font-display: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-display: "Inter Tight", "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
 
   /* Bordes y radios */
   --radius-xs: 4px;

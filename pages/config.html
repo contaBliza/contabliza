@@ -65,9 +65,9 @@
     }
     .brand-text{
       font-family: var(--font-display);
-      font-weight: 600;
-      font-size: 1.66rem;
-      letter-spacing: -0.02em;
+      font-weight: 700;
+      font-size: 1.6rem;
+      letter-spacing: 0;
     }
     .cfg-shell{
       max-width: 690px;
@@ -98,7 +98,8 @@
     }
     .cfg-hero h2{
       color: #ebf6f8;
-      font-size: 2.12rem;
+      font-size: 1.88rem;
+      font-weight: 700;
       margin: 0 0 4px;
       text-shadow: 0 4px 14px rgba(0,0,0,0.34);
     }
@@ -120,14 +121,64 @@
     }
     .cfg-title{
       margin: 0 0 4px;
-      font-size: 1.58rem;
+      font-size: 1.32rem;
+      font-weight: 600;
       color: #0e3345;
     }
     .cfg-lead{
       color: var(--cfg-muted);
       margin: 0 0 14px;
-      font-size: 0.95rem;
+      font-size: 0.92rem;
+      font-weight: 400;
       line-height: 1.3;
+    }
+    .cfg-accordion{
+      padding: 0;
+      overflow: hidden;
+    }
+    .cfg-accordion-head{
+      width: 100%;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 34px;
+      gap: 10px;
+      align-items: start;
+      padding: 16px 16px 14px;
+      border: 0;
+      background: transparent;
+      color: inherit;
+      text-align: left;
+      cursor: pointer;
+    }
+    .cfg-accordion-head .cfg-title,
+    .cfg-accordion-head .cfg-lead,
+    .cfg-accordion-head .cfg-muted{
+      display: block;
+      pointer-events: none;
+    }
+    .cfg-accordion-head .cfg-lead,
+    .cfg-accordion-head .cfg-muted{
+      margin-bottom: 0;
+    }
+    .cfg-accordion-icon{
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      margin-top: 2px;
+      color: #0d566d;
+      background: rgba(13, 86, 109, 0.08);
+      border: 1px solid rgba(13, 86, 109, 0.12);
+      transition: transform 0.18s ease;
+    }
+    .cfg-accordion[data-collapsed="true"] .cfg-accordion-icon{
+      transform: rotate(-90deg);
+    }
+    .cfg-accordion-body{
+      padding: 0 16px 18px;
+    }
+    .cfg-accordion[data-collapsed="true"] .cfg-accordion-body{
+      display: none;
     }
     .cfg-form{
       display: grid;
@@ -221,6 +272,106 @@
       line-height: 1.3;
       margin: 0 0 12px;
     }
+    .cfg-profile-row{
+      display: grid;
+      grid-template-columns: 54px minmax(0, 1fr);
+      gap: 12px;
+      align-items: center;
+      padding: 4px 0 14px;
+      border-bottom: 1px solid rgba(221, 213, 202, 0.86);
+      margin-bottom: 12px;
+    }
+    .cfg-avatar{
+      width: 54px;
+      height: 54px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, rgba(40, 208, 218, 0.18), rgba(14, 118, 140, 0.14));
+      color: #0c6b7c;
+      font-weight: 800;
+      font-size: 1.12rem;
+      border: 1px solid rgba(23, 117, 135, 0.1);
+    }
+    .cfg-profile-main{
+      min-width: 0;
+    }
+    .cfg-profile-main strong{
+      display: block;
+      color: #0e3345;
+      font-size: 1.02rem;
+      line-height: 1.2;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .cfg-profile-main span{
+      display: block;
+      color: var(--cfg-muted);
+      font-size: 0.84rem;
+      line-height: 1.35;
+      margin-top: 2px;
+    }
+    .cfg-info-list{
+      display: grid;
+      gap: 0;
+      margin: 0 0 14px;
+      border-top: 1px solid rgba(221, 213, 202, 0.7);
+      border-bottom: 1px solid rgba(221, 213, 202, 0.7);
+    }
+    .cfg-info-row{
+      display: grid;
+      grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+      gap: 12px;
+      align-items: center;
+      min-height: 43px;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(221, 213, 202, 0.7);
+    }
+    .cfg-info-row:last-child{
+      border-bottom: 0;
+    }
+    .cfg-info-row span:first-child{
+      color: #48606c;
+      font-size: 0.86rem;
+    }
+    .cfg-info-row strong,
+    .cfg-info-row span:last-child{
+      min-width: 0;
+      color: #103446;
+      font-size: 0.94rem;
+      font-weight: 700;
+      text-align: right;
+      overflow-wrap: anywhere;
+    }
+    .cfg-status-pill{
+      justify-self: end;
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      border-radius: 999px;
+      padding: 0 10px;
+      background: rgba(29, 151, 95, 0.1);
+      color: #0e7d49 !important;
+      border: 1px solid rgba(29, 151, 95, 0.16);
+      font-size: 0.82rem !important;
+      font-weight: 700 !important;
+      white-space: nowrap;
+    }
+    .cfg-disabled-btn{
+      width: 100%;
+      min-height: 46px;
+      border-radius: 14px;
+      border: 1px solid rgba(203, 196, 186, 0.85);
+      background: rgba(246, 243, 238, 0.84);
+      color: #6a7a83;
+      font-weight: 700;
+      font-size: 0.96rem;
+      cursor: not-allowed;
+    }
+    .cfg-plan-note{
+      margin-top: 12px;
+    }
     .cfg-actions{
       display: grid;
       gap: 8px;
@@ -306,11 +457,15 @@
         height: 52px;
       }
       .brand-mark{ width:40px; height:40px; }
-      .brand-text{ font-size:1.48rem; }
-      .cfg-hero h2{ font-size:1.95rem; }
-      .cfg-title{ font-size: 1.7rem; }
+      .brand-text{ font-size:1.42rem; }
+      .cfg-hero h2{ font-size:1.74rem; }
+      .cfg-title{ font-size: 1.28rem; }
       .cat-row{
         grid-template-columns: minmax(0, 1fr) 84px;
+      }
+      .cfg-info-row{
+        grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.22fr);
+        gap: 8px;
       }
     }
   </style>
@@ -355,13 +510,72 @@
   <main class="cfg-shell">
     <section class="cfg-hero">
       <h2>Configuración</h2>
-      <p class="cfg-sub">Moneda, medios y mantenimiento.</p>
+      <p class="cfg-sub">Cuenta, preferencias y respaldo.</p>
     </section>
 
-    <section class="cfg-card">
-      <h3 class="cfg-title">Ajustes</h3>
-      <p class="cfg-lead">Moneda base, nombres de medios y categorías de uso diario.</p>
-      <form id="settingsForm" class="cfg-form">
+    <div id="msg" class="chart-empty" style="display:none;"></div>
+
+    <section class="cfg-card cfg-accordion">
+      <button class="cfg-accordion-head" type="button" aria-expanded="true">
+        <span>
+          <span class="cfg-title">Cuenta</span>
+          <span class="cfg-lead">Preparada para sincronización y acceso seguro.</span>
+        </span>
+        <span class="cfg-accordion-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"></path></svg>
+        </span>
+      </button>
+
+      <div class="cfg-accordion-body">
+        <div class="cfg-profile-row">
+          <div class="cfg-avatar" id="accountInitial">C</div>
+          <div class="cfg-profile-main">
+            <strong id="accountName">Usuario local</strong>
+            <span id="accountSession">Base local en este dispositivo</span>
+          </div>
+        </div>
+
+        <div class="cfg-info-list" aria-label="Datos de cuenta">
+          <div class="cfg-info-row">
+            <span>Email asociado</span>
+            <strong id="accountEmail">No sincronizado todavía</strong>
+          </div>
+          <div class="cfg-info-row">
+            <span>Contraseña</span>
+            <span>Al activar cuenta</span>
+          </div>
+          <div class="cfg-info-row">
+            <span>Sincronización</span>
+            <span class="cfg-status-pill">Local</span>
+          </div>
+        </div>
+
+        <button class="cfg-disabled-btn" type="button" disabled>Cambiar contraseña</button>
+
+        <div class="cfg-note cfg-plan-note">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <circle cx="12" cy="12" r="9"></circle>
+            <path d="M12 8h.01"></path>
+            <path d="M11 12h1v4h1"></path>
+          </svg>
+          <span>Con Supabase activo vas a poder usar email real, sincronización y cambio de contraseña seguro.</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="cfg-card cfg-accordion" data-collapsed="true">
+      <button class="cfg-accordion-head" type="button" aria-expanded="false">
+        <span>
+          <span class="cfg-title">Preferencias</span>
+          <span class="cfg-lead">Moneda base, medios de pago y categorías de uso diario.</span>
+        </span>
+        <span class="cfg-accordion-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"></path></svg>
+        </span>
+      </button>
+
+      <div class="cfg-accordion-body">
+        <form id="settingsForm" class="cfg-form">
         <div>
           <label for="moneda">Moneda</label>
           <select id="moneda">
@@ -401,14 +615,22 @@
 
         <button class="cfg-save" type="submit">Guardar configuración</button>
       </form>
-      <div id="msg" class="chart-empty" style="display:none;"></div>
+      </div>
     </section>
 
-    <section class="cfg-card">
-      <h3 class="cfg-title">Mantenimiento</h3>
-      <p class="cfg-muted">Exportá o importá tu base local para respaldo y mantenimiento.</p>
+    <section class="cfg-card cfg-accordion" data-collapsed="true">
+      <button class="cfg-accordion-head" type="button" aria-expanded="false">
+        <span>
+          <span class="cfg-title">Datos y respaldo</span>
+          <span class="cfg-muted">Exportá, importá o limpiá tu base local.</span>
+        </span>
+        <span class="cfg-accordion-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"></path></svg>
+        </span>
+      </button>
 
-      <div class="cfg-note">
+      <div class="cfg-accordion-body">
+        <div class="cfg-note">
         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
           <circle cx="12" cy="12" r="9"></circle>
           <path d="M12 8h.01"></path>
@@ -432,6 +654,47 @@
           <button class="btn-secondary" id="btnCloseIO" type="button">Cerrar</button>
         </div>
       </div>
+      </div>
+    </section>
+
+    <section class="cfg-card cfg-accordion" data-collapsed="true">
+      <button class="cfg-accordion-head" type="button" aria-expanded="false">
+        <span>
+          <span class="cfg-title">Plan</span>
+          <span class="cfg-lead">Suscripción y método de pago para cuando activemos la nube.</span>
+        </span>
+        <span class="cfg-accordion-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"></path></svg>
+        </span>
+      </button>
+
+      <div class="cfg-accordion-body">
+        <div class="cfg-info-list" aria-label="Datos del plan">
+        <div class="cfg-info-row">
+          <span>Plan actual</span>
+          <strong>Gratis local</strong>
+        </div>
+        <div class="cfg-info-row">
+          <span>Método de pago</span>
+          <span>No asociado todavía</span>
+        </div>
+        <div class="cfg-info-row">
+          <span>Próximo cobro</span>
+          <span>No aplica</span>
+        </div>
+      </div>
+
+      <button class="cfg-disabled-btn" type="button" disabled>Gestionar plan</button>
+
+      <div class="cfg-note cfg-plan-note">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="12" cy="12" r="9"></circle>
+          <path d="M12 8h.01"></path>
+          <path d="M11 12h1v4h1"></path>
+        </svg>
+        <span>El plan Pro puede sumar sincronización, múltiples dispositivos, respaldo automático y metas avanzadas.</span>
+      </div>
+      </div>
     </section>
   </main>
 
@@ -448,6 +711,10 @@
     const medioTarjeta = document.getElementById("medioTarjeta");
     const catList = document.getElementById("catList");
     const catAdd = document.getElementById("catAdd");
+    const accountInitial = document.getElementById("accountInitial");
+    const accountName = document.getElementById("accountName");
+    const accountEmail = document.getElementById("accountEmail");
+    const accountSession = document.getElementById("accountSession");
 
     const btnExport = document.getElementById("btnExport");
     const btnImport = document.getElementById("btnImport");
@@ -461,6 +728,51 @@
       msg.style.display = "block";
       msg.textContent = text;
       setTimeout(() => msg.style.display = "none", 2200);
+    }
+
+    function setupAccordions(){
+      document.querySelectorAll(".cfg-accordion").forEach(section => {
+        const head = section.querySelector(".cfg-accordion-head");
+        if(!head) return;
+        head.addEventListener("click", () => {
+          const isCollapsed = section.getAttribute("data-collapsed") === "true";
+          if(isCollapsed){
+            section.removeAttribute("data-collapsed");
+            head.setAttribute("aria-expanded", "true");
+          }else{
+            section.setAttribute("data-collapsed", "true");
+            head.setAttribute("aria-expanded", "false");
+          }
+        });
+      });
+    }
+
+    function readLocalSession(){
+      const keys = ["contabliza_session", "cb_session", "userSession"];
+      for(const key of keys){
+        const raw = localStorage.getItem(key) || sessionStorage.getItem(key);
+        if(!raw) continue;
+        try{
+          const parsed = JSON.parse(raw);
+          if(parsed && typeof parsed === "object") return parsed;
+        }catch{
+          return { email: raw };
+        }
+      }
+      return null;
+    }
+
+    function loadAccountInfo(){
+      const session = readLocalSession();
+      const possibleUser = session?.user || session?.profile || {};
+      const email = session?.email || possibleUser?.email || "";
+      const name = possibleUser?.name || session?.name || email || "Usuario local";
+      const initial = String(name || email || "C").trim().charAt(0).toUpperCase() || "C";
+
+      if(accountInitial) accountInitial.textContent = initial;
+      if(accountName) accountName.textContent = name;
+      if(accountEmail) accountEmail.textContent = email || "No sincronizado todavía";
+      if(accountSession) accountSession.textContent = session ? "Sesión local detectada" : "Base local en este dispositivo";
     }
 
     function loadSettingsToUI(){
@@ -662,6 +974,8 @@
     });
 
     document.addEventListener("DOMContentLoaded", () => {
+      setupAccordions();
+      loadAccountInfo();
       loadSettingsToUI();
     });
 

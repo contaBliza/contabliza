@@ -1,16 +1,17 @@
-## Hi there 👋
+# ContaBliza
 
-<!--
-**contaBliza/contabliza** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+Aplicacion web estatica para registrar ingresos, gastos, comprobantes, reportes y recordatorios financieros.
 
-Here are some ideas to get you started:
+## Estructura
 
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
+- `index.html`: login de demo.
+- `pages/`: pantallas internas de la aplicacion.
+- `js/storage.js`: persistencia local con `localStorage`.
+- `js/app.js`: sesion, navegacion y notificaciones.
+- `js/reportes.js`: filtros, graficos y exportaciones.
+- `css/`: estilos base, componentes y paginas.
+
+## Demo
+
+Usuario: `admin`
+Clave: `1234`

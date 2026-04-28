@@ -45,6 +45,7 @@
     let cmpFallbackRegions = [];
     let cmpSelectedIndex = null;
     let cmpSelectionState = null;
+    let kpiCurrency = "UYU";
 
     function fmtMoney(n, moneda){
       const value = Number(n || 0);
@@ -66,6 +67,14 @@
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#39;");
+    }
+
+    function fillSelectOptions(select, options){
+      if(!select) return;
+      select.textContent = "";
+      options.forEach(({ value, label }) => {
+        select.appendChild(new Option(label, value));
+      });
     }
 
     function getDateISO(d){
@@ -154,11 +163,13 @@
       if(!medioSelect) return;
       const current = medioSelect.value || "__all__";
       const medios = getMediosSafe();
-      const opts = [
-        `<option value="__all__">Todas las cuentas</option>`,
-        ...medios.map(m => `<option value="${m.id}">${m.name}</option>`)
-      ];
-      medioSelect.innerHTML = opts.join("");
+      fillSelectOptions(medioSelect, [
+        { value: "__all__", label: "Todas las cuentas" },
+        ...medios.map(m => ({
+          value: String(m.id || ""),
+          label: String(m.name || "")
+        }))
+      ]);
       if(Array.from(medioSelect.options).some(o => o.value === current)){
         medioSelect.value = current;
       }
@@ -183,12 +194,11 @@
       const list = scope ? movs.filter(scope) : movs;
       const cats = getCategoriasFromMovs(list);
       const hasNone = list.some(m => !m.categoria);
-      const opts = [
-        `<option value="__all__">Todas las categorías</option>`,
-        ...(hasNone ? [`<option value="__none__">Sin categoría</option>`] : []),
-        ...cats.map(c => `<option value="${c}">${c}</option>`)
-      ];
-      categoriaSelect.innerHTML = opts.join("");
+      fillSelectOptions(categoriaSelect, [
+        { value: "__all__", label: "Todas las categorías" },
+        ...(hasNone ? [{ value: "__none__", label: "Sin categoría" }] : []),
+        ...cats.map(c => ({ value: c, label: c }))
+      ]);
       if(Array.from(categoriaSelect.options).some(o => o.value === current)){
         categoriaSelect.value = current;
       }
@@ -767,12 +777,11 @@
       const movs = getMovimientosSafe();
       const cats = getCategoriasFromMovs(movs);
       const hasNone = movs.some(m => !m.categoria);
-      const opts = [
-        `<option value="__all__">Todas las categorías</option>`,
-        ...(hasNone ? [`<option value="__none__">Sin categoría</option>`] : []),
-        ...cats.map(c => `<option value="${c}">${c}</option>`)
-      ];
-      cmpCategoriaSelect.innerHTML = opts.join("");
+      fillSelectOptions(cmpCategoriaSelect, [
+        { value: "__all__", label: "Todas las categorías" },
+        ...(hasNone ? [{ value: "__none__", label: "Sin categoría" }] : []),
+        ...cats.map(c => ({ value: c, label: c }))
+      ]);
       if(Array.from(cmpCategoriaSelect.options).some(o => o.value === current)){
         cmpCategoriaSelect.value = current;
       }
@@ -1551,7 +1560,7 @@
         const cat = categoriaSelect ? categoriaSelect.value : "__all__";
         const catLabel = (cat === "__all__") ? "Todas" : (cat === "__none__" ? "Sin categoría" : cat);
         const periodo = getPeriodoSummaryLabel();
-        reportHint.innerHTML = `Filtros activos: <b>${periodo}</b> · <b>${m}</b> · <b>${medioLabel}</b> · <b>${catLabel}</b>.`;
+        reportHint.innerHTML = `Filtros activos: <b>${escapeHtml(periodo)}</b> · <b>${escapeHtml(m)}</b> · <b>${escapeHtml(medioLabel)}</b> · <b>${escapeHtml(catLabel)}</b>.`;
         if(filtersSummarySub){
           filtersSummarySub.textContent = `${periodo} · ${m} · ${medioLabel}`;
         }

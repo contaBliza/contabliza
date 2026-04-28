@@ -120,6 +120,36 @@ function cbWireMenú(){
   });
 }
 
+function cbEnsureMetasNavItem(){
+  const drawerPanel = document.querySelector(".nav-drawer-panel");
+  if(!drawerPanel || drawerPanel.querySelector("[data-nav-link='metas']")) return;
+
+  const configLink = Array.from(drawerPanel.querySelectorAll("a.nav-drawer-item"))
+    .find(link => (link.getAttribute("href") || "").includes("config.html"));
+  const metasLink = document.createElement("a");
+  metasLink.className = "nav-drawer-item";
+  metasLink.href = "./metas.html";
+  metasLink.setAttribute("data-nav-link", "metas");
+  metasLink.innerHTML = `
+    <span class="ico" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="9"></circle>
+        <circle cx="12" cy="12" r="4"></circle>
+        <path d="M12 3v3"></path>
+        <path d="M21 12h-3"></path>
+      </svg>
+    </span>
+    <span>Metas</span>
+  `;
+
+  if(configLink){
+    drawerPanel.insertBefore(metasLink, configLink);
+  }else{
+    const divider = drawerPanel.querySelector(".nav-drawer-divider");
+    drawerPanel.insertBefore(metasLink, divider || null);
+  }
+}
+
 function cbGetNotificationsCount(){
   try{
     if(typeof getNotifications === "function"){
@@ -157,6 +187,15 @@ function cbFormatDateShort(iso){
   const d = new Date(iso);
   if(Number.isNaN(d)) return "";
   return d.toLocaleDateString("es-UY", { day: "2-digit", month: "short" });
+}
+
+function cbEscapeHtml(str){
+  return String(str ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 }
 
 function cbGetNotificationsList(){
@@ -227,9 +266,9 @@ function cbRenderNotificationsPanel(){
     const meta = cbFormatDateShort(n.createdAt);
     const unread = n.read ? "" : "unread";
     return `
-      <div class="notif-item ${unread}" data-notif-id="${n.id}">
-        <div class="notif-title">${title}</div>
-        <div class="notif-meta">${meta}</div>
+      <div class="notif-item ${unread}" data-notif-id="${cbEscapeHtml(n.id)}">
+        <div class="notif-title">${cbEscapeHtml(title)}</div>
+        <div class="notif-meta">${cbEscapeHtml(meta)}</div>
       </div>
     `;
   }).join("");
@@ -294,6 +333,7 @@ function cbWireNotifications(){
   try{ cbRequireSession(); }catch(e){ console.warn("Guard error:", e); }
   try{ cbWireLogout(); }catch(e){ console.warn("Logout hook error:", e); }
   try{ cbWireBack(); }catch(e){ console.warn("Back hook error:", e); }
+  try{ cbEnsureMetasNavItem(); }catch(e){ console.warn("Metas nav error:", e); }
   try{ cbWireMenú(); }catch(e){ console.warn("Menú hook error:", e); }
   try{ cbUpdateNotificationsBadge(); }catch(e){ console.warn("Badge error:", e); }
   try{ cbWireNotifications(); }catch(e){ console.warn("Notif hook error:", e); }

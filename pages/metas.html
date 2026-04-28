@@ -1,0 +1,1083 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>ContaBliza - Metas</title>
+
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/componentes.css">
+  <link rel="stylesheet" href="../css/pages.css">
+
+  <style>
+    body.metas-page{
+      background:
+        radial-gradient(980px 460px at 50% -130px, rgba(136, 208, 222, 0.36) 0%, rgba(136, 208, 222, 0) 66%),
+        linear-gradient(180deg, #0d4658 0%, #155f70 250px, #f2efea 251px, #f7f4ef 100%);
+      min-height: 100vh;
+    }
+    .metas-page .navbar{
+      height: 62px;
+      background: linear-gradient(135deg, #0a3d4e, #125368);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 8px 22px rgba(5, 34, 46, 0.34);
+    }
+    .metas-page .navbar::after{
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -1px;
+      height: 2px;
+      background: linear-gradient(90deg, rgba(214, 245, 255, 0.28), rgba(240, 198, 118, 0.9));
+    }
+    .metas-page .nav-btn,
+    .metas-page .logo-text{
+      color: #f4fafc;
+    }
+    .brand-chip{
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: #f7fbfc;
+      text-decoration: none;
+      font-weight: 800;
+      font-size: 1.25rem;
+      letter-spacing: 0;
+    }
+    .brand-mark{
+      width: 34px;
+      height: 34px;
+      display: block;
+      background: center / contain no-repeat url("../assets/contabliza-mark.svg");
+      color: transparent;
+      filter: drop-shadow(0 7px 16px rgba(9, 38, 49, 0.35));
+    }
+    .metas-shell{
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 92px 14px 28px;
+      position: relative;
+    }
+    .metas-hero{
+      padding: 16px 8px 20px;
+      color: #eef8fa;
+    }
+    .metas-hero h2{
+      margin: 0 0 6px;
+      font-size: 2.35rem;
+      line-height: 1.05;
+      text-shadow: 0 4px 14px rgba(0, 0, 0, 0.28);
+    }
+    .metas-hero p{
+      margin: 0;
+      color: rgba(235, 247, 250, 0.92);
+      font-size: 1.05rem;
+    }
+    .metas-panel{
+      border-radius: 22px;
+      border: 1px solid #ddd8cf;
+      background: rgba(255, 254, 251, 0.97);
+      box-shadow: 0 18px 40px rgba(23, 39, 48, 0.16);
+      padding: 18px 14px 16px;
+    }
+    .metas-head{
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: end;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .metas-head h3{
+      margin: 0;
+      color: #10384a;
+      font-size: 1.4rem;
+    }
+    .goal-picker{
+      display: grid;
+      gap: 7px;
+      min-width: 0;
+      position: relative;
+    }
+    .goal-picker label{
+      margin: 0;
+      color: #10384a;
+      font-size: 1.18rem;
+      font-weight: 900;
+      line-height: 1.1;
+    }
+    .goal-select{
+      width: 100%;
+      min-height: 42px;
+      border-radius: 13px;
+      border: 1px solid #d8d1c8;
+      background: #fffefa;
+      color: #12384a;
+      padding: 0 38px 0 12px;
+      font: inherit;
+      font-weight: 800;
+      appearance: none;
+      -webkit-appearance: none;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .goal-picker::after{
+      content: "";
+      position: absolute;
+      right: 14px;
+      bottom: 15px;
+      width: 8px;
+      height: 8px;
+      border-right: 2px solid #1b4658;
+      border-bottom: 2px solid #1b4658;
+      transform: rotate(45deg);
+      pointer-events: none;
+    }
+    .metas-cta{
+      border: 1px solid #0c6176;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #0e7186, #0a5266);
+      color: #fff;
+      min-height: 42px;
+      padding: 0 13px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 800;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .metas-card{
+      border: 1px solid #ded7ce;
+      border-radius: 18px;
+      background: #fffefa;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+    .goal-top{
+      display: grid;
+      grid-template-columns: 76px minmax(0, 1fr) auto;
+      gap: 14px;
+      align-items: center;
+      padding: 16px;
+    }
+    .goal-icon{
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #dff3ef, #eef9f7);
+      display: grid;
+      place-items: center;
+      color: #126f81;
+      font-size: 1.9rem;
+      font-weight: 800;
+    }
+    .goal-title{
+      margin: 0 0 3px;
+      color: #11384a;
+      font-size: 1.45rem;
+      line-height: 1.05;
+    }
+    .goal-desc{
+      margin: 0;
+      color: #526b7a;
+      font-size: 0.96rem;
+    }
+    .ghost-btn{
+      border: 1px solid #d9d0c5;
+      background: #f8f5ef;
+      color: #24475a;
+      border-radius: 999px;
+      min-height: 36px;
+      padding: 0 12px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .ghost-btn.danger{
+      color: #9b2d2d;
+      border-color: #edd0c8;
+      background: #fff7f4;
+    }
+    .goal-actions{
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+    }
+    .goal-grid{
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-top: 1px solid #e3dcd3;
+      border-bottom: 1px solid #e3dcd3;
+    }
+    .goal-cell{
+      padding: 14px 8px;
+      text-align: center;
+      border-right: 1px solid #e3dcd3;
+    }
+    .goal-cell:last-child{ border-right: none; }
+    .goal-label{
+      color: #466174;
+      font-size: 0.86rem;
+      margin-bottom: 5px;
+    }
+    .goal-value{
+      color: #10384a;
+      font-size: 1.2rem;
+      font-weight: 900;
+      line-height: 1.08;
+    }
+    .goal-value.warn{ color: #a73838; }
+    .goal-value.good{ color: #1f8b4c; }
+    .progress-wrap{
+      padding: 16px;
+    }
+    .progress-head{
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+      color: #173e51;
+      font-weight: 800;
+    }
+    .progress-track{
+      height: 18px;
+      border-radius: 999px;
+      background: #e9e5df;
+      overflow: hidden;
+      box-shadow: inset 0 1px 4px rgba(38, 49, 58, 0.12);
+    }
+    .progress-fill{
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #19984a, #2fb96a);
+    }
+    .progress-note{
+      margin: 10px 0 0;
+      color: #5f7480;
+      font-size: 0.92rem;
+    }
+    .goal-message{
+      margin: 0;
+      padding: 0 16px 16px;
+      color: #536c7b;
+      font-size: 0.95rem;
+      line-height: 1.35;
+    }
+    .projection-card{
+      padding: 16px;
+    }
+    .section-title{
+      margin: 0 0 12px;
+      color: #10384a;
+      font-size: 1.12rem;
+    }
+    .scenario-grid{
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .scenario{
+      border: 1px solid #e0d8ce;
+      border-radius: 14px;
+      padding: 12px 8px;
+      text-align: center;
+      background: #fffdf9;
+      color: inherit;
+      cursor: pointer;
+      font: inherit;
+      width: 100%;
+    }
+    .scenario.is-active{
+      border-color: #4dab72;
+      background: #f2fbf4;
+      box-shadow: 0 8px 18px rgba(37, 135, 73, 0.08);
+    }
+    .scenario:focus-visible{
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(31, 139, 76, 0.18);
+    }
+    .scenario-label{
+      color: #466174;
+      font-size: 0.82rem;
+      margin-bottom: 6px;
+    }
+    .scenario-months{
+      color: #1f8b4c;
+      font-weight: 900;
+      font-size: 1.25rem;
+      line-height: 1.08;
+    }
+    .scenario-date{
+      color: #607383;
+      font-size: 0.82rem;
+      margin-top: 5px;
+    }
+    .insight{
+      display: grid;
+      grid-template-columns: 54px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+    }
+    .insight-icon{
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: #e5f5ea;
+      color: #1f8b4c;
+      font-size: 1.4rem;
+    }
+    .insight-value{
+      color: #1f8b4c;
+      font-size: 1.6rem;
+      font-weight: 900;
+      line-height: 1;
+    }
+    .insight-copy strong{
+      display: block;
+      color: #11384a;
+      font-size: 1rem;
+    }
+    .insight-copy span{
+      color: #607383;
+      font-size: 0.9rem;
+    }
+    .period-toggle{
+      display: inline-flex;
+      gap: 4px;
+      padding: 3px;
+      margin-top: 10px;
+      border-radius: 999px;
+      border: 1px solid #d9d0c5;
+      background: #f4f0ea;
+    }
+    .period-btn{
+      min-height: 30px;
+      border: 0;
+      border-radius: 999px;
+      background: transparent;
+      color: #466174;
+      padding: 0 10px;
+      font: inherit;
+      font-size: 0.82rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .period-btn.is-active{
+      background: #fffefa;
+      color: #0d566d;
+      box-shadow: 0 1px 4px rgba(15, 35, 45, 0.08);
+    }
+    .calc-btn{
+      margin-top: 10px;
+      border: 1px solid #d9d0c5;
+      background: #fffefa;
+      color: #24475a;
+      border-radius: 999px;
+      min-height: 34px;
+      padding: 0 12px;
+      font-weight: 800;
+      cursor: pointer;
+      justify-self: start;
+    }
+    .calc-detail{
+      display: none;
+      grid-column: 2 / -1;
+      color: #607383;
+      font-size: 0.88rem;
+      line-height: 1.35;
+      border-top: 1px solid #ece5dc;
+      padding-top: 10px;
+    }
+    .calc-detail.is-open{
+      display: block;
+    }
+    .metas-page .form-group{
+      margin-bottom: 0;
+    }
+    .metas-page label{
+      display: block;
+      color: #26495c;
+      font-size: 0.78rem;
+      font-weight: 800;
+      margin-bottom: 5px;
+    }
+    .metas-page input,
+    .metas-page select{
+      width: 100%;
+      min-height: 44px;
+      border-radius: 12px;
+      border: 1px solid #d8d1c8;
+      background: #fffefa;
+      color: #12384a;
+      padding: 0 12px;
+      font: inherit;
+    }
+    .goal-form-card{
+      display: none;
+      padding: 16px;
+    }
+    .goal-form-card.is-open{
+      display: block;
+    }
+    .goal-form{
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .goal-form .span-2{
+      grid-column: 1 / -1;
+    }
+    .form-actions{
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      grid-column: 1 / -1;
+      margin-top: 2px;
+    }
+    .empty-state{
+      padding: 22px 16px;
+      text-align: center;
+      color: #526b7a;
+    }
+    .empty-state strong{
+      display: block;
+      color: #10384a;
+      font-size: 1.2rem;
+      margin-bottom: 6px;
+    }
+    .detail-note{
+      margin: 10px 0 0;
+      color: #607383;
+      font-size: 0.88rem;
+      line-height: 1.35;
+    }
+    .viability-note{
+      margin: 12px 0 0;
+      border: 1px solid #ead7b1;
+      border-radius: 12px;
+      background: #fff8ea;
+      color: #755119;
+      padding: 10px 12px;
+      font-size: 0.9rem;
+      line-height: 1.35;
+    }
+    @media (max-width: 560px){
+      .metas-shell{ padding: 88px 12px 28px; }
+      .metas-hero h2{ font-size: 2rem; }
+      .metas-panel{ padding: 14px 10px; border-radius: 20px; }
+      .metas-head{
+        grid-template-columns: 1fr;
+        align-items: stretch;
+        gap: 8px;
+      }
+      .metas-head .metas-cta{
+        align-self: flex-end;
+      }
+      .goal-picker label{
+        font-size: 1.12rem;
+      }
+      .goal-top{
+        grid-template-columns: 62px minmax(0, 1fr);
+        padding: 14px;
+      }
+      .goal-icon{
+        width: 58px;
+        height: 58px;
+        font-size: 1.55rem;
+      }
+      .goal-top .ghost-btn{
+        justify-self: end;
+      }
+      .goal-actions{
+        grid-column: 1 / -1;
+        justify-self: end;
+      }
+      .goal-title{ font-size: 1.25rem; }
+      .goal-grid{ grid-template-columns: 1fr; }
+      .goal-cell{
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 12px;
+        text-align: left;
+        padding: 12px 16px;
+        border-right: none;
+        border-bottom: 1px solid #e3dcd3;
+      }
+      .goal-label{
+        margin-bottom: 0;
+      }
+      .goal-value{
+        font-size: 1.08rem;
+        text-align: right;
+      }
+      .goal-cell:last-child{ border-bottom: none; }
+      .scenario-grid{ grid-template-columns: 1fr; }
+      .insight{ grid-template-columns: 48px minmax(0, 1fr); align-items: start; }
+      .insight-value{ grid-column: 2; font-size: 1.4rem; }
+      .calc-detail{ grid-column: 1 / -1; }
+      .goal-form{ grid-template-columns: 1fr; }
+      .metas-cta{ padding: 0 11px; }
+    }
+  </style>
+</head>
+
+<body class="metas-page">
+  <nav class="navbar">
+    <div class="nav-left">
+      <button class="nav-btn" type="button" data-nav="back" aria-label="Volver" title="Volver"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"></path></svg></button>
+      <button class="nav-btn" data-nav="menu" aria-label="Menú" title="Menú"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16"></path><path d="M4 12h16"></path><path d="M4 18h16"></path></svg></button>
+    </div>
+    <div class="nav-center">
+      <a class="brand-chip" href="./home.html" aria-label="Ir a Home">
+        <span class="brand-mark">CB</span>
+        <span class="brand-text">ContaBliza</span>
+      </a>
+    </div>
+    <div class="nav-right">
+      <button class="nav-btn" data-action="notifications" aria-label="Notificaciones" title="Notificaciones"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 10-12 0c0 7-3 7-3 7h18s-3 0-3-7"></path><path d="M13.73 21a2 2 0 01-3.46 0"></path></svg></button>
+      <button class="nav-btn" id="btnLogout" title="Salir" aria-label="Salir"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 17l5-5-5-5"></path><path d="M15 12H3"></path><path d="M21 5v14"></path></svg></button>
+    </div>
+  </nav>
+
+  <div class="nav-drawer" id="navDrawer" aria-hidden="true">
+    <div class="nav-drawer-backdrop" data-nav="close"></div>
+    <div class="nav-drawer-panel" role="menu">
+      <div class="nav-drawer-header">Menú</div>
+      <a class="nav-drawer-item" href="./home.html"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10l9-7 9 7"></path><path d="M5 10v9h14v-9"></path></svg></span><span>Home</span></a>
+      <a class="nav-drawer-item" href="./movimientos.html"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h10"></path><path d="M6 10h12"></path><path d="M6 14h12"></path><path d="M8 18h10"></path></svg></span><span>Movimientos</span></a>
+      <a class="nav-drawer-item" href="./movimiento.html"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg></span><span>Nuevo</span></a>
+      <a class="nav-drawer-item" href="./reportes.html"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5"></path><path d="M8 19V9"></path><path d="M12 19V12"></path><path d="M16 19V7"></path><path d="M20 19V10"></path></svg></span><span>Reportes</span></a>
+      <a class="nav-drawer-item" href="./calendario.html"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M16 3v4"></path><path d="M8 3v4"></path><path d="M3 9h18"></path></svg></span><span>Calendario</span></a>
+      <a class="nav-drawer-item" href="./documentos.html"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2h9l5 5v15a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"></path><path d="M14 2v6h6"></path><path d="M8 13h8"></path><path d="M8 17h8"></path></svg></span><span>Documentos</span></a>
+      <a class="nav-drawer-item" href="./metas.html" data-nav-link="metas"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="4"></circle><path d="M12 3v3"></path><path d="M21 12h-3"></path></svg></span><span>Metas</span></a>
+      <a class="nav-drawer-item" href="./config.html"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="M4.93 4.93l1.41 1.41"></path><path d="M17.66 17.66l1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="M4.93 19.07l1.41-1.41"></path><path d="M17.66 6.34l1.41-1.41"></path><circle cx="12" cy="12" r="3"></circle></svg></span><span>Configuración</span></a>
+      <div class="nav-drawer-divider"></div>
+      <button class="nav-drawer-item" data-action="logout" type="button"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 17l5-5-5-5"></path><path d="M15 12H3"></path><path d="M21 5v14"></path></svg></span><span>Cerrar sesión</span></button>
+    </div>
+  </div>
+
+  <main class="metas-shell">
+    <section class="metas-hero">
+      <h2>Metas</h2>
+      <p>Planificá tu futuro con tus movimientos reales.</p>
+    </section>
+
+    <section class="metas-panel">
+      <div class="metas-head">
+        <div class="goal-picker">
+          <label for="goalSelect">Meta seleccionada</label>
+          <select class="goal-select" id="goalSelect" aria-label="Meta seleccionada"></select>
+        </div>
+        <button class="metas-cta" id="btnNewGoal" type="button">
+          <span aria-hidden="true">+</span>
+          <span>Nueva meta</span>
+        </button>
+      </div>
+
+      <section class="metas-card goal-form-card" id="goalFormCard">
+        <form class="goal-form" id="goalForm">
+          <div class="form-group span-2">
+            <label for="goalName">Nombre de la meta</label>
+            <input id="goalName" type="text" placeholder="Ej: Auto propio" required>
+          </div>
+          <div class="form-group">
+            <label for="goalType">Tipo</label>
+            <select id="goalType">
+              <option value="auto">Auto</option>
+              <option value="casa">Casa</option>
+              <option value="viaje">Viaje</option>
+              <option value="emergencia">Fondo emergencia</option>
+              <option value="deuda">Pagar deudas</option>
+              <option value="inversion">Inversión personal</option>
+              <option value="otro">Otro</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="goalCurrency">Moneda</label>
+            <select id="goalCurrency">
+              <option value="UYU">UYU</option>
+              <option value="USD">USD</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="goalTarget">Monto objetivo</label>
+            <input id="goalTarget" type="number" min="1" step="0.01" placeholder="15000" required>
+          </div>
+          <div class="form-group">
+            <label for="goalSaved">Ahorrado actual</label>
+            <input id="goalSaved" type="number" min="0" step="0.01" placeholder="5700">
+          </div>
+          <div class="form-group span-2">
+            <label for="goalMonthly">Aporte mensual manual (opcional)</label>
+            <input id="goalMonthly" type="number" min="0" step="0.01" placeholder="Si lo dejás vacío, ContaBliza usa tu promedio real">
+          </div>
+          <div class="form-actions">
+            <button class="ghost-btn" id="btnCancelGoal" type="button">Cancelar</button>
+            <button class="metas-cta" type="submit">Guardar meta</button>
+          </div>
+        </form>
+      </section>
+
+      <div id="goalContent"></div>
+    </section>
+  </main>
+
+  <script src="../js/storage.js"></script>
+  <script src="../js/app.js"></script>
+  <script>
+    const GOALS_KEY = "contabliza_metas";
+    const ACTIVE_GOAL_KEY = "contabliza_meta_activa";
+    const btnNewGoal = document.getElementById("btnNewGoal");
+    const goalSelect = document.getElementById("goalSelect");
+    const goalFormCard = document.getElementById("goalFormCard");
+    const goalForm = document.getElementById("goalForm");
+    const btnCancelGoal = document.getElementById("btnCancelGoal");
+    const goalContent = document.getElementById("goalContent");
+    const goalName = document.getElementById("goalName");
+    const goalType = document.getElementById("goalType");
+    const goalCurrency = document.getElementById("goalCurrency");
+    const goalTarget = document.getElementById("goalTarget");
+    const goalSaved = document.getElementById("goalSaved");
+    const goalMonthly = document.getElementById("goalMonthly");
+    let editingGoalId = null;
+
+    function loadGoals(){
+      try{
+        const raw = localStorage.getItem(GOALS_KEY);
+        const list = raw ? JSON.parse(raw) : [];
+        return Array.isArray(list) ? list : [];
+      }catch{
+        return [];
+      }
+    }
+
+    function saveGoals(list){
+      localStorage.setItem(GOALS_KEY, JSON.stringify(list));
+    }
+
+    function cleanGoalName(name){
+      return String(name || "")
+        .trim()
+        .replace(/^[>\s]+/, "")
+        .trim();
+    }
+
+    function getActiveGoalId(){
+      try{
+        return localStorage.getItem(ACTIVE_GOAL_KEY) || "";
+      }catch{
+        return "";
+      }
+    }
+
+    function setActiveGoalId(id){
+      try{
+        if(id) localStorage.setItem(ACTIVE_GOAL_KEY, id);
+        else localStorage.removeItem(ACTIVE_GOAL_KEY);
+      }catch{}
+    }
+
+    function getMovs(){
+      if(typeof listMovimientosSortedDesc === "function") return listMovimientosSortedDesc();
+      if(typeof getMovimientos === "function") return getMovimientos();
+      return [];
+    }
+
+    function fmtMoney(value, currency){
+      try{
+        return new Intl.NumberFormat("es-UY", { style: "currency", currency }).format(Number(value || 0));
+      }catch{
+        return `${currency} ${Number(value || 0).toLocaleString("es-UY")}`;
+      }
+    }
+
+    function escapeHtml(str){
+      return String(str ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function iconFor(type){
+      const map = {
+        auto: '<svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12l2-5h10l2 5"></path><path d="M4 12h16v6H4z"></path><circle cx="7" cy="18" r="1.5"></circle><circle cx="17" cy="18" r="1.5"></circle></svg>',
+        casa: '<svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-7 9 7"></path><path d="M5 10v10h14V10"></path><path d="M10 20v-6h4v6"></path></svg>',
+        viaje: '<svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 21l2-6 8-8a2.1 2.1 0 0 0-3-3l-8 8-6 2 5 2z"></path><path d="M14 6l4 4"></path></svg>',
+        emergencia: '<svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9h16v10H4z"></path><path d="M8 9V6h8v3"></path><path d="M12 12v4"></path><path d="M10 14h4"></path></svg>',
+        deuda: '<svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 9h18"></path><path d="M7 15h4"></path></svg>',
+        inversion: '<svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5"></path><path d="M4 17l5-5 4 4 7-9"></path><path d="M16 7h4v4"></path></svg>',
+        otro: '<svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"></circle><path d="M12 8v8"></path><path d="M8 12h8"></path></svg>'
+      };
+      return map[type] || map.otro;
+    }
+
+    function labelFor(type){
+      const map = {
+        auto: "Auto propio",
+        casa: "Entrega de casa",
+        viaje: "Viaje",
+        emergencia: "Fondo emergencia",
+        deuda: "Pagar deudas",
+        inversion: "Inversión personal",
+        otro: "Meta personal"
+      };
+      return map[type] || "Meta personal";
+    }
+
+    function monthKey(iso){
+      return String(iso || "").slice(0, 7);
+    }
+
+    function averageMonthlySavings(currency){
+      const movs = getMovs().filter(m => String(m.moneda || "UYU") === currency && m.fecha);
+      const months = [];
+      const seen = new Set();
+      movs.forEach(m => {
+        const key = monthKey(m.fecha);
+        if(key && !seen.has(key)){
+          seen.add(key);
+          months.push(key);
+        }
+      });
+      months.sort();
+      const selected = months;
+      if(!selected.length) return { average: 0, months: 0 };
+
+      const totals = selected.map(key => {
+        return movs
+          .filter(m => monthKey(m.fecha) === key)
+          .reduce((acc, m) => {
+            const sign = m.tipo === "egreso" ? -1 : 1;
+            return acc + sign * Number(m.monto || 0);
+          }, 0);
+      });
+      const avg = totals.reduce((acc, n) => acc + n, 0) / selected.length;
+      return { average: Math.max(avg, 0), months: selected.length };
+    }
+
+    function addMonthsLabel(months){
+      if(months === 0) return "Hoy";
+      if(!Number.isFinite(months) || months < 0) return "Sin fecha";
+      const date = new Date();
+      date.setMonth(date.getMonth() + Math.ceil(months));
+      return date.toLocaleDateString("es-UY", { month: "short", year: "numeric" });
+    }
+
+    function monthsToGoal(missing, monthly){
+      if(missing <= 0) return 0;
+      if(monthly <= 0) return Infinity;
+      return Math.ceil(missing / monthly);
+    }
+
+    function requiredMonthlyForMonths(missing, months){
+      if(missing <= 0) return 0;
+      if(!Number.isFinite(months) || months <= 0) return 0;
+      return missing / months;
+    }
+
+    function monthsLabel(months){
+      if(months === Infinity) return "Sin ritmo";
+      if(months === 0) return "Lista";
+      if(months >= 24){
+        const years = Math.floor(months / 12);
+        const rest = months % 12;
+        return rest ? `${years} años y ${rest} meses` : `${years} años`;
+      }
+      return `${months} meses`;
+    }
+
+    function shortMonthsLabel(months){
+      if(months === Infinity) return "Sin ritmo";
+      if(months === 0) return "Lista";
+      if(months >= 24){
+        const years = Math.floor(months / 12);
+        const rest = months % 12;
+        return rest ? `${years}a ${rest}m` : `${years}a`;
+      }
+      return `${months}m`;
+    }
+
+    function openGoalForm(goal = null){
+      editingGoalId = goal?.id || null;
+      goalName.value = goal?.name || "";
+      goalType.value = goal?.type || "auto";
+      goalCurrency.value = goal?.currency || "UYU";
+      goalTarget.value = goal?.target || "";
+      goalSaved.value = goal?.saved || "";
+      goalMonthly.value = goal?.monthly || "";
+      goalFormCard.classList.add("is-open");
+      goalName.focus();
+    }
+
+    function closeGoalForm(){
+      editingGoalId = null;
+      goalForm.reset();
+      goalFormCard.classList.remove("is-open");
+    }
+
+    function renderGoalSelect(goals, activeId){
+      if(!goalSelect) return;
+      goalSelect.textContent = "";
+
+      if(!goals.length){
+        goalSelect.appendChild(new Option("Sin metas creadas", ""));
+        goalSelect.disabled = true;
+        return;
+      }
+
+      goalSelect.disabled = false;
+      goals.forEach((goal) => {
+        goalSelect.appendChild(new Option(cleanGoalName(goal.name) || "Meta sin nombre", goal.id));
+      });
+      goalSelect.value = goals.some(goal => goal.id === activeId) ? activeId : goals[0].id;
+    }
+
+    function getActiveGoal(){
+      const goals = loadGoals().map(goal => ({
+        ...goal,
+        name: cleanGoalName(goal.name)
+      }));
+      const activeId = getActiveGoalId();
+      const goal = goals.find(item => item.id === activeId) || goals[0] || null;
+      renderGoalSelect(goals, goal?.id || "");
+      if(goal) setActiveGoalId(goal.id);
+      return goal;
+    }
+
+    function renderEmpty(){
+      goalContent.innerHTML = `
+        <section class="metas-card empty-state">
+          <strong>Todavía no tenés una meta principal.</strong>
+          <p>Creá una meta para estimar cuándo podrías alcanzarla usando tus movimientos reales.</p>
+        </section>
+      `;
+    }
+
+    function renderGoal(){
+      const goal = getActiveGoal();
+      if(!goal){
+        renderEmpty();
+        return;
+      }
+
+      const currency = goal.currency || "UYU";
+      const target = Math.max(Number(goal.target || 0), 0);
+      const saved = Math.max(Number(goal.saved || 0), 0);
+      const missing = Math.max(target - saved, 0);
+      const pct = target > 0 ? Math.min(100, Math.round((saved / target) * 100)) : 0;
+      const realSavings = averageMonthlySavings(currency);
+      const manual = Number(goal.monthly || 0);
+      const monthly = manual > 0 ? manual : realSavings.average;
+      const normal = monthsToGoal(missing, monthly);
+      const conservative = monthsToGoal(missing, monthly * 0.7);
+      const aggressive = monthsToGoal(missing, monthly * 1.3);
+      const scenarios = {
+        conservative: {
+          label: "Conservador",
+          months: conservative,
+          requiredMonthly: requiredMonthlyForMonths(missing, conservative)
+        },
+        normal: {
+          label: "Normal",
+          months: normal,
+          requiredMonthly: requiredMonthlyForMonths(missing, normal)
+        },
+        aggressive: {
+          label: "Agresivo",
+          months: aggressive,
+          requiredMonthly: requiredMonthlyForMonths(missing, aggressive)
+        }
+      };
+      const insightSubtitle = "Según la proyección seleccionada.";
+      const viabilityNote = Number.isFinite(normal) && normal > 60
+        ? `<p class="viability-note">A este ritmo la meta queda muy lejos. Probá aumentar el ahorro mensual o usar el simulador.</p>`
+        : "";
+      const goalMessage = missing <= 0
+        ? "Ya alcanzaste esta meta."
+        : `Te faltan ${escapeHtml(fmtMoney(missing, currency))} para llegar a ${escapeHtml(goal.name)}.`;
+      const calcDetail = `Tomamos lo que falta para la meta y lo dividimos por los meses de la proyección elegida. El ritmo base sale de ${manual > 0 ? "tu aporte mensual manual" : `tu promedio real de todos los meses cargados en ${currency}`}.`;
+      goalContent.innerHTML = `
+        <section class="metas-card">
+          <div class="goal-top">
+            <div class="goal-icon" aria-hidden="true">${iconFor(goal.type)}</div>
+            <div>
+              <h4 class="goal-title">${escapeHtml(goal.name)}</h4>
+              <p class="goal-desc">${escapeHtml(labelFor(goal.type))}</p>
+            </div>
+            <div class="goal-actions">
+              <button class="ghost-btn" id="btnEditGoal" type="button">Editar</button>
+              <button class="ghost-btn danger" id="btnDeleteGoal" type="button">Eliminar</button>
+            </div>
+          </div>
+          <div class="goal-grid">
+            <div class="goal-cell">
+              <div class="goal-label">Monto objetivo</div>
+              <div class="goal-value">${escapeHtml(fmtMoney(target, currency))}</div>
+            </div>
+            <div class="goal-cell">
+              <div class="goal-label">Ahorrado</div>
+              <div class="goal-value good">${escapeHtml(fmtMoney(saved, currency))}</div>
+            </div>
+            <div class="goal-cell">
+              <div class="goal-label">Faltan</div>
+              <div class="goal-value warn">${escapeHtml(fmtMoney(missing, currency))}</div>
+            </div>
+          </div>
+          <div class="progress-wrap">
+            <div class="progress-head">
+              <span>Progreso total</span>
+              <span>${pct}%</span>
+            </div>
+            <div class="progress-track"><div class="progress-fill" style="width:${pct}%;"></div></div>
+            <p class="progress-note">${pct >= 100 ? "Meta alcanzada." : "Estimación basada en tu información actual."}</p>
+          </div>
+          <p class="goal-message">${goalMessage}</p>
+        </section>
+
+        <section class="metas-card projection-card">
+          <h4 class="section-title">Proyección de tiempo estimado</h4>
+          <div class="scenario-grid">
+            <button class="scenario" type="button" data-scenario="conservative" aria-pressed="false">
+              <div class="scenario-label">Conservador</div>
+              <div class="scenario-months">${escapeHtml(monthsLabel(conservative))}</div>
+              <div class="scenario-date">${escapeHtml(addMonthsLabel(conservative))}</div>
+            </button>
+            <button class="scenario is-main is-active" type="button" data-scenario="normal" aria-pressed="true">
+              <div class="scenario-label">Normal</div>
+              <div class="scenario-months">${escapeHtml(monthsLabel(normal))}</div>
+              <div class="scenario-date">${escapeHtml(addMonthsLabel(normal))}</div>
+            </button>
+            <button class="scenario" type="button" data-scenario="aggressive" aria-pressed="false">
+              <div class="scenario-label">Agresivo</div>
+              <div class="scenario-months">${escapeHtml(monthsLabel(aggressive))}</div>
+              <div class="scenario-date">${escapeHtml(addMonthsLabel(aggressive))}</div>
+            </button>
+          </div>
+          <p class="detail-note">El ritmo normal usa ${manual > 0 ? "el aporte mensual manual" : `tu ahorro mensual promedio de todos los meses cargados en ${currency} (${realSavings.months || 0} mes(es))`}.</p>
+          ${viabilityNote}
+        </section>
+
+        <section class="metas-card insight">
+          <div class="insight-icon" aria-hidden="true">$</div>
+          <div class="insight-copy">
+            <strong id="requiredContributionTitle">Aporte mensual necesario</strong>
+            <div class="period-toggle" role="group" aria-label="Periodo del aporte">
+              <button class="period-btn is-active" type="button" data-period="monthly">Mensual</button>
+              <button class="period-btn" type="button" data-period="daily">Diario</button>
+            </div>
+            <button class="calc-btn" id="btnCalcDetail" type="button">Ver cálculo</button>
+          </div>
+          <div class="insight-value" id="requiredContributionValue">${escapeHtml(fmtMoney(scenarios.normal.requiredMonthly, currency))}</div>
+          <div class="calc-detail" id="calcDetail">${calcDetail}</div>
+        </section>
+      `;
+
+      document.getElementById("btnEditGoal")?.addEventListener("click", () => openGoalForm(goal));
+      document.getElementById("btnDeleteGoal")?.addEventListener("click", () => deleteGoal(goal.id));
+      setupProjectionContribution(scenarios, currency);
+      document.getElementById("btnCalcDetail")?.addEventListener("click", () => {
+        document.getElementById("calcDetail")?.classList.toggle("is-open");
+      });
+    }
+
+    function setupProjectionContribution(scenarios, currency){
+      let selectedScenario = "normal";
+      let selectedPeriod = "monthly";
+
+      function renderRequiredContribution(){
+        const scenario = scenarios[selectedScenario] || scenarios.normal;
+        const periodLabel = selectedPeriod === "daily" ? "diario" : "mensual";
+        const value = selectedPeriod === "daily" ? scenario.requiredMonthly / 30 : scenario.requiredMonthly;
+        const title = `Aporte ${periodLabel} necesario`;
+        const hasRhythm = Number.isFinite(scenario.months);
+        const titleEl = document.getElementById("requiredContributionTitle");
+        const valueEl = document.getElementById("requiredContributionValue");
+        if(titleEl) titleEl.textContent = title;
+        if(valueEl) valueEl.textContent = hasRhythm ? fmtMoney(Math.max(value, 0), currency) : "Sin ritmo";
+
+        document.querySelectorAll(".scenario").forEach(btn => {
+          const active = btn.getAttribute("data-scenario") === selectedScenario;
+          btn.classList.toggle("is-active", active);
+          btn.setAttribute("aria-pressed", active ? "true" : "false");
+        });
+        document.querySelectorAll(".period-btn").forEach(btn => {
+          const active = btn.getAttribute("data-period") === selectedPeriod;
+          btn.classList.toggle("is-active", active);
+        });
+      }
+
+      document.querySelectorAll(".scenario").forEach(btn => {
+        btn.addEventListener("click", () => {
+          selectedScenario = btn.getAttribute("data-scenario") || "normal";
+          renderRequiredContribution();
+        });
+      });
+
+      document.querySelectorAll(".period-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          selectedPeriod = btn.getAttribute("data-period") || "monthly";
+          renderRequiredContribution();
+        });
+      });
+
+      renderRequiredContribution();
+    }
+
+    function deleteGoal(id){
+      if(!id) return;
+      const goal = loadGoals().find(item => item.id === id);
+      const ok = confirm(`Eliminar la meta "${cleanGoalName(goal?.name) || "seleccionada"}"?`);
+      if(!ok) return;
+      const nextList = loadGoals().filter(item => item.id !== id);
+      saveGoals(nextList);
+      setActiveGoalId(nextList[0]?.id || "");
+      renderGoal();
+    }
+
+    btnNewGoal.addEventListener("click", () => openGoalForm());
+    btnCancelGoal.addEventListener("click", closeGoalForm);
+    goalSelect.addEventListener("change", () => {
+      setActiveGoalId(goalSelect.value);
+      renderGoal();
+    });
+
+    goalForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const target = Number(goalTarget.value || 0);
+      if(target <= 0) return;
+      const list = loadGoals();
+      const nextGoal = {
+        id: editingGoalId || ((typeof crypto !== "undefined" && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now())),
+        name: cleanGoalName(goalName.value),
+        type: goalType.value || "otro",
+        currency: goalCurrency.value || "UYU",
+        target,
+        saved: Math.max(Number(goalSaved.value || 0), 0),
+        monthly: Math.max(Number(goalMonthly.value || 0), 0),
+        updatedAt: new Date().toISOString()
+      };
+      const nextList = editingGoalId
+        ? list.map(item => item.id === editingGoalId ? nextGoal : item)
+        : [nextGoal, ...list];
+      saveGoals(nextList);
+      setActiveGoalId(nextGoal.id);
+      closeGoalForm();
+      renderGoal();
+    });
+
+    document.addEventListener("DOMContentLoaded", renderGoal);
+    window.addEventListener("storage", (event) => {
+      if(event.key === GOALS_KEY || event.key === "contabliza_movimientos") renderGoal();
+    });
+  </script>
+</body>
+</html>

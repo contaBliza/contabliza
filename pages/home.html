@@ -1141,7 +1141,7 @@
 
       renderDistributionByCurrency(movs, selected, activeDistributionCurrency);
 
-      const last = filteredMovs.slice(0, 3);
+      const last = movs.slice(0, 3);
       rowsInfo.textContent = `${last.length} item${last.length === 1 ? "" : "s"}`;
 
       if(!last.length){

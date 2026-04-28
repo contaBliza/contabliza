@@ -1056,6 +1056,14 @@
         .replaceAll("'","&#039;");
     }
 
+    function fillSelectOptions(select, options){
+      if(!select) return;
+      select.textContent = "";
+      options.forEach(({ value, label }) => {
+        select.appendChild(new Option(label, value));
+      });
+    }
+
     function fmtMoney(n, moneda){
       const value = Number(n || 0);
       const m = moneda || "UYU";
@@ -1121,12 +1129,11 @@
       const list = scope ? movs.filter(scope) : movs;
       const cats = getCategoriasFromMovs(list);
       const hasNone = list.some(m => !m.categoria);
-      const opts = [
-        `<option value="__all__">Todas</option>`,
-        ...(hasNone ? [`<option value="__none__">Sin categoría</option>`] : []),
-        ...cats.map(c => `<option value="${c}">${c}</option>`)
-      ];
-      catFilter.innerHTML = opts.join("");
+      fillSelectOptions(catFilter, [
+        { value: "__all__", label: "Todas" },
+        ...(hasNone ? [{ value: "__none__", label: "Sin categoría" }] : []),
+        ...cats.map(c => ({ value: c, label: c }))
+      ]);
       if(Array.from(catFilter.options).some(o => o.value === current)){
         catFilter.value = current;
       }
@@ -1229,18 +1236,19 @@
       const cats = getCategoriasFromMovs(movs);
       const current = String(currentValue || "").trim();
       const list = current && !cats.includes(current) ? [...cats, current] : cats;
-      editCategoria.innerHTML = [
-        `<option value="">Sin categoría</option>`,
-        ...list.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`)
-      ].join("");
+      fillSelectOptions(editCategoria, [
+        { value: "", label: "Sin categoría" },
+        ...list.map(c => ({ value: c, label: c }))
+      ]);
     }
 
     function fillEditMedios(){
       if(!editMedio) return;
       const medios = getMediosSafe();
-      editMedio.innerHTML = medios.map(m =>
-        `<option value="${m.id}">${m.name}</option>`
-      ).join("");
+      fillSelectOptions(editMedio, medios.map(m => ({
+        value: String(m.id || ""),
+        label: String(m.name || "")
+      })));
     }
 
     function openEdit(mov, movsAll){

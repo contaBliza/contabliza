@@ -1,13 +1,13 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Inter+Tight:wght@500;600;700;800&display=swap");
 
-/* Reset b·sico */
+/* Reset b√°sico */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* TipografÌa y cuerpo */
+/* Tipograf√≠a y cuerpo */
 html, body {
   height: auto;
   min-height: 100%;
@@ -19,6 +19,11 @@ body {
   background-color: var(--color-bg);
   color: var(--color-text);
   line-height: 1.4;
+  font-size: 16px;
+  letter-spacing: 0;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Contenedores generales */
@@ -29,11 +34,12 @@ body {
   margin-right: auto;
 }
 
-/* TÌtulos */
+/* T√≠tulos */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-display);
   font-weight: 600;
-  line-height: 1.2;
+  line-height: 1.12;
+  letter-spacing: 0;
 }
 
 /* Texto */
@@ -48,6 +54,7 @@ select,
 textarea {
   font-family: var(--font-base);
   font-size: 1rem;
+  letter-spacing: 0;
 }
 
 input,
@@ -90,7 +97,7 @@ a {
   color: inherit;
 }
 
-/* Utilidades b·sicas */
+/* Utilidades b√°sicas */
 .hidden {
   display: none !important;
 }
@@ -106,3 +113,54 @@ a {
 .mb-1 { margin-bottom: 0.5rem; }
 .mb-2 { margin-bottom: 1rem; }
 .mb-3 { margin-bottom: 1.5rem; }
+
+/* Product typography pass */
+.brand-text,
+.logo-text{
+  font-family: var(--font-display) !important;
+  font-weight: 700 !important;
+  letter-spacing: 0 !important;
+}
+
+:is(.home-hero, .movs-hero, .mv-hero, .rep-hero, .cal-hero, .doc-hero, .metas-hero, .cfg-hero) h2{
+  font-family: var(--font-display) !important;
+  font-size: clamp(1.72rem, 6.4vw, 1.98rem) !important;
+  font-weight: 700 !important;
+  line-height: 1.08 !important;
+  letter-spacing: 0 !important;
+}
+
+:is(
+  .section-title,
+  .home-title,
+  .saldo-title,
+  .account-title,
+  .distribution-head h3,
+  .last-head h3,
+  .movs-head h3,
+  .mv-title,
+  .rep-title,
+  .filters-summary-title,
+  .cal-month-label,
+  .cal-form-title,
+  .cal-card-title,
+  .doc-title,
+  .doc-card-title,
+  .cfg-title,
+  .goal-title,
+  .scenario-months,
+  .insight-title,
+  .camera-header,
+  .edit-header
+){
+  font-family: var(--font-display) !important;
+  font-weight: 700 !important;
+  line-height: 1.12 !important;
+  letter-spacing: 0 !important;
+}
+
+:is(.summary-value, .kpi-value, .saldo-value, .distribution-amount, .last-item-amount, .goal-value, .insight-value){
+  font-family: var(--font-display) !important;
+  font-weight: 700 !important;
+  letter-spacing: 0 !important;
+}

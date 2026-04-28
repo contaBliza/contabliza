@@ -615,6 +615,33 @@
     let cameraStream = null;
     let cameraFile = null;
     let previewUrl = null;
+    const MAX_ATTACHMENT_BYTES = 1.5 * 1024 * 1024;
+
+    function showSavedMsg(message, timeout = 2500){
+      if(!savedMsg) return;
+      savedMsg.textContent = message;
+      savedMsg.style.display = "block";
+      if(timeout){
+        setTimeout(() => savedMsg.style.display = "none", timeout);
+      }
+    }
+
+    function fillSelectOptions(select, options){
+      if(!select) return;
+      select.textContent = "";
+      options.forEach(({ value, label }) => {
+        select.appendChild(new Option(label, value));
+      });
+    }
+
+    function validateAttachment(file){
+      if(!file) return true;
+      if(file.size > MAX_ATTACHMENT_BYTES){
+        showSavedMsg("El adjunto supera 1.5 MB. Elegí un archivo más liviano o guardá el movimiento sin adjunto.", 4000);
+        return false;
+      }
+      return true;
+    }
 
     function getMediosSafe(){
       if(typeof getMedios === "function") return getMedios();
@@ -627,9 +654,10 @@
 
     function fillMedioOptions(){
       const medios = getMediosSafe();
-      medio.innerHTML = medios.map(m =>
-        `<option value="${m.id}">${m.name}</option>`
-      ).join("");
+      fillSelectOptions(medio, medios.map(m => ({
+        value: String(m.id || ""),
+        label: String(m.name || "")
+      })));
 
       if(medios.some(m => m.id === "banco")) medio.value = "banco";
       else if(medios.length) medio.value = medios[0].id;
@@ -667,11 +695,11 @@
       const set = new Set([...base, ...extra]);
       const list = Array.from(set).sort((a,b) => a.localeCompare(b));
       const current = categoria.value || "";
-      categoria.innerHTML = [
-        `<option value="">Sin categoría</option>`,
-        ...list.map(n => `<option value="${n}">${n}</option>`),
-        `<option value="__other__">Otra categoría...</option>`
-      ].join("");
+      fillSelectOptions(categoria, [
+        { value: "", label: "Sin categoría" },
+        ...list.map(n => ({ value: n, label: n })),
+        { value: "__other__", label: "Otra categoría..." }
+      ]);
       if(Array.from(categoria.options).some(option => option.value === current)){
         categoria.value = current;
       }else if(current){
@@ -777,6 +805,12 @@
 
     adjuntoArchivo.addEventListener("change", () => {
       const file = adjuntoArchivo?.files?.[0] || null;
+      if(file && !validateAttachment(file)){
+        adjuntoArchivo.value = "";
+        setAdjuntoEstado(null);
+        setAdjuntoPreview(null);
+        return;
+      }
       if(file) adjuntoFoto.value = "";
       cameraFile = null;
       cameraUse.disabled = true;
@@ -786,6 +820,12 @@
 
     adjuntoFoto.addEventListener("change", () => {
       const file = adjuntoFoto?.files?.[0] || null;
+      if(file && !validateAttachment(file)){
+        adjuntoFoto.value = "";
+        setAdjuntoEstado(null);
+        setAdjuntoPreview(null);
+        return;
+      }
       if(file) adjuntoArchivo.value = "";
       cameraFile = null;
       cameraUse.disabled = true;
@@ -836,6 +876,7 @@
       cameraCanvas.toBlob((blob) => {
         if(!blob) return;
         const file = new File([blob], `comprobante-${Date.now()}.jpg`, { type: "image/jpeg" });
+        if(!validateAttachment(file)) return;
         cameraFile = file;
         adjuntoArchivo.value = "";
         adjuntoFoto.value = "";
@@ -881,33 +922,38 @@
       const adjName = adjFile?.name || "";
 
       if(!montoVal || montoVal <= 0 || !fechaVal || !medioId || !conceptoVal){
-        savedMsg.textContent = "Completa monto, fecha, concepto y cuenta/medio.";
-        savedMsg.style.display = "block";
-        setTimeout(() => savedMsg.style.display = "none", 2000);
+        showSavedMsg("Completa monto, fecha, concepto y cuenta/medio.");
         return;
       }
 
       if(typeof addMovimiento !== "function"){
-        savedMsg.textContent = "Falta addMovimiento() en storage.js";
-        savedMsg.style.display = "block";
-        setTimeout(() => savedMsg.style.display = "none", 2000);
+        showSavedMsg("Falta addMovimiento() en storage.js");
+        return;
+      }
+
+      if(!validateAttachment(adjFile)){
         return;
       }
 
       readFileAsDataUrl(adjFile).then((dataUrl) => {
-        addMovimiento({
-          fecha: fechaVal,
-          tipo: currentTipo,
-          concepto: conceptoVal,
-          monto: montoVal,
-          moneda: monedaVal,
-          medioId,
-          categoria: categoriaVal || null,
-          factura: facturaVal || null,
-          adjuntoName: adjName || null,
-          adjuntoDataUrl: dataUrl || null,
-          adjuntoMime: adjFile?.type || null
-        });
+        try{
+          addMovimiento({
+            fecha: fechaVal,
+            tipo: currentTipo,
+            concepto: conceptoVal,
+            monto: montoVal,
+            moneda: monedaVal,
+            medioId,
+            categoria: categoriaVal || null,
+            factura: facturaVal || null,
+            adjuntoName: adjName || null,
+            adjuntoDataUrl: dataUrl || null,
+            adjuntoMime: adjFile?.type || null
+          });
+        }catch(error){
+          showSavedMsg(error?.message || "No se pudo guardar el movimiento.", 4000);
+          return;
+        }
 
         form.reset();
         clearAdjuntos();
@@ -918,8 +964,7 @@
         setTipo(currentTipo);
         moneda.value = (typeof getSettings === "function" ? (getSettings()?.moneda || "UYU") : "UYU");
 
-        savedMsg.style.display = "block";
-        setTimeout(() => savedMsg.style.display = "none", 2000);
+        showSavedMsg("Movimiento guardado correctamente!");
       });
     });
 
