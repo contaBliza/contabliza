@@ -51,7 +51,19 @@ function cbIsLogged(){
   return !!(s && (s.user || s.idNumber));
 }
 
-function cbRequireSession(){
+async function cbGetSupabaseSession(){
+  try{
+    if(!window.cbSupabase) return null;
+    const { data, error } = await window.cbSupabase.auth.getSession();
+    if(error) throw error;
+    return data?.session || null;
+  }catch(error){
+    console.warn("Supabase session error:", error);
+    return null;
+  }
+}
+
+async function cbRequireSession(){
   // Si estás en /pages/ (o cualquier html interno) y no hay sesión, redirige a login
   const path = (location.pathname || "").toLowerCase();
   const isIndex = path.endsWith("/index.html") || path.endsWith("/");
@@ -59,8 +71,10 @@ function cbRequireSession(){
   // Consideramos internas a: /pages/*.html (ajustá si tu carpeta cambia)
   const isInternal = path.includes("/pages/");
 
-  if(!isIndex && isInternal && !cbIsLogged()){
-    // Desde /pages/* volvemos a /index.html
+  if(isIndex || !isInternal || cbIsLogged()) return;
+
+  const supabaseSession = await cbGetSupabaseSession();
+  if(!supabaseSession){
     location.href = "../index.html";
   }
 }
@@ -82,7 +96,13 @@ function cbWireLogout(){
       localStorage.removeItem(CB_KEYS.SESSION);
       localStorage.removeItem(CB_KEYS.REMEMBER);
       sessionStorage.removeItem(CB_KEYS.SESSION_TEMP);
-      location.href = "../index.html";
+      if(window.cbSupabase){
+        window.cbSupabase.auth.signOut().finally(() => {
+          location.href = "../index.html";
+        });
+      }else{
+        location.href = "../index.html";
+      }
     });
   });
 }
@@ -371,26 +391,93 @@ window.addEventListener("cb:notifications-updated", () => {
   const forgot = document.getElementById("forgotLink");
   const register = document.getElementById("registerLink");
   const remember = document.getElementById("rememberDevice");
+  const submitBtn = form.querySelector("button[type='submit']");
+  const loginTitle = document.querySelector(".login-card h2");
+  const loginSub = document.querySelector(".login-sub");
+  const loginHint = document.querySelector(".login-hint");
+  let authMode = "login";
+
+  cbGetSupabaseSession().then((session) => {
+    if(session) window.location.href = "pages/home.html";
+  });
 
   if(remember){
     remember.checked = localStorage.getItem(CB_KEYS.REMEMBER) === "1";
   }
 
+  function isEmail(value){
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value || "").trim());
+  }
+
+  function setAuthMode(mode){
+    authMode = mode === "register" ? "register" : "login";
+    if(loginTitle) loginTitle.textContent = authMode === "register" ? "Crear cuenta" : "Iniciar sesión";
+    if(loginSub) loginSub.textContent = authMode === "register" ? "Registrá tu cuenta en la nube" : "Accedé a tu cuenta";
+    if(submitBtn) submitBtn.textContent = authMode === "register" ? "Crear cuenta" : "Ingresar";
+    if(register) register.textContent = authMode === "register" ? "Ya tengo cuenta" : "Registrarse";
+    if(loginHint){
+      loginHint.textContent = authMode === "register"
+        ? "Usá un email real y una contraseña de al menos 6 caracteres."
+        : "Demo rápida: `admin` / `1234`";
+    }
+  }
+
+  async function signInWithSupabase(email, pass){
+    const { error } = await window.cbSupabase.auth.signInWithPassword({
+      email,
+      password: pass
+    });
+    if(error) throw error;
+  }
+
+  async function signUpWithSupabase(email, pass, idType, idNumber){
+    const { data, error } = await window.cbSupabase.auth.signUp({
+      email,
+      password: pass,
+      options: {
+        data: {
+          display_name: email.split("@")[0],
+          document_type: idType,
+          document_number: idNumber
+        }
+      }
+    });
+    if(error) throw error;
+    return data;
+  }
+
   if(forgot){
     forgot.addEventListener("click", (e) => {
       e.preventDefault();
-      alert("Recuperar contraseña: lo sumamos más adelante.");
+      const email = document.getElementById("user")?.value.trim() || prompt("Ingresá tu email para recuperar contraseña:");
+      if(!email) return;
+      if(!window.cbSupabase){
+        alert("Supabase no está disponible en este momento.");
+        return;
+      }
+      if(!isEmail(email)){
+        alert("Ingresá un email válido.");
+        return;
+      }
+      window.cbSupabase.auth.resetPasswordForEmail(email)
+        .then(({ error }) => {
+          if(error) throw error;
+          alert("Te enviamos un email para recuperar la contraseña.");
+        })
+        .catch((error) => {
+          alert(error?.message || "No se pudo enviar el email de recuperación.");
+        });
     });
   }
 
   if(register){
     register.addEventListener("click", (e) => {
       e.preventDefault();
-      alert("Registro: lo sumamos más adelante.");
+      setAuthMode(authMode === "register" ? "login" : "register");
     });
   }
 
-  form.addEventListener("submit", (e) => {
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const user = document.getElementById("user")?.value.trim() || "";
@@ -401,6 +488,40 @@ window.addEventListener("cb:notifications-updated", () => {
 
     if(!user || !pass || !idType || !idNumber){
       alert("Completa todos los campos.");
+      return;
+    }
+
+    if(window.cbSupabase && isEmail(user)){
+      try{
+        if(submitBtn) submitBtn.disabled = true;
+
+        if(authMode === "register"){
+          const data = await signUpWithSupabase(user, pass, idType, idNumber);
+          if(data?.session){
+            window.location.href = "pages/home.html";
+          }else{
+            alert("Cuenta creada. Revisá tu email para confirmar el registro.");
+            setAuthMode("login");
+          }
+          return;
+        }
+
+        await signInWithSupabase(user, pass);
+        localStorage.removeItem(CB_KEYS.SESSION);
+        localStorage.removeItem(CB_KEYS.REMEMBER);
+        sessionStorage.removeItem(CB_KEYS.SESSION_TEMP);
+        window.location.href = "pages/home.html";
+        return;
+      }catch(error){
+        alert(error?.message || "No se pudo completar la operación con Supabase.");
+        return;
+      }finally{
+        if(submitBtn) submitBtn.disabled = false;
+      }
+    }
+
+    if(authMode === "register"){
+      alert("Para registrarte en Supabase tenés que usar un email válido.");
       return;
     }
 
@@ -427,6 +548,8 @@ window.addEventListener("cb:notifications-updated", () => {
 
     window.location.href = "pages/home.html";
   });
+
+  setAuthMode("login");
 })();
 
 

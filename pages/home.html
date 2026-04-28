@@ -935,6 +935,8 @@
   <!-- =============================
        SCRIPTS
        ============================= -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/supabaseClient.js"></script>
   <script src="../js/storage.js"></script>
   <script src="../js/app.js"></script>
 
@@ -997,6 +999,13 @@
       }catch{}
       if(typeof getSession === "function") return getSession();
       return null;
+    }
+
+    async function renderSupabaseUserName(){
+      if(!userName || getSessionSafe() || typeof cbGetSupabaseSession !== "function") return;
+      const session = await cbGetSupabaseSession();
+      const email = session?.user?.email || "";
+      if(email) userName.textContent = email.split("@")[0];
     }
 
     function getMovimientosSafe(){
@@ -1195,6 +1204,7 @@
       rebuildMedioSelect();
       setActiveDistributionCurrency("UYU");
       renderHome();
+      renderSupabaseUserName();
     });
   </script>
 
