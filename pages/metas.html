@@ -451,6 +451,17 @@
       font-size: 1.2rem;
       margin-bottom: 6px;
     }
+    .goal-alert{
+      display: none;
+      border: 1px solid #ead7b1;
+      border-radius: 12px;
+      background: #fff8ea;
+      color: #755119;
+      padding: 10px 12px;
+      margin-bottom: 12px;
+      font-size: 0.9rem;
+      line-height: 1.35;
+    }
     .detail-note{
       margin: 10px 0 0;
       color: #607383;
@@ -581,6 +592,8 @@
         </button>
       </div>
 
+      <div class="goal-alert" id="goalAlert"></div>
+
       <section class="metas-card goal-form-card" id="goalFormCard">
         <form class="goal-form" id="goalForm">
           <div class="form-group span-2">
@@ -632,8 +645,8 @@
   <script src="../js/storage.js"></script>
   <script src="../js/app.js"></script>
   <script>
-    const GOALS_KEY = "contabliza_metas";
-    const ACTIVE_GOAL_KEY = "contabliza_meta_activa";
+    const GOALS_KEY = (typeof STORAGE_KEYS !== "undefined" && STORAGE_KEYS.METAS) ? STORAGE_KEYS.METAS : "contabliza_metas";
+    const ACTIVE_GOAL_KEY = (typeof STORAGE_KEYS !== "undefined" && STORAGE_KEYS.META_ACTIVA) ? STORAGE_KEYS.META_ACTIVA : "contabliza_meta_activa";
     const btnNewGoal = document.getElementById("btnNewGoal");
     const goalSelect = document.getElementById("goalSelect");
     const goalFormCard = document.getElementById("goalFormCard");
@@ -646,7 +659,17 @@
     const goalTarget = document.getElementById("goalTarget");
     const goalSaved = document.getElementById("goalSaved");
     const goalMonthly = document.getElementById("goalMonthly");
+    const goalAlert = document.getElementById("goalAlert");
     let editingGoalId = null;
+
+    function showGoalAlert(message){
+      if(!goalAlert) return;
+      goalAlert.textContent = message;
+      goalAlert.style.display = "block";
+      setTimeout(() => {
+        goalAlert.style.display = "none";
+      }, 3600);
+    }
 
     function loadGoals(){
       try{
@@ -659,7 +682,14 @@
     }
 
     function saveGoals(list){
-      localStorage.setItem(GOALS_KEY, JSON.stringify(list));
+      try{
+        if(typeof save === "function") save(GOALS_KEY, list);
+        else localStorage.setItem(GOALS_KEY, JSON.stringify(list));
+        return true;
+      }catch(error){
+        showGoalAlert(error?.message || "No se pudieron guardar las metas.");
+        return false;
+      }
     }
 
     function cleanGoalName(name){
@@ -1038,7 +1068,7 @@
       const ok = confirm(`Eliminar la meta "${cleanGoalName(goal?.name) || "seleccionada"}"?`);
       if(!ok) return;
       const nextList = loadGoals().filter(item => item.id !== id);
-      saveGoals(nextList);
+      if(!saveGoals(nextList)) return;
       setActiveGoalId(nextList[0]?.id || "");
       renderGoal();
     }
@@ -1068,7 +1098,7 @@
       const nextList = editingGoalId
         ? list.map(item => item.id === editingGoalId ? nextGoal : item)
         : [nextGoal, ...list];
-      saveGoals(nextList);
+      if(!saveGoals(nextList)) return;
       setActiveGoalId(nextGoal.id);
       closeGoalForm();
       renderGoal();

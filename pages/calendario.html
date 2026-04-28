@@ -600,6 +600,7 @@
         </span>
         <span>Documentos</span>
       </a>
+      <a class="nav-drawer-item" href="./metas.html" data-nav-link="metas"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="4"></circle><path d="M12 3v3"></path><path d="M21 12h-3"></path></svg></span><span>Metas</span></a>
       <a class="nav-drawer-item" href="./config.html">
         <span class="ico" aria-hidden="true">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
@@ -764,7 +765,22 @@
   <script src="../js/app.js"></script>
 
   <script>
-    const KEY = "ContaBliza_calendario";
+    const LEGACY_KEY = "ContaBliza_calendario";
+    const KEY = (typeof STORAGE_KEYS !== "undefined" && STORAGE_KEYS.CALENDARIO) ? STORAGE_KEYS.CALENDARIO : "contabliza_calendario";
+
+    (function migrateCalendarKey(){
+      try{
+        const legacyRaw = localStorage.getItem(LEGACY_KEY);
+        if(legacyRaw && !localStorage.getItem(KEY)){
+          localStorage.setItem(KEY, legacyRaw);
+        }
+        if(legacyRaw && LEGACY_KEY !== KEY){
+          localStorage.removeItem(LEGACY_KEY);
+        }
+      }catch(error){
+        console.warn("Migración de calendario fallida:", error);
+      }
+    })();
 
     const msg = document.getElementById("msg");
 
@@ -911,7 +927,8 @@
     }
 
     function saveList(list){
-      localStorage.setItem(KEY, JSON.stringify(list));
+      if(typeof save === "function") save(KEY, list);
+      else localStorage.setItem(KEY, JSON.stringify(list));
     }
 
     function pushPendingNotification(item, mode){
@@ -1172,13 +1189,20 @@
         return;
       }
 
-      const newId = addItem({
-        tipo: tipo.value,
-        fecha: f,
-        descripcion: d,
-        estado: estado.value,
-        monto: Number(monto.value || 0)
-      });
+      const tipoVal = tipo.value;
+      let newId = null;
+      try{
+        newId = addItem({
+          tipo: tipoVal,
+          fecha: f,
+          descripcion: d,
+          estado: estado.value,
+          monto: Number(monto.value || 0)
+        });
+      }catch(error){
+        showMsg(error?.message || "No se pudo guardar el evento.");
+        return;
+      }
 
       form.reset();
       fecha.value = todayISO();
@@ -1188,7 +1212,7 @@
       showMsg("Evento guardado.");
       render();
 
-      if(tipo.value === "RECORDATORIO"){
+      if(tipoVal === "RECORDATORIO"){
         requestNotificationPermission().then(granted => {
           if(!granted){
             showMsg("Notificaciones bloqueadas en el navegador.");

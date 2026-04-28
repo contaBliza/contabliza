@@ -501,6 +501,7 @@
       <a class="nav-drawer-item" href="./reportes.html"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5"></path><path d="M8 19V9"></path><path d="M12 19V12"></path><path d="M16 19V7"></path><path d="M20 19V10"></path></svg></span><span>Reportes</span></a>
       <a class="nav-drawer-item" href="./calendario.html"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M16 3v4"></path><path d="M8 3v4"></path><path d="M3 9h18"></path></svg></span><span>Calendario</span></a>
       <a class="nav-drawer-item" href="./documentos.html"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2h9l5 5v15a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"></path><path d="M14 2v6h6"></path><path d="M8 13h8"></path><path d="M8 17h8"></path></svg></span><span>Documentos</span></a>
+      <a class="nav-drawer-item" href="./metas.html" data-nav-link="metas"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="4"></circle><path d="M12 3v3"></path><path d="M21 12h-3"></path></svg></span><span>Metas</span></a>
       <a class="nav-drawer-item" href="./config.html"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="M4.93 4.93l1.41 1.41"></path><path d="M17.66 17.66l1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="M4.93 19.07l1.41-1.41"></path><path d="M17.66 6.34l1.41-1.41"></path><circle cx="12" cy="12" r="3"></circle></svg></span><span>Configuración</span></a>
       <div class="nav-drawer-divider"></div>
       <button class="nav-drawer-item" data-action="logout" type="button"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 17l5-5-5-5"></path><path d="M15 12H3"></path><path d="M21 5v14"></path></svg></span><span>Cerrar sesión</span></button>
@@ -642,7 +643,7 @@
       <div class="cfg-actions">
         <button class="btn-secondary" id="btnExport" type="button">Exportar JSON</button>
         <button class="btn-secondary" id="btnImport" type="button">Importar (pegar JSON)</button>
-        <button class="btn-secondary cfg-danger" id="btnClearAll" type="button">Borrar TODO</button>
+        <button class="btn-secondary cfg-danger" id="btnClearAll" type="button">Borrar datos de ContaBliza</button>
       </div>
 
       <div id="ioWrap" style="display:none;">
@@ -730,6 +731,15 @@
       setTimeout(() => msg.style.display = "none", 2200);
     }
 
+    function escapeAttr(value){
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
     function setupAccordions(){
       document.querySelectorAll(".cfg-accordion").forEach(section => {
         const head = section.querySelector(".cfg-accordion-head");
@@ -798,8 +808,8 @@
       const items = (list && list.length) ? list : ["Ventas", "Compras", "Servicios", "Impuestos", "Sueldos", "Otros"];
       catList.innerHTML = items.map((c, idx) => `
         <div class="cat-row">
-          <input id="cat_${idx}" class="cat-input" type="text" data-old="${(c || "").replace(/"/g, "&quot;")}" value="${(c || "").replace(/"/g, "&quot;")}">
-          <button class="btn-secondary" type="button" data-cat-del="${idx}" data-cat-old="${(c || "").replace(/"/g, "&quot;")}">Quitar</button>
+          <input id="cat_${idx}" class="cat-input" type="text" data-old="${escapeAttr(c)}" value="${escapeAttr(c)}">
+          <button class="btn-secondary" type="button" data-cat-del="${idx}" data-cat-old="${escapeAttr(c)}">Quitar</button>
         </div>
       `).join("");
 
@@ -912,12 +922,28 @@
       }
     });
 
+    function isContaBlizaStorageKey(key){
+      const value = String(key || "");
+      return value.startsWith("contabliza_") || ["cb_session", "userSession", "ContaBliza_calendario"].includes(value);
+    }
+
+    function normalizeImportedStorageValue(value){
+      if(typeof value === "string") return value;
+      return JSON.stringify(value);
+    }
+
+    function getContaBlizaStorageKeys(){
+      const keys = [];
+      for(let i = 0; i < localStorage.length; i++){
+        const key = localStorage.key(i);
+        if(isContaBlizaStorageKey(key)) keys.push(key);
+      }
+      return keys;
+    }
+
     function exportAll(){
       const dump = {};
-      for(let i=0; i<localStorage.length; i++){
-        const k = localStorage.key(i);
-        dump[k] = localStorage.getItem(k);
-      }
+      getContaBlizaStorageKeys().forEach(k => dump[k] = localStorage.getItem(k));
       return dump;
     }
 
@@ -953,24 +979,32 @@
         return;
       }
 
-      const ok = confirm("Esto va a pisar tu localStorage actual. Seguro?");
-      if(!ok) return;
-
-      localStorage.clear();
-      for(const k of Object.keys(parsed)){
-        localStorage.setItem(k, parsed[k]);
+      const entries = Object.entries(parsed).filter(([key]) => isContaBlizaStorageKey(key));
+      if(!entries.length){
+        showMsg("El JSON no contiene datos de ContaBliza.");
+        return;
       }
 
+      const ok = confirm("Esto va a reemplazar los datos locales de ContaBliza. Seguro?");
+      if(!ok) return;
+
+      getContaBlizaStorageKeys().forEach(key => localStorage.removeItem(key));
+      entries.forEach(([key, value]) => {
+        localStorage.setItem(key, normalizeImportedStorageValue(value));
+      });
+
       showMsg("Import aplicado.");
+      loadAccountInfo();
       loadSettingsToUI();
     });
 
     btnClearAll.addEventListener("click", () => {
-      const ok = confirm("Borrar TODO el localStorage de ContaBliza? (Esto no se puede deshacer)");
+      const ok = confirm("Borrar todos los datos locales de ContaBliza? (Esto no se puede deshacer)");
       if(!ok) return;
 
-      localStorage.clear();
-      showMsg("Borrado. (recarga la pagina)");
+      getContaBlizaStorageKeys().forEach(key => localStorage.removeItem(key));
+      showMsg("Datos de ContaBliza borrados. Recargá la página.");
+      loadAccountInfo();
     });
 
     document.addEventListener("DOMContentLoaded", () => {

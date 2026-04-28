@@ -3,6 +3,9 @@
   USERS: "contabliza_users",
   SETTINGS: "contabliza_settings",
   MOVIMIENTOS: "contabliza_movimientos",
+  CALENDARIO: "contabliza_calendario",
+  METAS: "contabliza_metas",
+  META_ACTIVA: "contabliza_meta_activa",
   NOTIFICATIONS: "contabliza_notifications"
 };
 // Migracion de sesion (cb_session -> contabliza_session)
@@ -264,6 +267,9 @@ function getMovimientos() {
 
 function saveMovimientos(list) {
   save(STORAGE_KEYS.MOVIMIENTOS, list);
+  if(typeof window !== "undefined" && window.dispatchEvent){
+    window.dispatchEvent(new Event("cb:movimientos-updated"));
+  }
 }
 
 function listMovimientosSortedDesc() {
