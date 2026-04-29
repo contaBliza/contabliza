@@ -675,8 +675,7 @@
 
     function loadGoals(){
       try{
-        const raw = localStorage.getItem(GOALS_KEY);
-        const list = raw ? JSON.parse(raw) : [];
+        const list = (typeof load === "function") ? load(GOALS_KEY, []) : JSON.parse(localStorage.getItem(GOALS_KEY) || "[]");
         return Array.isArray(list) ? list : [];
       }catch{
         return [];
@@ -703,6 +702,7 @@
 
     function getActiveGoalId(){
       try{
+        if(typeof load === "function") return load(ACTIVE_GOAL_KEY, "") || "";
         return localStorage.getItem(ACTIVE_GOAL_KEY) || "";
       }catch{
         return "";
@@ -711,8 +711,14 @@
 
     function setActiveGoalId(id){
       try{
-        if(id) localStorage.setItem(ACTIVE_GOAL_KEY, id);
-        else localStorage.removeItem(ACTIVE_GOAL_KEY);
+        if(id){
+          if(typeof save === "function") save(ACTIVE_GOAL_KEY, id);
+          else localStorage.setItem(ACTIVE_GOAL_KEY, id);
+        }else if(typeof remove === "function"){
+          remove(ACTIVE_GOAL_KEY);
+        }else{
+          localStorage.removeItem(ACTIVE_GOAL_KEY);
+        }
       }catch{}
     }
 
@@ -1107,6 +1113,8 @@
     });
 
     document.addEventListener("DOMContentLoaded", renderGoal);
+    window.addEventListener("cb:metas-updated", renderGoal);
+    window.addEventListener("cb:movimientos-updated", renderGoal);
     window.addEventListener("storage", (event) => {
       if(event.key === GOALS_KEY || event.key === "contabliza_movimientos") renderGoal();
     });

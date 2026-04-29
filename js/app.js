@@ -63,6 +63,30 @@ async function cbGetSupabaseSession(){
   }
 }
 
+function cbBuildSupabaseLocalSession(session, fallback = {}){
+  const user = session?.user || {};
+  const email = user.email || fallback.email || "";
+  const metadata = user.user_metadata || {};
+  return {
+    user: email || metadata.display_name || "Usuario",
+    email,
+    idType: metadata.document_type || fallback.idType || "CI",
+    idNumber: metadata.document_number || fallback.idNumber || "",
+    supabaseUserId: user.id || fallback.supabaseUserId || "",
+    authProvider: "supabase",
+    ts: Date.now()
+  };
+}
+
+function cbStoreSupabaseLocalSession(session, fallback = {}){
+  const localSession = cbBuildSupabaseLocalSession(session, fallback);
+  if(!localSession.supabaseUserId) return null;
+  localStorage.setItem(CB_KEYS.SESSION, JSON.stringify(localSession));
+  localStorage.setItem(CB_KEYS.REMEMBER, "1");
+  sessionStorage.removeItem(CB_KEYS.SESSION_TEMP);
+  return localSession;
+}
+
 async function cbRequireSession(){
   // Si estás en /pages/ (o cualquier html interno) y no hay sesión, redirige a login
   const path = (location.pathname || "").toLowerCase();
@@ -71,12 +95,17 @@ async function cbRequireSession(){
   // Consideramos internas a: /pages/*.html (ajustá si tu carpeta cambia)
   const isInternal = path.includes("/pages/");
 
-  if(isIndex || !isInternal || cbIsLogged()) return;
+  if(isIndex || !isInternal) return;
+
+  const localSession = cbGetSession();
+  if(localSession?.supabaseUserId) return;
 
   const supabaseSession = await cbGetSupabaseSession();
   if(!supabaseSession){
-    location.href = "../index.html";
+    if(!localSession) location.href = "../index.html";
+    return;
   }
+  cbStoreSupabaseLocalSession(supabaseSession);
 }
 
 /* =====================================================
@@ -382,12 +411,6 @@ window.addEventListener("cb:notifications-updated", () => {
   const form = document.getElementById("loginForm");
   if(!form) return;
 
-  // Sesion persistente: si ya esta logueado, entra directo al home.
-  if(cbIsLogged()){
-    window.location.href = "pages/home.html";
-    return;
-  }
-
   const forgot = document.getElementById("forgotLink");
   const register = document.getElementById("registerLink");
   const remember = document.getElementById("rememberDevice");
@@ -398,7 +421,12 @@ window.addEventListener("cb:notifications-updated", () => {
   let authMode = "login";
 
   cbGetSupabaseSession().then((session) => {
-    if(session) window.location.href = "pages/home.html";
+    if(session){
+      cbStoreSupabaseLocalSession(session);
+      window.location.href = "pages/home.html";
+    }else if(cbIsLogged()){
+      window.location.href = "pages/home.html";
+    }
   });
 
   if(remember){
@@ -427,11 +455,12 @@ window.addEventListener("cb:notifications-updated", () => {
   }
 
   async function signInWithSupabase(email, pass){
-    const { error } = await window.cbSupabase.auth.signInWithPassword({
+    const { data, error } = await window.cbSupabase.auth.signInWithPassword({
       email,
       password: pass
     });
     if(error) throw error;
+    return data;
   }
 
   async function signUpWithSupabase(email, pass, idType, idNumber){
@@ -505,6 +534,7 @@ window.addEventListener("cb:notifications-updated", () => {
         if(authMode === "register"){
           const data = await signUpWithSupabase(user, pass, idType, idNumber);
           if(data?.session){
+            cbStoreSupabaseLocalSession(data.session, { email: user, idType, idNumber });
             window.location.href = "pages/home.html";
           }else{
             alert("Cuenta creada. Revisá tu email para confirmar el registro.");
@@ -513,10 +543,8 @@ window.addEventListener("cb:notifications-updated", () => {
           return;
         }
 
-        await signInWithSupabase(user, pass);
-        localStorage.removeItem(CB_KEYS.SESSION);
-        localStorage.removeItem(CB_KEYS.REMEMBER);
-        sessionStorage.removeItem(CB_KEYS.SESSION_TEMP);
+        const data = await signInWithSupabase(user, pass);
+        cbStoreSupabaseLocalSession(data?.session, { email: user, idType, idNumber });
         window.location.href = "pages/home.html";
         return;
       }catch(error){

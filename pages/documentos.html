@@ -927,8 +927,8 @@
     if(monedaFilter) monedaFilter.addEventListener("change", () => { currentPage = 1; render(); });
     if(sortBy) sortBy.addEventListener("change", () => { currentPage = 1; render(); });
     document.addEventListener("DOMContentLoaded", render);
+    window.addEventListener("cb:movimientos-updated", () => { currentPage = 1; render(); });
   </script>
 </body>
 </html>
-
 

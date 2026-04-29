@@ -1709,6 +1709,10 @@
       apply();
     });
 
+    window.addEventListener("cb:movimientos-updated", () => {
+      apply();
+    });
+
     window.addEventListener("storage", (e) => {
       if(e.key === "contabliza_settings"){
         apply();

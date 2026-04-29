@@ -1692,6 +1692,12 @@
       syncMonedaDisplay();
     });
 
+    window.addEventListener("cb:movimientos-updated", () => {
+      render();
+      syncCategoriaDisplay();
+      syncMonedaDisplay();
+    });
+
     window.addEventListener("storage", (e) => {
       if(e.key === "contabliza_settings"){
         render();
@@ -1703,5 +1709,4 @@
 
 </body>
 </html>
-
 

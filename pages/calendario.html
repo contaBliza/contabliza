@@ -921,8 +921,8 @@
 
     function loadList(){
       try{
-        const raw = localStorage.getItem(KEY);
-        return raw ? JSON.parse(raw) : [];
+        const list = (typeof load === "function") ? load(KEY, []) : JSON.parse(localStorage.getItem(KEY) || "[]");
+        return Array.isArray(list) ? list : [];
       }catch{
         return [];
       }
@@ -1294,6 +1294,11 @@
       openReminderFromQuery();
       checkReminders();
       setInterval(checkReminders, 60 * 1000);
+    });
+
+    window.addEventListener("cb:calendario-updated", () => {
+      render();
+      checkReminders();
     });
   </script>
 

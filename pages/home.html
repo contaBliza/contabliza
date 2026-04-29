@@ -1206,6 +1206,16 @@
       renderHome();
       renderSupabaseUserName();
     });
+
+    window.addEventListener("cb:movimientos-updated", () => {
+      rebuildMedioSelect();
+      renderHome();
+    });
+
+    window.addEventListener("cb:settings-updated", () => {
+      rebuildMedioSelect();
+      renderHome();
+    });
   </script>
 
 </body>
