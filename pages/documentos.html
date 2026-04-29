@@ -686,7 +686,7 @@
     }
 
     function hasAdjunto(m){
-      return !!String(m.adjuntoDataUrl || "").trim() || !!String(m.adjuntoName || "").trim();
+      return !!String(m.adjuntoDataUrl || "").trim() || !!String(m.adjuntoPath || "").trim() || !!String(m.adjuntoName || "").trim();
     }
 
     function hasFactura(m){
@@ -739,6 +739,9 @@
 
     function getDocKind(m){
       if(!hasAdjunto(m)) return "none";
+      if(String(m.adjuntoPath || "").trim()){
+        return String(m.adjuntoMime || "").includes("pdf") ? "pdf" : "img";
+      }
       return String(m.adjuntoDataUrl || "").startsWith("data:application/pdf") ? "pdf" : "img";
     }
     function getDocMetaLabel(m){
@@ -896,7 +899,14 @@
       if(!mov || !hasAdjunto(mov)) return;
       const dataUrl = String(mov.adjuntoDataUrl || "");
       const fileName = getDownloadName(mov);
-      if(dataUrl.startsWith("data:application/pdf")){
+      const remotePath = String(mov.adjuntoPath || "");
+      if(remotePath && typeof getSupabaseAttachmentUrl === "function"){
+        getSupabaseAttachmentUrl(remotePath).then((url) => {
+          if(!url) return;
+          if(String(mov.adjuntoMime || "").includes("pdf")) openPreviewPdf(url, fileName);
+          else openPreviewImage(url, fileName);
+        });
+      }else if(dataUrl.startsWith("data:application/pdf")){
         openPreviewPdf(dataUrl, fileName);
       }else{
         openPreviewImage(dataUrl, fileName);
@@ -931,4 +941,3 @@
   </script>
 </body>
 </html>
-

@@ -1306,6 +1306,18 @@
     function renderAdjuntoBtn(a){
       const dataUrl = String(a.adjuntoDataUrl || "");
       const fileName = escapeHtml(getDownloadName(a));
+      const path = String(a.adjuntoPath || "");
+      if(path){
+        const isPdf = String(a.adjuntoMime || "").includes("pdf");
+        return `<button class="btn-secondary cat-view-btn" type="button" data-remote-path="${escapeHtml(path)}" data-remote-kind="${isPdf ? "pdf" : "img"}" data-file="${fileName}" aria-label="Ver adjunto" title="Ver adjunto">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"></path>
+            <path d="M14 3v5h5"></path>
+            <path d="M8 15h8"></path>
+            <path d="M8 11h3"></path>
+          </svg>
+        </button>`;
+      }
       if(dataUrl.startsWith("data:image/")){
         return `<button class="btn-secondary cat-view-btn" type="button" data-preview="${dataUrl}" data-file="${fileName}" aria-label="Ver imagen adjunta" title="Ver imagen adjunta">
           <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
@@ -1539,8 +1551,16 @@
       if(btn){
         const imgUrl = btn.getAttribute("data-preview");
         const pdfUrl = btn.getAttribute("data-preview-pdf");
+        const remotePath = btn.getAttribute("data-remote-path");
+        const remoteKind = btn.getAttribute("data-remote-kind");
         const file = btn.getAttribute("data-file") || "";
-        if(pdfUrl){
+        if(remotePath && typeof getSupabaseAttachmentUrl === "function"){
+          getSupabaseAttachmentUrl(remotePath).then((url) => {
+            if(!url) return;
+            if(remoteKind === "pdf") openPreviewPdf(url, file);
+            else openPreviewImage(url, file);
+          });
+        }else if(pdfUrl){
           openPreviewPdf(pdfUrl, file);
         }else if(imgUrl){
           openPreviewImage(imgUrl, file);
@@ -1709,4 +1729,3 @@
 
 </body>
 </html>
-

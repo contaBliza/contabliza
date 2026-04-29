@@ -155,7 +155,11 @@
     }
     #movForm input,
     #movForm select{
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
       min-height: 54px;
+      box-sizing: border-box;
       border-radius: 16px;
       border-color: #d8d0c4;
       background: #fffcf9;
@@ -163,6 +167,12 @@
       font-size: 1rem;
       padding: 10px 14px;
       box-shadow: inset 0 1px 0 rgba(255,255,255,0.95), 0 4px 12px rgba(19, 36, 46, 0.04);
+    }
+    #movForm input[type="date"]{
+      appearance: none;
+      -webkit-appearance: none;
+      display: block;
+      line-height: 1.2;
     }
     #movForm input:focus,
     #movForm select:focus{
@@ -903,6 +913,10 @@
       });
     }
 
+    function createMovementId(){
+      return (typeof crypto !== "undefined" && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now());
+    }
+
     btnIngreso.addEventListener("click", () => setTipo("ingreso"));
     btnEgreso.addEventListener("click", () => setTipo("egreso"));
     if(categoria){
@@ -938,9 +952,18 @@
         return;
       }
 
-      readFileAsDataUrl(adjFile).then((dataUrl) => {
+      const movementId = createMovementId();
+      const uploadPromise = (adjFile && typeof uploadMovimientoAdjunto === "function")
+        ? uploadMovimientoAdjunto(adjFile, movementId).catch((error) => {
+            showSavedMsg(error?.message || "No se pudo subir el adjunto a Supabase.", 4200);
+            return null;
+          })
+        : Promise.resolve(null);
+
+      Promise.all([readFileAsDataUrl(adjFile), uploadPromise]).then(([dataUrl, remoteAttachment]) => {
         try{
           addMovimiento({
+            id: movementId,
             fecha: fechaVal,
             tipo: currentTipo,
             concepto: conceptoVal,
@@ -950,8 +973,9 @@
             categoria: categoriaVal || null,
             factura: facturaVal || null,
             adjuntoName: adjName || null,
-            adjuntoDataUrl: dataUrl || null,
-            adjuntoMime: adjFile?.type || null
+            adjuntoDataUrl: remoteAttachment ? null : (dataUrl || null),
+            adjuntoPath: remoteAttachment?.path || null,
+            adjuntoMime: remoteAttachment?.mime || adjFile?.type || null
           });
         }catch(error){
           showSavedMsg(error?.message || "No se pudo guardar el movimiento.", 4000);
@@ -1002,5 +1026,3 @@
 
 </body>
 </html>
-
-

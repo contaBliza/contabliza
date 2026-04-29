@@ -220,6 +220,46 @@ function cbRowToLocalMovimiento(row) {
   };
 }
 
+async function getSupabaseAttachmentUrl(path) {
+  if(!path || !window.cbSupabase) return "";
+  const { data, error } = await window.cbSupabase.storage
+    .from("comprobantes")
+    .createSignedUrl(path, 60 * 60);
+  if(error){
+    cbLogRemoteError("storage:signedUrl", error);
+    return "";
+  }
+  return data?.signedUrl || "";
+}
+
+async function deleteSupabaseAttachment(path) {
+  if(!path || !cbCanSyncRemote()) return;
+  const { error } = await window.cbSupabase.storage
+    .from("comprobantes")
+    .remove([path]);
+  if(error) cbLogRemoteError("storage:remove", error);
+}
+
+async function uploadMovimientoAdjunto(file, movimientoId) {
+  if(!file || !cbCanSyncRemote()) return null;
+  const userId = getScopedUserId();
+  const safeName = String(file.name || "adjunto").replace(/[^\w.\-]+/g, "_");
+  const path = `${userId}/${movimientoId}/${Date.now()}-${safeName}`;
+  const { error } = await window.cbSupabase.storage
+    .from("comprobantes")
+    .upload(path, file, {
+      cacheControl: "3600",
+      upsert: true,
+      contentType: file.type || "application/octet-stream"
+    });
+  if(error) throw error;
+  return {
+    path,
+    name: file.name || safeName,
+    mime: file.type || ""
+  };
+}
+
 function cbLocalMetaToRow(goal) {
   const row = {
     user_id: getScopedUserId(),
@@ -580,7 +620,7 @@ function addMovimiento(mov) {
   }
 
   const list = getMovimientos();
-  const id = (typeof crypto !== "undefined" && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now());
+  const id = mov.id || ((typeof crypto !== "undefined" && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now()));
 
   const record = {
     id,
@@ -597,6 +637,7 @@ function addMovimiento(mov) {
   if (Array.isArray(mov.tags) && mov.tags.length) record.tags = mov.tags;
   if (mov.factura) record.factura = mov.factura;
   if (mov.adjuntoName) record.adjuntoName = mov.adjuntoName;
+  if (mov.adjuntoPath) record.adjuntoPath = mov.adjuntoPath;
   if (mov.adjuntoDataUrl) record.adjuntoDataUrl = mov.adjuntoDataUrl;
   if (mov.adjuntoMime) record.adjuntoMime = mov.adjuntoMime;
 
@@ -606,7 +647,12 @@ function addMovimiento(mov) {
 }
 
 function deleteMovimiento(id) {
-  saveMovimientos(getMovimientos().filter(m => m.id !== id));
+  const list = getMovimientos();
+  const deleted = list.find(m => String(m.id) === String(id));
+  if(deleted?.adjuntoPath){
+    deleteSupabaseAttachment(deleted.adjuntoPath);
+  }
+  saveMovimientos(list.filter(m => String(m.id) !== String(id)));
 }
 
 function updateMovimiento(id, patch) {
