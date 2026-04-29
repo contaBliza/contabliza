@@ -409,6 +409,10 @@ window.addEventListener("cb:notifications-updated", () => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value || "").trim());
   }
 
+  function getAuthRedirectUrl(){
+    return new URL("index.html", window.location.href).href;
+  }
+
   function setAuthMode(mode){
     authMode = mode === "register" ? "register" : "login";
     if(loginTitle) loginTitle.textContent = authMode === "register" ? "Crear cuenta" : "Iniciar sesión";
@@ -435,6 +439,7 @@ window.addEventListener("cb:notifications-updated", () => {
       email,
       password: pass,
       options: {
+        emailRedirectTo: getAuthRedirectUrl(),
         data: {
           display_name: email.split("@")[0],
           document_type: idType,
@@ -459,7 +464,9 @@ window.addEventListener("cb:notifications-updated", () => {
         alert("Ingresá un email válido.");
         return;
       }
-      window.cbSupabase.auth.resetPasswordForEmail(email)
+      window.cbSupabase.auth.resetPasswordForEmail(email, {
+        redirectTo: getAuthRedirectUrl()
+      })
         .then(({ error }) => {
           if(error) throw error;
           alert("Te enviamos un email para recuperar la contraseña.");
