@@ -1090,6 +1090,10 @@
 
     goalForm.addEventListener("submit", (event) => {
       event.preventDefault();
+      if(typeof canWriteAppData === "function" && !canWriteAppData()){
+        showGoalAlert("Tu prueba gratuita termino. Podes ver tus metas, pero necesitas un plan activo para crear o modificar.");
+        return;
+      }
       const target = Number(goalTarget.value || 0);
       if(target <= 0) return;
       const list = loadGoals();

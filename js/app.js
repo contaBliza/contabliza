@@ -68,14 +68,51 @@ function cbBuildSupabaseLocalSession(session, fallback = {}){
   const email = user.email || fallback.email || "";
   const metadata = user.user_metadata || {};
   return {
-    user: email || metadata.display_name || "Usuario",
+    user: metadata.display_name || fallback.displayName || email || "Usuario",
     email,
-    idType: metadata.document_type || fallback.idType || "CI",
+    idType: metadata.document_type || fallback.idType || "",
     idNumber: metadata.document_number || fallback.idNumber || "",
     supabaseUserId: user.id || fallback.supabaseUserId || "",
     authProvider: "supabase",
     ts: Date.now()
   };
+}
+
+function cbAppAlert(message, options = {}){
+  const text = String(message || "");
+  if(!text) return;
+  let host = document.getElementById("cbAppAlert");
+  if(!host){
+    host = document.createElement("div");
+    host.id = "cbAppAlert";
+    host.className = "cb-app-alert";
+    host.setAttribute("role", "status");
+    host.setAttribute("aria-live", "polite");
+    host.innerHTML = `
+      <div class="cb-app-alert-card">
+        <strong class="cb-app-alert-title"></strong>
+        <p class="cb-app-alert-text"></p>
+        <button class="cb-app-alert-close" type="button">Entendido</button>
+      </div>
+    `;
+    document.body.appendChild(host);
+    host.querySelector(".cb-app-alert-close")?.addEventListener("click", () => {
+      host.classList.remove("is-open");
+    });
+  }
+
+  host.querySelector(".cb-app-alert-title").textContent = options.title || "ContaBliza";
+  host.querySelector(".cb-app-alert-text").textContent = text;
+  host.classList.add("is-open");
+  clearTimeout(host._cbTimer);
+  if(options.autoClose !== false){
+    host._cbTimer = setTimeout(() => host.classList.remove("is-open"), options.duration || 3600);
+  }
+}
+
+if(typeof window !== "undefined"){
+  window.cbAppAlert = cbAppAlert;
+  window.alert = (message) => cbAppAlert(message, { autoClose: false });
 }
 
 function cbStoreSupabaseLocalSession(session, fallback = {}){
@@ -418,6 +455,8 @@ window.addEventListener("cb:notifications-updated", () => {
   const loginTitle = document.querySelector(".login-card h2");
   const loginSub = document.querySelector(".login-sub");
   const loginHint = document.querySelector(".login-hint");
+  const displayNameField = document.querySelector(".register-only");
+  const displayNameInput = document.getElementById("displayName");
   let authMode = "login";
 
   cbGetSupabaseSession().then((session) => {
@@ -447,10 +486,12 @@ window.addEventListener("cb:notifications-updated", () => {
     if(loginSub) loginSub.textContent = authMode === "register" ? "Registrá tu cuenta en la nube" : "Accedé a tu cuenta";
     if(submitBtn) submitBtn.textContent = authMode === "register" ? "Crear cuenta" : "Ingresar";
     if(register) register.textContent = authMode === "register" ? "Ya tengo cuenta" : "Registrarse";
+    if(displayNameField) displayNameField.hidden = authMode !== "register";
+    if(displayNameInput) displayNameInput.required = authMode === "register";
     if(loginHint){
       loginHint.textContent = authMode === "register"
         ? "Usá un email real y una contraseña de al menos 6 caracteres."
-        : "Demo rápida: `admin` / `1234`";
+        : "Usá tu email y contraseña para acceder.";
     }
   }
 
@@ -463,16 +504,14 @@ window.addEventListener("cb:notifications-updated", () => {
     return data;
   }
 
-  async function signUpWithSupabase(email, pass, idType, idNumber){
+  async function signUpWithSupabase(email, pass, displayName){
     const { data, error } = await window.cbSupabase.auth.signUp({
       email,
       password: pass,
       options: {
         emailRedirectTo: getAuthRedirectUrl(),
         data: {
-          display_name: email.split("@")[0],
-          document_type: idType,
-          document_number: idNumber
+          display_name: displayName || email.split("@")[0]
         }
       }
     });
@@ -483,14 +522,18 @@ window.addEventListener("cb:notifications-updated", () => {
   if(forgot){
     forgot.addEventListener("click", (e) => {
       e.preventDefault();
-      const email = document.getElementById("user")?.value.trim() || prompt("Ingresá tu email para recuperar contraseña:");
-      if(!email) return;
+      const email = document.getElementById("user")?.value.trim() || "";
+      if(!email){
+        cbAppAlert("Ingresá tu email en el campo Usuario o email para recuperar la contraseña.");
+        document.getElementById("user")?.focus();
+        return;
+      }
       if(!window.cbSupabase){
-        alert("Supabase no está disponible en este momento.");
+        cbAppAlert("Supabase no está disponible en este momento.");
         return;
       }
       if(!isEmail(email)){
-        alert("Ingresá un email válido.");
+        cbAppAlert("Ingresá un email válido.");
         return;
       }
       window.cbSupabase.auth.resetPasswordForEmail(email, {
@@ -498,10 +541,10 @@ window.addEventListener("cb:notifications-updated", () => {
       })
         .then(({ error }) => {
           if(error) throw error;
-          alert("Te enviamos un email para recuperar la contraseña.");
+          cbAppAlert("Te enviamos un email para recuperar la contraseña.");
         })
         .catch((error) => {
-          alert(error?.message || "No se pudo enviar el email de recuperación.");
+          cbAppAlert(error?.message || "No se pudo enviar el email de recuperación.");
         });
     });
   }
@@ -518,12 +561,11 @@ window.addEventListener("cb:notifications-updated", () => {
 
     const user = document.getElementById("user")?.value.trim() || "";
     const pass = document.getElementById("pass")?.value.trim() || "";
-    const idType = document.getElementById("idType")?.value || "";
-    const idNumber = document.getElementById("idNumber")?.value.trim() || "";
+    const displayName = displayNameInput?.value.trim() || "";
     const rememberDevice = !!remember?.checked;
 
-    if(!user || !pass || !idType || !idNumber){
-      alert("Completa todos los campos.");
+    if(!user || !pass || (authMode === "register" && !displayName)){
+      cbAppAlert("Completá todos los campos.");
       return;
     }
 
@@ -532,23 +574,23 @@ window.addEventListener("cb:notifications-updated", () => {
         if(submitBtn) submitBtn.disabled = true;
 
         if(authMode === "register"){
-          const data = await signUpWithSupabase(user, pass, idType, idNumber);
+          const data = await signUpWithSupabase(user, pass, displayName);
           if(data?.session){
-            cbStoreSupabaseLocalSession(data.session, { email: user, idType, idNumber });
+            cbStoreSupabaseLocalSession(data.session, { email: user, displayName });
             window.location.href = "pages/home.html";
           }else{
-            alert("Cuenta creada. Revisá tu email para confirmar el registro.");
+            cbAppAlert("Cuenta creada. Revisá tu email para confirmar el registro.");
             setAuthMode("login");
           }
           return;
         }
 
         const data = await signInWithSupabase(user, pass);
-        cbStoreSupabaseLocalSession(data?.session, { email: user, idType, idNumber });
+        cbStoreSupabaseLocalSession(data?.session, { email: user });
         window.location.href = "pages/home.html";
         return;
       }catch(error){
-        alert(error?.message || "No se pudo completar la operación con Supabase.");
+        cbAppAlert(error?.message || "No se pudo completar la operación con Supabase.");
         return;
       }finally{
         if(submitBtn) submitBtn.disabled = false;
@@ -556,7 +598,7 @@ window.addEventListener("cb:notifications-updated", () => {
     }
 
     if(authMode === "register"){
-      alert("Para registrarte en Supabase tenés que usar un email válido.");
+      cbAppAlert("Para registrarte en Supabase tenés que usar un email válido.");
       return;
     }
 
@@ -564,12 +606,12 @@ window.addEventListener("cb:notifications-updated", () => {
       const users = getUsers();
       const ok = users.find(u => u.user === user && u.pass === pass);
       if(!ok){
-        alert("Usuario o contraseña incorrectos.");
+        cbAppAlert("Usuario o contraseña incorrectos.");
         return;
       }
     }
 
-    const session = { user, idType, idNumber, ts: Date.now() };
+    const session = { user, ts: Date.now() };
     if(rememberDevice){
       localStorage.setItem(CB_KEYS.SESSION, JSON.stringify(session));
       localStorage.setItem(CB_KEYS.REMEMBER, "1");

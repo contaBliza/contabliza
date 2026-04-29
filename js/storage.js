@@ -1,6 +1,7 @@
 ﻿const STORAGE_KEYS = {
   SESSION: "contabliza_session",
   USERS: "contabliza_users",
+  PROFILE: "contabliza_profile",
   SETTINGS: "contabliza_settings",
   MOVIMIENTOS: "contabliza_movimientos",
   CALENDARIO: "contabliza_calendario",
@@ -44,6 +45,7 @@
 
 const USER_SCOPED_STORAGE_KEYS = new Set([
   STORAGE_KEYS.SETTINGS,
+  STORAGE_KEYS.PROFILE,
   STORAGE_KEYS.MOVIMIENTOS,
   STORAGE_KEYS.CALENDARIO,
   STORAGE_KEYS.METAS,
@@ -129,6 +131,120 @@ function cbDispatchDataEvent(name) {
 
 function cbLogRemoteError(scope, error) {
   if(error) console.warn(`Supabase sync ${scope}:`, error);
+}
+
+function cbAddDays(date, days) {
+  const base = date instanceof Date ? new Date(date.getTime()) : new Date(date || Date.now());
+  base.setDate(base.getDate() + days);
+  return base;
+}
+
+function cbIsoDate(date) {
+  const d = date instanceof Date ? date : new Date(date || Date.now());
+  return Number.isNaN(d.getTime()) ? "" : d.toISOString();
+}
+
+function cbReadProfile() {
+  return load(STORAGE_KEYS.PROFILE, null);
+}
+
+function cbWriteProfile(profile) {
+  saveLocalOnly(STORAGE_KEYS.PROFILE, profile || null);
+  cbDispatchDataEvent("cb:profile-updated");
+}
+
+function getProfile() {
+  const cached = cbReadProfile();
+  if(cached) return cached;
+  const session = getSession ? getSession() : null;
+  if(!session?.supabaseUserId) return null;
+  const started = session.ts ? cbIsoDate(new Date(session.ts)) : cbIsoDate(new Date());
+  return {
+    id: session.supabaseUserId,
+    email: session.email || "",
+    display_name: session.user || session.email || "Usuario",
+    plan: "free",
+    subscription_status: "trialing",
+    trial_started_at: started,
+    trial_ends_at: cbIsoDate(cbAddDays(started, 60)),
+    subscription_provider: null,
+    subscription_id: null,
+    payment_method_label: null,
+    current_period_ends_at: null
+  };
+}
+
+function cbDaysUntil(dateValue) {
+  const target = new Date(dateValue || "");
+  if(Number.isNaN(target.getTime())) return null;
+  const now = new Date();
+  return Math.ceil((target.getTime() - now.getTime()) / 86400000);
+}
+
+function cbIsFutureOrEmpty(dateValue) {
+  if(!dateValue) return true;
+  const target = new Date(dateValue);
+  return !Number.isNaN(target.getTime()) && target.getTime() >= Date.now();
+}
+
+function getPlanStatus() {
+  const session = getSession ? getSession() : null;
+  if(!session?.supabaseUserId){
+    return {
+      mode: "local",
+      label: "Gratis local",
+      statusLabel: "Local",
+      canWrite: true,
+      daysLeft: null,
+      trialEndsAt: null,
+      profile: null
+    };
+  }
+
+  const profile = getProfile();
+  if(!profile){
+    return {
+      mode: "checking",
+      label: "Verificando cuenta",
+      statusLabel: "Sincronizado",
+      canWrite: true,
+      daysLeft: null,
+      trialEndsAt: null,
+      profile: null
+    };
+  }
+
+  const plan = String(profile.plan || "free").toLowerCase();
+  const subscriptionStatus = String(profile.subscription_status || "trialing").toLowerCase();
+  const paidActive = (plan === "pro" || plan === "premium") &&
+    ["active", "paid"].includes(subscriptionStatus) &&
+    cbIsFutureOrEmpty(profile.current_period_ends_at);
+  const daysLeft = cbDaysUntil(profile.trial_ends_at);
+  const trialActive = !paidActive && daysLeft !== null && daysLeft >= 0 && subscriptionStatus !== "expired";
+  const canWrite = paidActive || trialActive;
+
+  return {
+    mode: paidActive ? "pro" : (trialActive ? "trial" : "expired"),
+    label: paidActive ? "Pro activo" : (trialActive ? "Prueba gratuita" : "Prueba vencida"),
+    statusLabel: paidActive ? "Activo" : (trialActive ? `${daysLeft} dia${daysLeft === 1 ? "" : "s"} restantes` : "Vencido"),
+    canWrite,
+    daysLeft,
+    trialEndsAt: profile.trial_ends_at || null,
+    currentPeriodEndsAt: profile.current_period_ends_at || null,
+    paymentMethod: profile.payment_method_label || "",
+    provider: profile.subscription_provider || "",
+    profile
+  };
+}
+
+function canWriteAppData() {
+  return getPlanStatus().canWrite;
+}
+
+function assertCanWriteAppData() {
+  const status = getPlanStatus();
+  if(status.canWrite) return true;
+  throw new Error("Tu prueba gratuita terminó. Podés ver y exportar tus datos, pero necesitás un plan activo para crear o modificar información.");
 }
 
 function cbQueueRemoteSync(key, value) {
@@ -242,6 +358,7 @@ async function deleteSupabaseAttachment(path) {
 
 async function uploadMovimientoAdjunto(file, movimientoId) {
   if(!file || !cbCanSyncRemote()) return null;
+  assertCanWriteAppData();
   const userId = getScopedUserId();
   const safeName = String(file.name || "adjunto").replace(/[^\w.\-]+/g, "_");
   const path = `${userId}/${movimientoId}/${Date.now()}-${safeName}`;
@@ -397,6 +514,63 @@ async function cbHydrateSettingsFromSupabase() {
   cbDispatchDataEvent("cb:settings-updated");
 }
 
+function cbNormalizeRemoteProfile(data) {
+  const session = getSession ? getSession() : null;
+  const startedAt = data?.trial_started_at || cbIsoDate(new Date());
+  return {
+    id: data?.id || getScopedUserId(),
+    email: data?.email || session?.email || "",
+    display_name: data?.display_name || session?.user || session?.email || "Usuario",
+    document_type: data?.document_type || session?.idType || "",
+    document_number: data?.document_number || session?.idNumber || "",
+    plan: data?.plan || "free",
+    subscription_status: data?.subscription_status || "trialing",
+    trial_started_at: startedAt,
+    trial_ends_at: data?.trial_ends_at || cbIsoDate(cbAddDays(startedAt, 60)),
+    subscription_provider: data?.subscription_provider || null,
+    subscription_id: data?.subscription_id || null,
+    payment_method_label: data?.payment_method_label || null,
+    current_period_ends_at: data?.current_period_ends_at || null,
+    created_at: data?.created_at || null,
+    updated_at: data?.updated_at || null
+  };
+}
+
+async function cbHydrateProfileFromSupabase() {
+  if(!cbCanSyncRemote()) return;
+  const userId = getScopedUserId();
+  const { data, error } = await window.cbSupabase.from("profiles").select("*").eq("id", userId).maybeSingle();
+  if(error){
+    cbLogRemoteError("profiles:hydrate", error);
+    return;
+  }
+  if(data){
+    cbWriteProfile(cbNormalizeRemoteProfile(data));
+    return;
+  }
+
+  const session = getSession ? getSession() : null;
+  const startedAt = cbIsoDate(new Date());
+  const payload = {
+    id: userId,
+    email: session?.email || "",
+    display_name: session?.user || session?.email || "Usuario",
+    document_type: session?.idType || null,
+    document_number: session?.idNumber || null,
+    plan: "free",
+    subscription_status: "trialing",
+    trial_started_at: startedAt,
+    trial_ends_at: cbIsoDate(cbAddDays(startedAt, 60))
+  };
+  const inserted = await window.cbSupabase.from("profiles").upsert(payload, { onConflict: "id" }).select("*").maybeSingle();
+  if(inserted.error){
+    cbLogRemoteError("profiles:upsert", inserted.error);
+    cbWriteProfile(cbNormalizeRemoteProfile(payload));
+    return;
+  }
+  cbWriteProfile(cbNormalizeRemoteProfile(inserted.data || payload));
+}
+
 async function cbHydrateTableFromSupabase(table, storageKey, mapper, eventName) {
   if(!cbCanSyncRemote()) return;
   const userId = getScopedUserId();
@@ -422,6 +596,7 @@ async function cbHydrateTableFromSupabase(table, storageKey, mapper, eventName) 
 
 function cbHydrateRemoteData() {
   if(!cbCanSyncRemote()) return;
+  cbHydrateProfileFromSupabase();
   cbHydrateSettingsFromSupabase();
   cbHydrateTableFromSupabase("movimientos", STORAGE_KEYS.MOVIMIENTOS, cbRowToLocalMovimiento, "cb:movimientos-updated");
   cbHydrateTableFromSupabase("metas", STORAGE_KEYS.METAS, cbRowToLocalMeta, "cb:metas-updated");
@@ -613,6 +788,7 @@ function listMovimientosSortedDesc() {
 }
 
 function addMovimiento(mov) {
+  assertCanWriteAppData();
   if (!mov) throw new Error("Movimiento invalido");
   const monto = Number(mov.monto || 0);
   if (!mov.tipo || !mov.fecha || !mov.medioId || !monto || monto <= 0) {
@@ -656,6 +832,7 @@ function deleteMovimiento(id) {
 }
 
 function updateMovimiento(id, patch) {
+  assertCanWriteAppData();
   if(!id) throw new Error("ID invalido");
   const list = getMovimientos();
   const idx = list.findIndex(m => m.id === id);

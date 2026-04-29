@@ -1615,15 +1615,23 @@
         return;
       }
 
-      updateMovimiento(currentEditId, {
-        tipo: tipoVal,
-        moneda: monedaVal,
-        concepto: conceptoVal,
-        monto: montoVal,
-        fecha: fechaVal,
-        medioId: medioVal,
-        categoria: catVal || null,
-      });
+      try{
+        updateMovimiento(currentEditId, {
+          tipo: tipoVal,
+          moneda: monedaVal,
+          concepto: conceptoVal,
+          monto: montoVal,
+          fecha: fechaVal,
+          medioId: medioVal,
+          categoria: catVal || null,
+        });
+      }catch(error){
+        if(editMsg){
+          editMsg.textContent = error?.message || "No se pudo guardar el movimiento.";
+          editMsg.style.display = "block";
+        }
+        return;
+      }
       closeEdit();
       render();
     });

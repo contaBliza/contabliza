@@ -37,6 +37,20 @@
           </div>
         </div>
 
+        <div class="form-group login-field register-only" hidden>
+          <label class="login-hidden-label" for="displayName">Nombre</label>
+          <div class="field-title">Nombre para mostrar en ContaBliza</div>
+          <div class="input-shell">
+            <span class="input-ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="8" r="4"></circle>
+                <path d="M4 20c1.8-4 5-6 8-6s6.2 2 8 6"></path>
+              </svg>
+            </span>
+            <input type="text" id="displayName" placeholder="Ej: Nicolas">
+          </div>
+        </div>
+
         <div class="form-group login-field">
           <label class="login-hidden-label" for="pass">Contraseña</label>
           <div class="field-title">Contraseña</div>
@@ -57,32 +71,6 @@
           </div>
         </div>
 
-        <select id="idType" required style="display:none;">
-          <option value="CI" selected>CI</option>
-          <option value="RUT">RUT</option>
-        </select>
-
-        <div class="form-group login-field">
-          <label class="login-hidden-label" for="idNumber">Número de documento</label>
-          <div class="field-head">
-            <div class="field-title">Número de documento</div>
-            <div class="id-switch-wrap" aria-label="Tipo de documento">
-              <button type="button" class="id-switch-btn is-active" data-id-type="CI">CI</button>
-              <button type="button" class="id-switch-btn" data-id-type="RUT">RUT</button>
-            </div>
-          </div>
-          <div class="input-shell">
-            <span class="input-ico" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="4" width="18" height="16" rx="2"></rect>
-                <path d="M7 9h6"></path>
-                <path d="M7 13h10"></path>
-              </svg>
-            </span>
-            <input type="text" id="idNumber" placeholder="Número de documento" inputmode="numeric" required>
-          </div>
-        </div>
-
         <label class="remember-wrap" for="rememberDevice">
           <input type="checkbox" id="rememberDevice">
           <span>Recordarme en este dispositivo</span>
@@ -96,7 +84,7 @@
         <a href="#" id="registerLink">Registrarse</a>
       </div>
 
-      <p class="login-hint">Demo rápida: `admin` / `1234`</p>
+      <p class="login-hint">Usá tu email y contraseña para acceder.</p>
       <p class="login-footer">ContaBliza - Gestión simple para tus finanzas</p>
     </section>
   </main>
@@ -106,25 +94,6 @@
   <script src="js/storage.js"></script>
   <script src="js/app.js"></script>
   <script>
-    (function wireIdTypeSwitch(){
-      const hiddenSelect = document.getElementById("idType");
-      const buttons = Array.from(document.querySelectorAll("[data-id-type]"));
-      if(!hiddenSelect || !buttons.length) return;
-
-      function setType(value){
-        hiddenSelect.value = value;
-        buttons.forEach((btn) => {
-          btn.classList.toggle("is-active", btn.getAttribute("data-id-type") === value);
-        });
-      }
-
-      buttons.forEach((btn) => {
-        btn.addEventListener("click", () => setType(btn.getAttribute("data-id-type")));
-      });
-
-      setType(hiddenSelect.value || "CI");
-    })();
-
     (function wireTogglePass(){
       const input = document.getElementById("pass");
       const btn = document.getElementById("togglePass");

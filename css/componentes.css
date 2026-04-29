@@ -154,6 +154,57 @@
 }
 
 /* =============================
+   APP ALERT
+   ============================= */
+.cb-app-alert{
+  position: fixed;
+  inset: auto 14px 18px;
+  z-index: 500;
+  display: none;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.cb-app-alert.is-open{
+  display: flex;
+}
+
+.cb-app-alert-card{
+  width: min(380px, 100%);
+  border-radius: 18px;
+  border: 1px solid #d8d0c5;
+  background: #f8f5f0;
+  box-shadow: 0 18px 38px rgba(8, 35, 46, 0.26);
+  padding: 14px;
+  pointer-events: auto;
+}
+
+.cb-app-alert-title{
+  display: block;
+  color: #0e3345;
+  font-size: 1rem;
+  margin-bottom: 4px;
+}
+
+.cb-app-alert-text{
+  margin: 0;
+  color: #445f6f;
+  line-height: 1.35;
+  font-size: 0.94rem;
+}
+
+.cb-app-alert-close{
+  width: 100%;
+  min-height: 40px;
+  margin-top: 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(13, 86, 109, 0.24);
+  background: #0d566d;
+  color: #f5fbfc;
+  font-weight: 700;
+}
+
+/* =============================
    NAV DRAWER
    ============================= */
 .nav-drawer{

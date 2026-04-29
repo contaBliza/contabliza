@@ -547,7 +547,7 @@
           </div>
           <div class="cfg-info-row">
             <span>Sincronización</span>
-            <span class="cfg-status-pill">Local</span>
+            <span class="cfg-status-pill" id="accountSyncStatus">Local</span>
           </div>
         </div>
 
@@ -673,7 +673,15 @@
         <div class="cfg-info-list" aria-label="Datos del plan">
         <div class="cfg-info-row">
           <span>Plan actual</span>
-          <strong>Gratis local</strong>
+          <strong id="planCurrent">Gratis local</strong>
+        </div>
+        <div class="cfg-info-row">
+          <span>Estado</span>
+          <span id="planStatus">Local</span>
+        </div>
+        <div class="cfg-info-row">
+          <span>Fin de prueba</span>
+          <span id="planTrialEnd">No aplica</span>
         </div>
         <div class="cfg-info-row">
           <span>Método de pago</span>
@@ -685,7 +693,7 @@
         </div>
       </div>
 
-      <button class="cfg-disabled-btn" type="button" disabled>Gestionar plan</button>
+      <button class="cfg-disabled-btn" id="btnManagePlan" type="button" disabled>Activar Pro</button>
 
       <div class="cfg-note cfg-plan-note">
         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
@@ -718,6 +726,11 @@
     const accountName = document.getElementById("accountName");
     const accountEmail = document.getElementById("accountEmail");
     const accountSession = document.getElementById("accountSession");
+    const accountSyncStatus = document.getElementById("accountSyncStatus");
+    const planCurrent = document.getElementById("planCurrent");
+    const planStatus = document.getElementById("planStatus");
+    const planTrialEnd = document.getElementById("planTrialEnd");
+    const btnManagePlan = document.getElementById("btnManagePlan");
 
     const btnExport = document.getElementById("btnExport");
     const btnImport = document.getElementById("btnImport");
@@ -778,13 +791,35 @@
       const session = readLocalSession();
       const possibleUser = session?.user || session?.profile || {};
       const email = session?.email || possibleUser?.email || "";
-      const name = possibleUser?.name || session?.name || email || "Usuario local";
+      const sessionUser = typeof session?.user === "string" ? session.user : "";
+      const name = possibleUser?.name || session?.name || sessionUser || email || "Usuario local";
       const initial = String(name || email || "C").trim().charAt(0).toUpperCase() || "C";
 
       if(accountInitial) accountInitial.textContent = initial;
       if(accountName) accountName.textContent = name;
       if(accountEmail) accountEmail.textContent = email || "No sincronizado todavía";
       if(accountSession) accountSession.textContent = session ? "Sesión local detectada" : "Base local en este dispositivo";
+    }
+
+    function fmtPlanDate(value){
+      if(!value) return "No aplica";
+      const date = new Date(value);
+      if(Number.isNaN(date.getTime())) return "No aplica";
+      return date.toLocaleDateString("es-UY", { day: "2-digit", month: "short", year: "numeric" });
+    }
+
+    function loadPlanInfo(){
+      if(typeof getPlanStatus !== "function") return;
+      const session = readLocalSession();
+      const status = getPlanStatus();
+      if(accountSyncStatus) accountSyncStatus.textContent = session?.supabaseUserId ? "Nube" : "Local";
+      if(planCurrent) planCurrent.textContent = status.label;
+      if(planStatus) planStatus.textContent = status.statusLabel;
+      if(planTrialEnd) planTrialEnd.textContent = fmtPlanDate(status.trialEndsAt);
+      if(btnManagePlan){
+        btnManagePlan.disabled = true;
+        btnManagePlan.textContent = status.mode === "expired" ? "Activar Pro" : "Gestionar plan";
+      }
     }
 
     function loadSettingsToUI(){
@@ -1012,8 +1047,11 @@
     document.addEventListener("DOMContentLoaded", () => {
       setupAccordions();
       loadAccountInfo();
+      loadPlanInfo();
       loadSettingsToUI();
     });
+
+    window.addEventListener("cb:profile-updated", loadPlanInfo);
 
     if(catAdd){
       catAdd.addEventListener("click", () => {
