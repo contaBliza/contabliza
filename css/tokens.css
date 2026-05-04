@@ -42,3 +42,18 @@
   --transition-fast: 0.15s ease;
   --transition: 0.25s ease;
 }
+
+:root[data-theme="dark"] {
+  --color-primary: #16c4c1;
+  --color-secondary: #f0bc5e;
+  --color-bg: #071018;
+  --color-text: #e8eef5;
+  --color-muted: #9eafbf;
+  --color-border: #233241;
+  --color-success: #1fb36a;
+  --color-danger: #ef4b55;
+  --shadow-xs: 0 1px 2px rgba(0,0,0,0.32);
+  --shadow-sm: 0 4px 10px rgba(0,0,0,0.34);
+  --shadow: 0 10px 26px rgba(0,0,0,0.42);
+  --shadow-lg: 0 18px 42px rgba(0,0,0,0.48);
+}

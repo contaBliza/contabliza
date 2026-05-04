@@ -22,8 +22,40 @@ const CB_KEYS = {
   SESSION: "contabliza_session",
   SESSION_TEMP: "contabliza_session_temp",
   REMEMBER: "contabliza_remember_me",
-  NOTIFICATIONS: "contabliza_notifications"
+  NOTIFICATIONS: "contabliza_notifications",
+  THEME: "contabliza_theme"
 };
+
+function cbGetTheme(){
+  try{
+    const stored = localStorage.getItem(CB_KEYS.THEME);
+    if(stored === "dark" || stored === "light") return stored;
+  }catch{}
+  return "light";
+}
+
+function cbThemeIcon(theme){
+  if(theme === "dark"){
+    return '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="M4.93 4.93l1.41 1.41"></path><path d="M17.66 17.66l1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="M6.34 17.66l-1.41 1.41"></path><path d="M19.07 4.93l-1.41 1.41"></path></svg>';
+  }
+  return '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path></svg>';
+}
+
+function cbApplyTheme(theme){
+  const selected = theme === "dark" ? "dark" : "light";
+  document.documentElement.setAttribute("data-theme", selected);
+  document.body?.setAttribute("data-theme", selected);
+
+  const buttons = Array.from(document.querySelectorAll("[data-action='theme-toggle']"));
+  buttons.forEach(btn => {
+    btn.innerHTML = cbThemeIcon(selected);
+    btn.setAttribute("aria-label", selected === "dark" ? "Cambiar a modo claro" : "Cambiar a modo oscuro");
+    btn.setAttribute("title", selected === "dark" ? "Modo claro" : "Modo oscuro");
+    btn.setAttribute("aria-pressed", selected === "dark" ? "true" : "false");
+  });
+}
+
+cbApplyTheme(cbGetTheme());
 
 // Compatibilidad: sesiones guardadas antes del checkbox "Recordarme".
 (function cbMigrateRememberLegacy(){
@@ -180,6 +212,21 @@ function cbWireBack(){
   btnBack.addEventListener("click", (e) => {
     e.preventDefault();
     if(history.length > 1) history.back();
+  });
+}
+
+function cbWireThemeToggle(){
+  cbApplyTheme(cbGetTheme());
+  const buttons = Array.from(document.querySelectorAll("[data-action='theme-toggle']"));
+  if(!buttons.length) return;
+
+  buttons.forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      const next = cbGetTheme() === "dark" ? "light" : "dark";
+      try{ localStorage.setItem(CB_KEYS.THEME, next); }catch{}
+      cbApplyTheme(next);
+    });
   });
 }
 
@@ -419,6 +466,7 @@ function cbWireNotifications(){
   try{ cbRequireSession(); }catch(e){ console.warn("Guard error:", e); }
   try{ cbWireLogout(); }catch(e){ console.warn("Logout hook error:", e); }
   try{ cbWireBack(); }catch(e){ console.warn("Back hook error:", e); }
+  try{ cbWireThemeToggle(); }catch(e){ console.warn("Theme hook error:", e); }
   try{ cbEnsureMetasNavItem(); }catch(e){ console.warn("Metas nav error:", e); }
   try{ cbWireMenú(); }catch(e){ console.warn("Menú hook error:", e); }
   try{ cbUpdateNotificationsBadge(); }catch(e){ console.warn("Badge error:", e); }
@@ -431,6 +479,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 window.addEventListener("storage", (e) => {
   if(e.key === CB_KEYS.NOTIFICATIONS) cbUpdateNotificationsBadge();
+  if(e.key === CB_KEYS.THEME) cbApplyTheme(cbGetTheme());
 });
 
 window.addEventListener("cb:notifications-updated", () => {
