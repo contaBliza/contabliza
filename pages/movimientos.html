@@ -336,6 +336,13 @@
       font-size: 0.98rem;
       font-weight: 700;
       line-height: 1.15;
+      overflow-wrap: anywhere;
+    }
+    .mov-card-amount{
+      color: #0f3244;
+      font-size: 0.9rem;
+      font-weight: 800;
+      line-height: 1.15;
     }
     .mov-card-meta{
       display: flex;
@@ -617,6 +624,23 @@
       background: linear-gradient(135deg, rgba(12, 82, 103, 0.95), rgba(23, 109, 128, 0.94));
       border-color: rgba(12, 82, 103, 0.38);
       box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 12px 24px rgba(10, 43, 56, 0.22);
+    }
+    @media (max-width: 700px){
+      .movs-card{
+        padding: 16px 12px 14px;
+      }
+      .movs-table-wrap{
+        display: none;
+      }
+      .movs-list{
+        display: grid;
+      }
+      .mov-card{
+        grid-template-columns: 54px minmax(0, 1fr) auto;
+      }
+      .mov-card-meta span{
+        min-width: 0;
+      }
     }
     @media (max-width: 560px){
       .movs-shell{
@@ -1496,6 +1520,7 @@
             </div>
             <div class="mov-card-main">
               <div class="mov-card-concept">${escapeHtml(m.concepto || "")}</div>
+              <div class="mov-card-amount">${fmtMoney(m.monto || 0, m.moneda || "UYU")}</div>
               <div class="mov-card-meta">
                 <span class="badge ${m.tipo === "ingreso" ? "badge-success" : m.tipo === "egreso" ? "badge-danger" : ""}">
                   ${escapeHtml(getTipoLabel(m.tipo))}
