@@ -428,14 +428,16 @@
    DARK THEME
    ============================= */
 
-:root[data-theme="dark"] body{
+:root[data-theme="dark"] body,
+html.cb-theme-dark body{
   background:
     radial-gradient(900px 520px at 50% -160px, rgba(22, 196, 193, 0.18), rgba(22, 196, 193, 0) 68%),
     linear-gradient(180deg, #071018 0%, #0b1520 100%);
   color: var(--color-text);
 }
 
-:root[data-theme="dark"] .navbar{
+:root[data-theme="dark"] .navbar,
+html.cb-theme-dark .navbar{
   background:
     radial-gradient(420px 160px at 80% 130%, rgba(22, 196, 193, 0.16), rgba(22, 196, 193, 0)),
     linear-gradient(135deg, rgba(7, 16, 24, 0.96), rgba(12, 28, 39, 0.95));
@@ -444,7 +446,9 @@
 }
 
 :root[data-theme="dark"] .nav-btn,
-:root[data-theme="dark"] .logo-text{
+:root[data-theme="dark"] .logo-text,
+html.cb-theme-dark .nav-btn,
+html.cb-theme-dark .logo-text{
   color: #eef6fb;
 }
 

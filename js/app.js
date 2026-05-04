@@ -44,6 +44,7 @@ function cbThemeIcon(theme){
 function cbApplyTheme(theme){
   const selected = theme === "dark" ? "dark" : "light";
   document.documentElement.setAttribute("data-theme", selected);
+  document.documentElement.classList.toggle("cb-theme-dark", selected === "dark");
   document.body?.setAttribute("data-theme", selected);
 
   const buttons = Array.from(document.querySelectorAll("[data-action='theme-toggle']"));
